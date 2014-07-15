@@ -20,7 +20,7 @@
         return new Buffer(base64str, 'base64').toString();
     };
 
-     //length表示生成字符串的长度
+    //length为生成字符串的长度
     exports.random = function(length) {
         var basestr = "abcdefghijklmnopqrstuvwxyz0123456789";
         var randomstr = "";
