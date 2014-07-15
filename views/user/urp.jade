@@ -1,0 +1,78 @@
+extends ./userlayout
+
+block subscript
+  script(src=base.rooturl + '/static/js/user-urp.js?v=#{version.js}')
+
+block nav-tabs
+  a.item(href=base.rooturl + '/user')= lang.user.profile
+  a.item(href=base.rooturl + '/user/activity')= lang.user.activity
+  a.item(href=base.rooturl + '/user/page')= lang.user.page
+  a.active.item(href=base.rooturl + '/user/urp')= lang.user.urp
+  a.item(href=base.rooturl + '/user/settings')= lang.user.settings
+
+block user-form
+  if (urp)
+    form.ui.form.raised.segment#user_urp_op_form(enctype='application/x-www-form-urlencoded', method='POST', action='/user/urp')
+      div(style='display:none')
+        input(type='hidden', name='csrf', value=user.csrf)
+        input#urp_op_type(type='hidden', name='op', value='')
+      if (err.op && err.op.msg)
+        .ui.error.message
+          i.close.icon(type='button', onclick='$(this).parent().remove();')
+          .header= lang.info.error
+          p=err.msg
+      if (err.op && err.op.success)
+        .ui.success.message
+          i.close.icon(type='button', onclick='$(this).parent().remove();')
+          .header= lang.info.success
+          p=lang.user.input_tips.update_success
+
+      .ui.teal.ribbon.label= lang.user.urp_account
+      if (urp.info)
+        p
+        a.ui.label
+          = urp.info.name
+          .detail= urp.info.grade
+        p
+          span.time(style='font-size: 0.6rem;')
+            | &nbsp;&nbsp;#{lang.info.last_update_at}: #{urp.update_at_friendly}
+      else
+        p= lang.user.input_tips.urp_need_update
+      .form-actions
+        button.ui.blue.button#urp_update(onclick="urp_op('update');")= lang.info.update
+        | 
+        button.ui.blue.button#urp_update(onclick="urp_op('remove')")= lang.info.remove
+
+  form.ui.form.raised.segment#user_urp_form(enctype='application/x-www-form-urlencoded', method='POST', action='/user/urp')
+    div(style='display:none')
+      input(type='hidden', name='csrf', value=user.csrf)
+      input(type='hidden', name='op', value='bind')
+    if (err.msg)
+      .ui.error.message
+        i.close.icon(type='button', onclick='$(this).parent().remove();')
+        .header= lang.info.error
+        p=err.msg
+    if (err.success)
+      .ui.success.message
+        i.close.icon(type='button', onclick='$(this).parent().remove();')
+        .header= lang.info.success
+        p=lang.user.input_tips.change_success
+
+    .ui.ribbon.label= lang.user.username
+    .example.field(class=(err.urp_username ? 'error' : ''))
+      .ui.left.labeled.icon.input
+        input#user_urp_username(maxlength='20', type='text', name='user[urp_username]', value=user.student_id)
+        i.user.icon
+        if (err.username)
+          div.ui.red.pointing.above.ui.label= lang.user.input_error.username
+        p= lang.user.input_tips.urp_username
+    .ui.ribbon.label= lang.user.password
+    .example.field(class=(err.urp_password ? 'error' : ''))
+      .ui.left.labeled.icon.input
+        input#user_urp_password(maxlength='20', type='password', name='user[urp_password]', value='')
+        i.lock.icon
+        if (err.contact)
+          div.ui.red.pointing.above.ui.label= lang.user.input_error.contact
+        p= lang.user.input_tips.urp_password
+    .form-actions
+      button.ui.blue.submit.button#urp_bind(type='submit')= lang.info.bind

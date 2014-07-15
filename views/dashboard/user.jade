@@ -1,0 +1,90 @@
+extends ../common/layout
+
+block bodyheader
+  div.segment
+    div.container#overview
+      div.introduction
+        h1.ui.dividing.header
+          i.dashboard.icon
+          = lang.dashboard.user_management
+
+block content
+  .ui.three.column.grid
+    .column
+      .ui.form.raised.segment
+        .ui.top.attached.label
+          i.lock.icon
+          span= lang.info.dashboard.change_password
+        .field
+          form.ui.form(enctype='application/x-www-form-urlencoded', method='POST', action='/dashboard/user')
+            div(style='display:none')
+              input(type='hidden', name='csrf', value=user.csrf)
+              input(type='hidden', name='action', value='change_password')
+            .field(class=(err.account ? 'error' : ''))
+              .ui.left.labeled.icon.input
+                input(maxlength='20', type='text', name='user[studentid]', placeholder=lang.user.studentid)
+                i.icon.user
+                .ui.corner.label
+                  i.icon.asterisk
+            .field(class=(err.new_password ? 'error' : ''))
+              .ui.left.labeled.icon.input
+                input(type='password', name='user[new_password]', placeholder=lang.user.new_password)
+                i.icon.lock
+                .ui.corner.label
+                  i.icon.asterisk
+            .form-actions
+              button.ui.blue.submit.button(type='submit')= lang.info.submit
+    .column
+      .ui.form.raised.segment
+        .ui.top.attached.label
+          i.legal.icon
+          span= lang.info.dashboard.set_page_permission
+        .field
+          form.ui.form(enctype='application/x-www-form-urlencoded', method='POST', action='/dashboard/user')
+            div(style='display:none')
+              input(type='hidden', name='csrf', value=user.csrf)
+              input(type='hidden', name='action', value='set_page_permission')
+            .field(class=(err.page ? 'error' : ''))
+              .ui.left.labeled.icon.input
+                input(type='text', name='user[page]', placeholder=lang.user.page)
+                i.icon.user
+                .ui.corner.label
+                  i.icon.asterisk
+            .field(class=(err.permission ? 'error' : ''))
+              .ui.left.labeled.icon.input
+                input(type='number', name='user[permission]', placeholder=lang.user.permission, value='0')
+                i.icon.legal
+                .ui.corner.label
+                  i.icon.asterisk
+            .form-actions
+              button.ui.blue.submit.button(type='submit')= lang.info.submit
+    .column
+      .ui.form.raised.segment
+        .ui.top.attached.label
+          i.url.icon
+          span= lang.info.dashboard.set_relation_power
+        .field
+          form.ui.form(enctype='application/x-www-form-urlencoded', method='POST', action='/dashboard/user')
+            div(style='display:none')
+              input(type='hidden', name='csrf', value=user.csrf)
+              input(type='hidden', name='action', value='set_relation_power')
+            .field(class=(err.account ? 'error' : ''))
+              .ui.left.labeled.icon.input
+                input(maxlength='20', type='text', name='user[studentid]', placeholder=lang.user.studentid)
+                i.icon.user
+                .ui.corner.label
+                  i.icon.asterisk
+            .field(class=(err.page ? 'error' : ''))
+              .ui.left.labeled.icon.input
+                input(type='text', name='user[page]', placeholder=lang.user.page)
+                i.icon.user
+                .ui.corner.label
+                  i.icon.asterisk
+            .field(class=(err.power ? 'error' : ''))
+              .ui.left.labeled.icon.input
+                input(type='number', name='user[power]', placeholder=lang.user.permission, value='0')
+                i.icon.url
+                .ui.corner.label
+                  i.icon.asterisk
+            .form-actions
+              button.ui.blue.submit.button(type='submit')= lang.info.submit

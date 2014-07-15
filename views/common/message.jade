@@ -1,0 +1,30 @@
+extends layout
+
+block script
+  if (message.redirect)
+    script(type='text/javascript').
+      setTimeout(function () {
+        window.location.href = "#{message.redirect}";
+      }, 2000);
+
+block bodyheader
+  .ui.segment
+
+block content
+  - var header_title = lang.info.tips
+  - var message_class = ''
+  - var icon_class = 'info'
+  case message.type
+    when 'error'
+      - var header_title = lang.info.error
+      - var message_class = 'error'
+      - var icon_class = 'exclamation'
+    when 'success'
+      - var header_title = lang.info.success
+      - var message_class = 'success'
+      - var icon_class = 'check'
+  .ui.icon.message(class=message_class)
+    i.icon(class=icon_class)
+    .content
+      .header= header_title
+      p !{message.info}

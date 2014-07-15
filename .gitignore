@@ -1,0 +1,11 @@
+/node_modules
+*.log
+.DS_Store
+/public/data/tmp
+/public/data/image
+/public/data/install.lock
+/test.js
+/src/data/*
+/src/config/config-production.json
+/public/static/MathJax-2.4-latest.zip
+/public/static/editor/MathJax/*

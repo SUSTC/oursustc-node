@@ -1,0 +1,56 @@
+extends page-layout
+
+block pageguide
+  div.peek
+    div.ui.vertical.pointing.secondary.menu
+      a.active.item= lang.info.page.thanks.opensource
+      a.item= lang.info.page.thanks.developer
+      a.item= lang.info.page.thanks.contributor
+      a.item= lang.info.page.thanks.others
+
+block pagecontent
+  h2.ui.dividing.header #{lang.info.page.thanks.opensource}
+  section.example(id='opensource')
+
+    h3 node.js
+    p Event-driven I/O server-side JavaScript environment based on V8.
+      br
+      | 官网: 
+      a(href='http://nodejs.org/', target='_blank') http://nodejs.org/
+
+    h3 MongoDB
+    p MongoDB (from "humongous") is an open-source document database, and the leading NoSQL database.
+      br
+      | 官网: 
+      a(href='http://www.mongodb.org/', target='_blank') http://www.mongodb.org/
+
+    h3 jQuery
+    p The Write Less, Do More, JavaScript Library.
+      br
+      | 项目地址: 
+      a(href='http://jquery.com/', target='_blank') http://jquery.com/
+
+    h3 更多
+    p 由于实在是太多无法一一列举，我们感到万分抱歉。
+
+  h2.ui.dividing.header #{lang.info.page.thanks.developer}
+  section.example(id='developer')
+
+    h3 南方科技大学计算机研究协会
+    p *
+
+  h2.ui.dividing.header #{lang.info.page.thanks.contributor}
+  section.example(id='contributor')
+
+    h3 组织或机构
+    p 南方科技大学社团
+
+    h3 个人
+    p 暂无
+
+  h2.ui.dividing.header #{lang.info.page.thanks.others}
+  section.example(id='others')
+
+    h3 南方科技大学
+    
+    h3 愉快地使用着的您

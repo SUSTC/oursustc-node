@@ -1,0 +1,19 @@
+extends ./userlayout
+
+block nav-tabs
+  if (user.page_id == page._id)
+    a.item(href=base.rooturl + '/user')= lang.user.profile
+    a.active.item(href=base.rooturl + '/user/activity')= lang.user.activity
+    a.item(href=base.rooturl + '/user/page')= lang.user.page
+    if (page.flags == 0)
+      a.item(href=base.rooturl + '/user/urp')= lang.user.urp
+    a.item(href=base.rooturl + '/user/settings')= lang.user.settings
+  else
+    a.item(href=base.rooturl + '/user/#{page._id}')= lang.user.profile
+    a.active.item(href=base.rooturl + '/user/activity/#{page._id}')= lang.user.activity
+
+block user-form
+  .ui.raised.segment
+    .ui.info.message
+      .header= lang.info.tips
+      = lang.info.in_process

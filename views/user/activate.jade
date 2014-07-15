@@ -1,0 +1,88 @@
+extends ../common/layout
+
+block bodyheader
+  div.segment
+    div.container
+      div.introduction
+        h1.ui.dividing.header= lang.title.user.activate
+
+block content
+  div.span7
+    div.login-board.login-activate
+      form.ui.form.segment#activate_form(autocomplete='on', action='/user/activate', method='POST')
+        div(style='display:none')
+          input(type='hidden', name='key', value=activate.key)
+          input(type='hidden', name='url', value=redirect)
+        .field
+          .ui.vertical.segment
+            - var u = activate.user;
+            include user-label
+        .field(class=(err.accountid ? 'error' : ''))#account-id
+          label= lang.user.studentid
+          div.ui.left.labeled.icon.input
+            input.disabled(type='text', id='activate-account-id', disabled='disabled', placeholder=lang.user.studentid, value=activate.user.student_id)
+            i.icon.user
+            div.ui.corner.label
+              i.icon.asterisk
+            if (err.accountid)
+              div.ui.red.pointing.above.ui.label= err.msg
+        .field#email(class=(err.email ? 'error' : ''))
+          label.control-label(for='user_new_password')= lang.user.email
+          .ui.left.labeled.icon.input
+            input#user_email(type='text', tabindex='1', name='user[email]', autocomplete='off', value=activate.user.email)
+            i.mail.icon
+            div.ui.corner.label
+              i.icon.asterisk
+            if (err.email)
+              div.ui.red.pointing.above.ui.label= lang.user.input_error.email
+        .field.passcheck#new_password(class=(err.new_password ? 'error' : ''))
+          label.control-label(for='user_new_password')= lang.user.new_password
+          .ui.left.labeled.icon.input
+            input#user_new_password(maxlength='36', type='password', tabindex='2', name='user[new_password]', autocomplete='off', value='')
+            i.lock.icon
+            div.ui.corner.label
+              i.icon.asterisk
+            if (err.new_password)
+              div.ui.red.pointing.above.ui.label= lang.user.input_error.new_password
+        .field.passcheck#new_password_again
+          label.control-label(for='user_new_password_again')= lang.user.new_password_again
+          .ui.left.labeled.icon.input
+            input#user_new_password_again(maxlength='36', type='password', tabindex='3', name='user[new_password_again]', autocomplete='off', value='')
+            i.lock.icon
+            div.ui.corner.label
+              i.icon.asterisk
+        div.ui.blue.submit.button#btnsubmit(tabindex='4', onclick='check_activate();')= lang.user.activate
+
+block script
+  script(type='text/javascript').
+    function check_activate() {
+      var form = $('#activate_form');
+      var checkThings = ['.field#email', '.field#new_password', '.field#new_password_again'];
+      var checkPass = true;
+
+      $.each(checkThings, function (i, value) {
+        var field = form.find(value);
+        var input = field.find('input');
+        if (!input.val()) {
+          field.addClass('error');
+          checkPass = false;
+        } else {
+          field.removeClass('error');
+        }
+      });
+
+      if (checkPass) {
+        var fields = form.find('.field.passcheck');
+        var inputs = fields.find('input');
+        if (inputs.length == 2 && ($(inputs[0]).val() != $(inputs[1]).val())) {
+          fields.addClass('error');
+          checkPass = false;
+        } else {
+          fields.removeClass('error');
+        }
+      }
+
+      if (checkPass) {
+        form.submit();
+      }
+    }

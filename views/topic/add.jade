@@ -1,0 +1,38 @@
+extends ../common/layout
+
+block bodyheader
+  div.segment
+    div.container#overview
+      div.introduction
+        h1.ui.dividing.header= lang.info.add
+
+block content
+  form.ui.form.segment#topic_add_form(method='POST', action='/#{active}/add')
+    div(style='display:none')
+      input(type='hidden', name='csrf', value=user.csrf)
+    .ui.ribbon.label= lang.topic.title
+    .example.field#title
+      .ui.left.labeled.input
+        input(maxlength='30', type='text', name='topic[title]', placeholder=lang.topic.input_tips.title)
+    .ui.ribbon.label= lang.topic.content
+    .example.field#content
+      - var editorName = 'topic[content]';
+      - var editorContent = '';
+      include ../common/editor
+    .ui.ribbon.label= lang.topic.attachment
+    .example.field#attachment
+      #attachment_list
+      .ui.error.message(style='display:none;')#attachment_errmsg
+        i.close.icon(onclick='$(this).parent().hide();')
+        .header= lang.info.error
+        p#errmsg
+      button.ui.teal.submit.button#topic_attachment_add(type='button')= lang.topic.add_attachment
+    .form-actions
+      button.ui.blue.submit.button#topic_add(type='button', onclick='check_add();')= lang.info.add
+  form.ui.form.modal#attachment_form
+    input(type='hidden', name='csrf', value=user.csrf)
+    input#attachment_file(type='file', name='userfile')
+
+block script
+  script(type='text/javascript' src=base.rooturl + '/static/js/topic-add.js?v=#{version.js}')
+  include ../common/editor-script

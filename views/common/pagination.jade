@@ -1,0 +1,19 @@
+.ui.pagination.menu(current_page=pagination.current)
+  if (pagination.disable_begin)
+    .disabled.icon.item
+      i.icon.left.arrow
+  else
+    a.icon.item(href='#{pagination.url}p=1')
+      i.icon.left.arrow
+  if (pagination.show_ellipsis_begin)
+    .disabled.item ...
+  - for (var i = pagination.start; i <= pagination.end; i++)
+    a.item(class=(i === pagination.current ? 'active' : ''), href='#{pagination.url}p=#{i}')= i
+  if (pagination.show_ellipsis_last)
+    .disabled.item ...
+  if (pagination.disable_last)
+    .disabled.icon.item
+      i.icon.right.arrow
+  else
+    a.icon.item(href='#{pagination.url}p=#{pagination.count}')
+      i.icon.right.arrow

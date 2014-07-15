@@ -1,0 +1,113 @@
+extends ../common/layout
+
+block stylesheet
+  link(rel='stylesheet', href=base.rooturl + '/static/editor/google-code-prettify/prettify.css', type='text/css')
+  link(rel='stylesheet', href=base.rooturl + '/static/editor/editor.css?v=#{version.css}')
+
+block bodyheader
+  div.segment
+    div.container#overview
+      div.introduction
+        h1.ui.dividing.header= topic.title
+        p.lead.topic-info
+          if (topic.author)
+            - var u = topic.author;
+            include ../user/user-label
+          span &nbsp;&nbsp;#{lang.topic.visit_count}: #{topic.visit_count}
+          span.time 
+            | &nbsp;&nbsp;#{lang.info.create_at}: #{topic.friendly_create_at} 
+            if (topic.update_at - topic.create_at > 10000)
+              | (#{lang.topic.modified})
+block content
+  .ui.grid
+    .twelve.wide.column#topic_wrapper
+      if (topic.canManage || (topic.author && topic.author._id == user.page_id))
+        .ui.segment
+          .ui.text.menu
+            a.item(href=base.rooturl + '/#{active}/edit/#{topic._id}')
+              i.edit.icon
+              = lang.info.edit
+            a.item(onclick="$('#topic_delete_confirm').modal('show');")
+              i.delete.icon
+              = lang.info.delete
+      .ui.segment.wmd-preview#topic_content
+        != topic.content
+      if (topic.attachments)
+        .ui.segment#topic_attachment
+          .ui.top.attached.label
+            i.attachment.icon
+            = lang.topic.attachment
+          each attach in topic.attachments
+            a.ui.image.label(href=base.rooturl + '/file/' + attach._id, target='_blank')= attach.name
+      if (user.uid)
+        each reply in topic.replies
+          .ui.segment(id=reply._id)
+            .user-avatar.img-circle
+              if (reply.author.avatar_url)
+                img(src=reply.author.avatar_url)
+              else
+                img(src=base.rooturl + '/static/img/user/def-avatar.png')
+            .reply-info
+              .user-name
+                a(href=base.rooturl + '/user/' + reply.author._id, target='_blank')= reply.author.name
+              span.time
+                | #{lang.info.create_at}: #{reply.friendly_create_at} 
+                if (reply.update_at - reply.create_at > 10000)
+                  | (#{lang.topic.modified})
+            .reply-content.wmd-preview!= reply.content
+      .ui.segment
+        .ui.top.attached.label
+          i.edit.icon
+          = lang.topic.reply
+        if (user.uid)
+          form.ui.form#topic_reply_form(method='POST', action='/#{active}/reply')
+            div(style='display:none')
+              input(type='hidden', name='csrf', value=user.csrf)
+              input(type='hidden', name='topic[id]', value=topic._id)
+            .field#reply_text
+              textarea#topic_reply_text(name='topic[reply]')
+            .form-actions
+              button.ui.blue.submit.button#topic_reply(type='button', onclick='check_reply();')= lang.topic.post_reply
+        else
+          .ui.message
+            = lang.info.please_first
+            a(href=base.rooturl + '/user/login?redirect=/#{active}/#{topic._id}')= lang.user.login
+
+    .four.wide.column.desktop.only
+      if (topic.author)
+        - var u = topic.author;
+        - u.title = lang.info.author
+        include ../user/user-card
+      .ui.segment
+        .ui.top.attached.label
+          i.browser.icon
+          = lang.topic.author_other_topics
+        .ui.selection.divided.list
+          each t in author_other_topics
+            a.item(href=base.rooturl + '/#{active}/topic/#{t._id}')
+              .content
+                .header= t.title
+              //span.time.pull-right= t.friendly_create_at
+          else
+            .ui.message
+              p= lang.topic.topics_not_found
+
+block other-content
+  .ui.small.modal#topic_delete_confirm
+    i.close.icon
+    .header= lang.info.confirm
+    .content= lang.topic.topic_delete_confirm
+    .actions
+      .ui.negative.button= lang.info.no
+      a.ui.positive.right.labeled.icon.button(href=base.rooturl + '/#{active}/delete/' + topic._id + '?csrf=' + user.csrf)
+        = lang.info.yes
+        i.checkmark.icon
+
+block script
+  script(type='text/javascript', src=base.rooturl + '/static/editor/google-code-prettify/prettify.js')
+  //mathjax
+  script(type='text/x-mathjax-config').
+    MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ["\\(","\\)"]], processEscapes: true },  messageStyle: "none"});
+  //mathjax source code is here: https://github.com/mathjax/MathJax
+  script(type='text/javascript', src='/static/editor/MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML')
+  script(type='text/javascript', src=base.rooturl + '/static/js/topic-show.js?v=#{version.js}')

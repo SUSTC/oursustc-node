@@ -1,0 +1,36 @@
+{
+  "name": "sustc.us",
+  "version": "0.1.8",
+  "private": true,
+  "scripts": {
+    "start": "forever app.js"
+  },
+  "dependencies": {
+    "express": "4.*",
+    "bson": "*",
+    "express-view-cache": "*",
+    "body-parser": "*",
+    "connect-multiparty": "*",
+    "cookie-parser": "*",
+    "express-session": "*",
+    "method-override": "*",
+    "morgan": "*",
+    "serve-static": "*",
+    "errorhandler": "*",
+    
+    "eventproxy": "*",
+    "jade": "*",
+    "mongoose": "2.7.3",
+    "connect-mongo": "*",
+    "pagedown": "*",
+    "validator": "0.3.7",
+    "nodemailer": "*",
+    "marked-prettyprint": "0.2.8",
+    "imagemagick": "*",
+    "csv": "*",
+    "xss": "0.0.5",
+    "bufferhelper": "*",
+    "iconv-lite": "*",
+    "node-tesseract": "*"
+  }
+}

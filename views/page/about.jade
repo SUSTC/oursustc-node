@@ -1,0 +1,64 @@
+extends page-layout
+
+block pageguide
+  div.peek
+    div.ui.vertical.pointing.secondary.menu
+      a.active.item= lang.info.page.about.aboutsite
+      a.item= lang.info.page.about.aboutus
+      a.item= lang.info.page.about.contact
+
+block pagecontent
+  h2.ui.dividing.header #{lang.info.page.about.aboutsite}
+  section(id='aboutsite')
+
+    h3 名称
+    h4 我们的南科大
+    p 该名称源于本网站的域名:
+      ul
+        li
+          a(href='http://sustc.us/', target='_blank') sustc.us
+        //li
+          a(href='http://sustcsu.org/', target='_blank') sustcsu.org
+
+    h3 性质
+    p 本网站并不是南方科技大学官网 (
+      a(href='http://www.sustc.edu.cn/', target='_blank') http://www.sustc.edu.cn/
+      | )，但是确是一个学生的官网，我们提供了足够有关学生学习与生活的信息和功能。
+
+    //h3 功能
+    //p 目前开放的功能有 
+      strong 新闻
+      | , 
+      strong 揭示板
+      |  等，现在还有很多功能仍在建设与完善中。
+
+  h2.ui.dividing.header #{lang.info.page.about.aboutus}
+  section(id='aboutus')
+
+    h3 建设者
+    p 主体框架由南方科技大学计算机研究协会使用 
+      a(href='http://nodejs.org/', target='_blank')
+        code nodejs
+      |  开发，详细开发信息请查看 
+      a(href=base.rooturl + '/page/thanks') 感谢
+      |  页面。
+    h3 维护者
+    p 南方科技大学计算机研究协会
+    h3 捐助者
+    p 暂无
+    h3 运营者
+    p 暂无
+
+  h2.ui.dividing.header #{lang.info.page.about.contact}
+  section(id='contact')
+
+    h3 邮箱
+    p
+      a(href='mailto:admin@sustc.us') admin@sustc.us
+      //|  (暂未启用)
+
+    h3 地址
+    p 广东省深圳市南山区西丽塘长路1088号
+
+    h3 邮编
+    p 518055

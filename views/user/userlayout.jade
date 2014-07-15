@@ -1,0 +1,25 @@
+extends ../common/layout
+
+block bodyheader
+  div.user-header.segment
+    - var u = page;
+    include ./user-cover
+    .user-nav-tabs
+      .ui.secondary.pointing.menu
+        block nav-tabs
+
+block content
+  .user-form
+    block user-form
+
+block script
+  block subscript
+  script(type='text/javascript').
+    !function ($) {
+      $(document).ready(function() {
+        setTimeout(function() {
+          var startTop = $('.user-info').offset().top - $('.navbar').height();
+          $("html,body").animate({scrollTop: startTop.toString() + 'px'}, 1000);
+        }, 200);
+      });
+    }(window.jQuery);

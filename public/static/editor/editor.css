@@ -1,0 +1,40 @@
+
+#wmd-button-row {
+  padding-left: 0;
+}
+
+#wmd-button-row li {
+  cursor: pointer;
+}
+
+#wmd-button-row li:hover {
+  background-color: rgba(0,0,0,.02)
+}
+
+.wmd-preview p:last-child {
+  margin-bottom: 1em !important;
+}
+
+.wmd-preview code, .wmd-preview pre {
+  font-size: 14px;
+}
+
+.wmd-preview code {
+  margin: 0;
+}
+
+.wmd-preview pre, .wmd-preview blockquote {
+  margin: 0 0 20px;
+}
+
+.wmd-preview ol.linenums {
+  padding-left: 0;
+}
+
+.wmd-preview ol.linenums>li {
+  line-height:20px
+}
+
+.wmd-preview img {
+  max-width: 100%;
+}

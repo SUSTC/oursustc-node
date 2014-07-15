@@ -1,0 +1,357 @@
+{
+    "base_title" : "我们的南科大",
+    "copyright" : "&copy; 2014 南方科技大学计算机研究协会",
+
+    "projects": {
+        "cloudprint": "云打印"
+    },
+
+    "title": {
+        "index": "首页",
+        "news": {
+            "index": "新闻"
+        },
+        "courseware": {
+            "index": "课件"
+        },
+        "channels": "揭示板",
+        "file": "文件",
+        "user": {
+            "index": "用户",
+            "login": "登录",
+            "forgot": "忘记密码",
+            "activate": "激活"
+        },
+        "page": {
+            "thanks": "感谢",
+            "privacypolicy": "隐私政策",
+            "about": "关于",
+            "print": "打印"
+        },
+        "store": {
+            "index": "商店",
+            "product": "商品",
+            "purchase": "购买",
+            "settle": "结算",
+            "house": "仓库"
+        },
+        "channel": {
+            "index": "揭示板",
+            "stream": "流"
+        },
+        "journal": {
+            "index": "刊物",
+            "term": "期刊",
+            "manage": "管理"
+        },
+        "bbs": {
+            "index": "论坛"
+        },
+        "dashboard": {
+            "index": "仪表盘",
+            "user": "用户"
+        },
+        "error404": "404 找不到",
+        "error500": "500 服务器内部错误"
+    },
+
+    "info": {
+        "oops": "哎呀！",
+        "error": "错误！",
+        "confirm": "确认！",
+        "ok": "确定",
+        "submit": "提交",
+        "bind": "绑定",
+        "notice": "注意！",
+        "success": "成功！",
+        "tips": "提示",
+        "nav": "导航",
+        "my": "我",
+        "author": "作者",
+        "public": "公开",
+        "view": "查看",
+        "set_public": "设为公开",
+        "set_private": "设为非公开",
+        "sort": "排序",
+        "order": {
+            "asc": "升序",
+            "desc": "降序"
+        },
+        "name": "名称",
+        "import": "导入",
+        "add": "添加",
+        "reduce": "减少",
+        "update": "更新",
+        "set": "设置",
+        "edit": "编辑",
+        "delete": "删除",
+        "save": "保存",
+        "remove": "移除",
+        "create": "创建",
+        "return": "返回",
+        "cancel": "取消",
+        "control": "操作",
+        "others": "其他",
+        "viewall": "查看全部",
+        "selectall": "全选",
+        "createdate": "创建日期",
+        "updatedate": "更新日期",
+        "create_at": "发表于",
+        "last_reply_at": "最后回复于",
+        "last_update_at": "最后更新于",
+        "please_first": "请先",
+        "need_select": "请至少选择一项",
+        "need_login": "需要登录",
+        "in_process": "建设中...",
+        "confirm_delete": "确认删除吗？",
+        "yes": "是",
+        "no": "否",
+        "user": {
+            "no_bio": "没有简介",
+            "manual_reset_password": "请尽快联系管理员帮助重置密码",
+            "no_found_purchase_log": "还没有购买记录",
+            "page_no_wallet": "该用户页没有钱包",
+            "action_page_manager": "用户页管理员操作",
+            "current_page_manager": "当前用户页管理员",
+            "add_page_manager": "添加用户页管理员",
+            "add_page_member": "添加用户页成员",
+            "no_page_manager": "当前用户页还没有管理员",
+            "no_found_studentid": "没有找到这些学号"
+        },
+        "store": {
+            "no_found_product": "没有找到商品",
+            "confirm_purchase": "请仔细确认以下信息",
+            "purchase_success": "成功购买 {0} 个 {1}，总价 ¥{2} 元",
+            "charge_success": "成功向 {0} 充值 {1} 元",
+            "no_settle": "现在没有需要进行结算的用户",
+            "no_stock": "当前没有商品库存"
+        },
+        "journal": {
+            "no_found_journal": "没有找到刊物",
+            "no_found_term": "没有找到期刊",
+            "no_found_term_page": "没有找到该期刊页",
+            "journal_private_need_login": "非公开刊物，需要登录",
+            "term_private_need_login": "非公开期刊，需要登录"
+        },
+        "page": {
+            "thanks": {
+                "description": "谢谢，谢谢你们，有你们在真是太好了",
+
+                "opensource": "开源项目",
+                "developer": "开发者",
+                "contributor": "捐助者",
+                "others": "其他"
+            },
+            "privacypolicy": {
+                "description": "本隐私保密政策（本“政策”），将向阁下解释我们如何处理个人信息",
+
+                "security": "安全",
+                "privacy": "隐私",
+                "policy": "免责声明"
+            },
+            "about": {
+                "description": "关于我们的一些信息",
+
+                "aboutsite": "关于网站",
+                "aboutus": "关于我们",
+                "contact": "联系我们"
+            },
+            "print": {
+                "description": "云打印的使用说明及帮助"
+            }
+        },
+        "dashboard": {
+            "change_password": "修改密码",
+            "set_page_permission": "设置用户页权限",
+            "set_relation_power": "设置关系权限"
+        }
+    },
+
+    "user": {
+        "login": "登录",
+        "logout": "退出",
+        "activate": "激活",
+        "account_id": "学号或姓名",
+        "password": "密码",
+        "remember_me": "记住我",
+        "forgot_password": "忘记密码",
+        "create_page": "创建用户页",
+        "switch_page": "切换",
+        "delete_page": "删除",
+        "remove_page": "移除",
+        "body": "本体",
+        "owner": "所有者",
+        "manager": "管理员",
+        "profile": "资料",
+        "page": "用户页",
+        "activity": "活动",
+        "wallet": "钱包",
+        "balance": "余额",
+        "urp": "URP教务系统",
+        "settings": "设置",
+        "account": "帐户",
+        "avatar": "头像",
+        "front_cover": "封面",
+        "change_avatar": "更换头像",
+        "change_front_cover": "更换封面",
+        "urp_account": "URP教务系统账号",
+        "username": "用户名",
+        "pagename": "用户页名",
+        "nousername": "无用户名",
+        "realname": "真实姓名",
+        "studentid": "学号",
+        "contact": "联系方式",
+        "email": "电子邮件",
+        "permission": "权限",
+        "new_password": "新密码",
+        "new_password_again": "重复新密码",
+        "ori_password": "原始密码",
+        "bio": "简介",
+        "my_page": "我的用户页",
+        "activate_succeed": "激活成功！",
+        "input_tips": {
+            "username": "请输入一个用于显示的用户名",
+            "urp_username": "请输入您在URP教务系统中的用户名",
+            "urp_need_update": "请更新您的URP教务系统信息",
+            "realname": "您无法自己修改真实姓名",
+            "studentid": "您无法自己修改学号",
+            "activating": "您正在激活",
+            "ori_password": "只有修改密码或电子邮件时才需要输入原始密码",
+            "urp_password": "请输入您在URP教务系统中的密码",
+            "bio": "关于自己的一个小简介 (1000字以内)",
+            "change_avatar": "建议大小: 200x200",
+            "change_front_cover": "建议大小: 1200x675",
+            "change_success": "修改成功",
+            "update_success": "更新成功"
+        },
+        "input_error": {
+            "username": "该用户名已被占用",
+            "password": "密码错误",
+            "new_password": "两次新密码输入不一致或者新密码位数过短",
+            "email": "错误的邮箱格式",
+            "contact": "错误的联系方式",
+            "image_ext": "不支持的图片格式",
+            "avatar_file": "头像上传失败",
+            "front_cover_file": "封面图片上传失败",
+            "page_already_exists": "该用户页已经存在"
+        }
+    },
+
+    "store": {
+        "price": "价格",
+        "yuan": "元",
+        "product": "商品",
+        "amount": "数量",
+        "purchase": "购买",
+        "settle": "结算",
+        "house": "仓库",
+        "stock": "库存",
+        "sales_num": "销售量",
+        "user_precharge": "用户预充值",
+        "user_data": "用户数据",
+        "user_settle": "用户结算",
+        "settle_clear": "清零",
+        "settle_charge": "充值",
+        "settle_precharge": "预充值",
+        "purchase_log_import": "导入购买记录",
+        "log_file": "记录文件",
+        "select_log_file": "选择记录文件",
+        "reduce_stock": "减少相应商品库存",
+        "reduce_balance": "减少用户余额",
+        "total_price": "总价格",
+        "purchase_log": "购买记录",
+        "purchase_date": "成交时间",
+        "purchase_need_login": "登录后购买",
+        "product_add": "添加商品",
+        "product_update": "更新商品",
+        "product_id": "编号",
+        "product_ready": "上架",
+        "product_remove": "下架",
+        "product_info": "商品信息",
+        "product_description": "商品描述",
+        "product_preview": "商品图片",
+        "product_not_exist": "该商品不存在",
+        "change_preview" : "修改预览图",
+        "change_stock": "修改库存",
+        "check_product": "检查商品",
+        "input_tips": {
+            "change_product_preview": "建议大小: 300x200",
+            "log_file": "目前仅支持导入CSV文件格式 (UTF-8编码)",
+            "log_format": "学号,商品名,购买数量,总价格,时间(2013/05/01)"
+        }
+    },
+
+    "topic": {
+        "add": "添加",
+        "edit": "编辑",
+        "delete": "删除",
+        "reply": "回复",
+        "modified": "已修改",
+        "post_reply": "发表回复",
+        "title": "标题",
+        "content": "内容",
+        "attachment": "附件",
+        "add_attachment": "添加附件",
+        "visit_count": "查看",
+        "latest_topics": "最新公告",
+        "author_other_topics": "该作者的其他话题",
+        "topics_not_found": "没有找到话题",
+        "topic_not_found": "此话题不存在或已被删除",
+        "topic_delete_confirm": "确认删除此话题？",
+        "topic_delete_succeed": "此话题已被删除。",
+        "input_tips": {
+            "title": "在此处输入标题，字数控制在30个字符以内"
+        }
+    },
+
+    "dashboard": {
+        "user_management": "用户管理",
+        "install": "安装"
+    },
+
+    "tools": {
+        "editor": {
+            "markdown": "Markdown",
+            "preview": "预览"
+        }
+    },
+
+    "journal": {
+        "journal": "刊物",
+        "journal_description": "刊物描述",
+        "journal_cover": "刊物封面",
+        "term": "期刊",
+        "term_add": "添加期刊",
+        "term_update": "更新信息",
+        "term_content_edit": "内容编辑",
+        "term_info": "期刊信息",
+        "term_description": "期刊描述",
+        "term_cover": "期刊封面",
+        "change_cover": "更换封面",
+        "input_tips": {
+            "change_term_cover": "建议大小: 221x300",
+            "change_journal_cover": "建议大小: 221x300"
+        }
+    },
+
+    "errmsg": {
+        "invalid_username": "无效的用户名",
+        "invalid_account": "无效的用户",
+        "invalid_password": "无效的密码",
+        "invalid_submit": "无效的数据提交",
+        "invalid_file_format": "错误的文件格式",
+        "no_permission": "您没有权限访问此页面",
+        "update_failed": "数据更新失败",
+        "error_params": "错误的参数",
+        "upload_failed": "上传失败",
+        "file_not_found": "没有找到该文件！",
+        "user_not_found": "没有找到该用户"
+    },
+    
+    "nav_text": "SUSTC",
+    
+    "university": {
+        "name": "南方科技大学"
+    }
+
+}

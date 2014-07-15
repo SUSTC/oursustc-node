@@ -1,0 +1,21 @@
+extends ../common/sublayout
+
+block content
+  .main
+    .panel#error_form
+      .header
+        ul.breadcrumb
+          li
+            i.icon-home
+            | 
+            a(href="/")= lang.title.index
+            span.divider /
+          li
+            a(href=base.rooturl + '/user')= lang.title.user.index
+            span.divider /
+          li
+            li.active= lang.title.user.forgot
+      .inner
+        .alert.alert-block.alert-info
+          h4= lang.info.notice
+          p= lang.info.user.manual_reset_password

@@ -1,0 +1,113 @@
+
+.journals {
+  margin-top: 25px;
+}
+
+.journals, .terms {
+  margin-left: 0;
+  z-index: 100;
+}
+
+@media (min-width: 768px) {
+  .journals, .terms {
+    margin-left: 80px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 979px) {
+  .journals, .terms {
+    margin-left: 100px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .journals, .terms {
+    margin-left: 50px;
+  }
+}
+
+.journal-card, .term-card {
+  float: left;
+}
+
+.journal-card .thumbnail, .term-card .thumbnail {
+  overflow: hidden;
+}
+
+.journal-image {
+  margin: 0 auto;
+  width: 221px;
+  height: 300px;
+  overflow: hidden;
+  text-align: center;
+}
+
+.journal-image img {
+  max-height: 100%;
+}
+
+.journal-info {
+  position: relative;
+  margin: 0 -4px -4px;
+  text-align: left;
+  color: #fff;
+}
+
+.journal-info .bar {
+  position: absolute;
+  bottom: -32px;
+  margin-top: 4px;
+  width: 100%;
+  height: 60px;
+  background-color: rgba(0, 0, 0, 0.75);
+  overflow: hidden;
+}
+
+.journal-info .bar-inline {
+  margin: 8px;
+}
+
+.journal-info .name {
+  font-size: 18px;
+  line-height: 20px;
+  margin-bottom: 2px;
+  text-shadow: 0 1px 0 rgba(255,255,255,.2);
+}
+
+.journal-info .name:hover {
+  text-decoration: underline;
+}
+
+.journal-info .description {
+  font-size: 14px;
+}
+
+.term-pagination {
+  text-align: center;
+}
+
+.term-pagination .pagination {
+  margin: 0;
+}
+
+.inner .paper {
+  margin: -10px;
+  padding: 20px;
+}
+
+#journal-cover-controls .size73, #term-cover-controls .size73 {
+  height: auto;
+}
+
+#term_info_submit.btn {
+  width: 100px;
+  height: 30px;
+}
+
+#journal-cover-controls .uploader-tools, #term_info_form .uploader-tools {
+  margin-left: 82px;
+}
+
+.term-table .term-card {
+  zoom: 0.5;
+}

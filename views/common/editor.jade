@@ -1,0 +1,44 @@
+.ta-editor
+
+  link(rel='stylesheet', href=base.rooturl + '/static/editor/google-code-prettify/prettify.css', type='text/css')
+  link(rel='stylesheet', href=base.rooturl + '/static/editor/editor.css?v=#{version.css}')
+
+  .field
+    .ui.compact.menu#editor-mode
+      a.active.item(onclick="setEditorMode('markdown')")= lang.tools.editor.markdown
+      a.item(onclick="setEditorMode('preview')")= lang.tools.editor.preview
+  .field
+    #wmd-wrapper
+      #wmd-button-bar
+
+      textarea#wmd-input(name=editorName, spellcheck='false')
+        != editorContent
+
+    #wmd-preview.ui.segment.wmd-preview(style='display:none')
+
+  .ui.modal#editor-link-dialog
+    i.close.icon
+    .header 链接
+    .content
+      .ui.form
+        p 请输入链接地址
+        p http://example.com/ "可选标题"
+        .ui.left.labeled.icon.input
+          input#editor_link(type='text', value='')
+          i.icon.url
+    .actions
+      .ui.black.button= lang.info.cancel
+      .ui.positive.right.labeled.icon.button
+        = lang.info.ok
+        i.checkmark.icon
+
+  .ui.modal#editor-image-dialog
+    i.close.icon
+    .header 图片
+    .content
+      p= lang.info.in_process
+    .actions
+      .ui.black.button= lang.info.cancel
+      .ui.positive.right.labeled.icon.button
+        = lang.info.ok
+        i.checkmark.icon

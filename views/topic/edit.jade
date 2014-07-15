@@ -1,0 +1,50 @@
+extends ../common/layout
+
+block bodyheader
+  div.segment
+    div.container#overview
+      div.introduction
+        h1.ui.dividing.header= lang.info.edit
+
+block content
+  form.ui.form.segment#topic_edit_form(method='POST', action='/#{active}/edit')
+    div(style='display:none')
+      input(type='hidden', name='csrf', value=user.csrf)
+      input(type='hidden', name='topic[id]', value=topic._id)
+    .ui.ribbon.label= lang.topic.title
+    .example.field#title
+      p
+        a(href=base.rooturl + '/#{active}/topic/#{topic._id}', target='_blank')
+          | #{lang.info.view}: #{topic.title}
+          i.right.arrow.icon
+      .ui.left.labeled.input
+        input(maxlength='30', type='text', name='topic[title]', placeholder=lang.topic.input_tips.title, value=topic.title)
+    .ui.ribbon.label= lang.topic.content
+    .example.field#content
+      - var editorName = 'topic[content]';
+      - var editorContent = topic.content;
+      include ../common/editor
+    .ui.ribbon.label= lang.topic.attachment
+    .example.field#attachment
+      #attachment_list
+        if (topic.attachments)
+          each attach in topic.attachments
+            .item
+              div.ui.image.label(href=base.rooturl + '/file/' + attach._id, target='_blank')
+                = attach.name
+                i.delete.icon(onclick='$(this).parent().parent().remove();')
+              input(type='hidden' name='topic[attachment][]' value=attach._id)
+      .ui.error.message(style='display:none;')#attachment_errmsg
+        i.close.icon(onclick='$(this).parent().hide();')
+        .header= lang.info.error
+        p#errmsg
+      button.ui.teal.submit.button#topic_attachment_add(type='button')= lang.topic.add_attachment
+    .form-actions
+      button.ui.blue.submit.button#topic_edit(type='button', onclick='check_edit();')= lang.info.save
+  form.ui.form.modal#attachment_form
+    input(type='hidden', name='csrf', value=user.csrf)
+    input#attachment_file(type='file', name='userfile')
+
+block script
+  script(type='text/javascript' src=base.rooturl + '/static/js/topic-add.js?v=#{version.js}')
+  include ../common/editor-script

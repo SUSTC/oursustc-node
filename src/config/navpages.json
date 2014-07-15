@@ -1,0 +1,22 @@
+[
+  {
+    "url": "/news",
+    "name": "#{lang.title.news.index}",
+    "id": "news"
+  },
+  {
+    "url": "/courseware",
+    "name": "#{lang.title.courseware.index}",
+    "id": "courseware"
+  },
+  {
+    "url": "/bbs",
+    "name": "#{lang.title.bbs.index}",
+    "id": "bbs"
+  },
+  {
+    "url": "/print",
+    "name": "#{lang.projects.cloudprint}",
+    "id": "print"
+  }
+]

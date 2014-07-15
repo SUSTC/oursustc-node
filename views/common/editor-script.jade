@@ -1,0 +1,13 @@
+script(type='text/javascript', src=base.rooturl + '/static/editor/google-code-prettify/prettify.js')
+script(type='text/javascript', src=base.rooturl + '/static/editor/pagedown/Markdown.Converter.js')
+script(type='text/javascript', src=base.rooturl + '/static/editor/pagedown/Markdown.Sanitizer.js')
+script(type='text/javascript', src=base.rooturl + '/static/editor/pagedown/Markdown.Editor.js')
+script(type='text/javascript', src=base.rooturl + '/static/editor/pagedown/local/Markdown.local.zh.js')
+script(type='text/javascript', src=base.rooturl + '/static/editor/Markdown.Extra.js')
+//mathjax
+script(type='text/x-mathjax-config').
+  MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ["\\(","\\)"]], processEscapes: true },  messageStyle: "none"});
+//mathjax source code is here: https://github.com/mathjax/MathJax
+script(type='text/javascript', src=base.rooturl + '/static/editor/mathJax.js')
+script(type='text/javascript', src='/static/editor/MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML')
+script(type='text/javascript', src=base.rooturl + '/static/editor/editor.js?v=#{version.js}')

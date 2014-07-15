@@ -1,0 +1,153 @@
+
+
+@media (min-width: 1200px) {
+  .products {
+    padding-left: 6px;
+  }
+  .product-page {
+    margin-left: 12px;
+  }
+  .product-card {
+    width: 31.623931623931625%;
+    margin: 6px !important;
+  }
+}
+
+@media (min-width: 980px) and (max-width: 1199px) {
+  .products {
+    padding-left: 10px;
+  }
+  .product-page {
+    margin-top: 16px;
+    margin-left: 16px;
+  }
+  .product-card {
+    width: 31%;
+    margin: 6px !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 979px) {
+  .products {
+    padding-left: 15px;
+  }
+  .product-page {
+    margin-left: 21px;
+  }
+  .product-card {
+    width: 46%;
+    margin: 6px !important;
+  }
+}
+
+.product-card a {
+  text-decoration: none;
+}
+
+.product-card .price, .product-detail .price, .product-table .price, .settle-table .price {
+  color: #ff2900;
+  font: bold 16px Arial;
+}
+
+.product-detail .price span, .product-table .price span, .settle-table .price span {
+  font-size: 28px;
+}
+
+.product-card .price {
+  text-decoration: none;
+}
+
+.product-detail {
+  float: left;
+}
+
+.product-detail .product-preview {
+  margin-left: 0;
+}
+
+.product-detail .product-info td {
+  vertical-align: middle;
+}
+
+.product-detail .product-info .input-append, .product-detail .product-info .input-prepend {
+  margin: 0;
+}
+
+.product-image {
+  position: relative;
+  text-align: center;
+  min-height: 50px;
+  max-height: 300px;
+  overflow: hidden;
+}
+
+@media (min-width: 768px) {
+  .product-image {
+    height: 200px;
+  }
+}
+
+.product-image img {
+  max-height: 100%;
+}
+
+.product-image .product-qr {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.product-table td, .settle-table td {
+  vertical-align: middle;
+}
+
+.product-table a {
+  float: left;
+}
+
+.product-table .btn-group a {
+  float: none;
+}
+
+.product-table .product-name {
+  text-align: center;
+}
+
+.product-table .product-view {
+  width: 160px;
+}
+
+.product-table-image {
+  float: left;
+  width: 160px;
+  height: 64px;
+  overflow: hidden;
+  text-align: center;
+}
+
+@media (max-width: 767px) {
+  .product-table .product-view {
+    width: 100px;
+  }
+  .product-table-image {
+    width: 100px;
+  }
+}
+
+.product-table-image img {
+  width: auto;
+  height: 100%;
+}
+
+#settle_charge_submit.btn, #product_info_submit.btn, #log_import_submit.btn {
+  width: 100px;
+  height: 30px;
+}
+
+#product-preview-controls .size73 {
+  height: auto;
+}
+
+#product_info_form .uploader-tools {
+  margin-left: 82px;
+}

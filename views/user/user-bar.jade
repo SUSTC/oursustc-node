@@ -1,0 +1,20 @@
+.user-bar
+  .user-bar-inner
+    if (user.uid)
+      .user-avatar
+        if (user.avatar_url)
+          img(src=user.avatar_url)
+        else
+          img(src=base.rooturl + '/static/img/user/def-avatar.png')
+      .user-notification.user-block
+        - if (user.new_notification > 0)
+          .notification
+            span= user.new_notification
+        - else
+          .notification.normal
+            span 0
+      .user-name.user-block
+        a(href=base.rooturl + '/user')= user.showname
+    else
+      .user-login
+        a.btn(href=base.rooturl + '/user/login?url=' + base.url)= lang.user.login

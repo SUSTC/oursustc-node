@@ -1,0 +1,39 @@
+
+div.suggestions {
+  display: none;
+  font-size: 13px;
+  color: gray;
+  max-height: 20px;
+  padding: 5px 10px 10px 10px;
+  width: 372px;
+  overflow: hidden;
+  background: #f4f4f4;
+  margin-top: 1px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+}
+
+div.sidetip p {
+  font-size: 13px;
+  line-height: 16px;
+  padding-left: 18px;
+  background-repeat: no-repeat;
+  background-position: center left;
+  color: gray;
+  display: none;
+}
+
+div.sidetip p.active {
+  display: block;
+}
+
+div.sidetip p.error {
+  background-image: url(/static/img/error.png);
+  color: #c33;
+}
+
+div.sidetip p.isaok {
+  background-image: url(/static/img/accept.png);
+  color: #390;
+}

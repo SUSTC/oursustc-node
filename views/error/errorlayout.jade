@@ -1,0 +1,12 @@
+extends ../common/sublayout
+
+block content
+  .ui.attached.message
+    div.ui.breadcrumb
+      a.section(href="/")
+        i.icon.home
+        = lang.title.index
+      div.divider /
+      div.active.section= lang.info.error
+  .ui.form.attached.fluid.segment
+    block error-form

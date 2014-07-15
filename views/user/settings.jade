@@ -1,0 +1,138 @@
+extends ./userlayout
+
+block subscript
+  script(src=base.rooturl + '/static/js/user-settings.js?v=#{version.js}')
+
+block nav-tabs
+  a.item(href=base.rooturl + '/user')= lang.user.profile
+  a.item(href=base.rooturl + '/user/activity')= lang.user.activity
+  a.item(href=base.rooturl + '/user/page')= lang.user.page
+  if (page.flags == 0)
+    a.item(href=base.rooturl + '/user/urp')= lang.user.urp
+  a.active.item(href=base.rooturl + '/user/settings')= lang.user.settings
+
+block user-form
+  form.ui.form.raised.segment#user_config_form(enctype='multipart/form-data', method='POST', action='/user/settings')
+    div(style='display:none')
+      input(type='hidden', name='csrf', value=user.csrf)
+    .ui.error.message#error_image_tips(style='display:none')
+      i.close.icon(type='button', onclick='$(this).parent().hide();')
+      .header= lang.info.oops
+      p=lang.user.input_error.image_ext
+    if (err.avatar_file)
+      .ui.error.message
+        i.close.icon(type='button', onclick='$(this).parent().remove();')
+        .header= lang.info.error
+        p=lang.user.input_error.avatar_file
+    if (err.front_cover_file)
+      .ui.error.message
+        i.close.icon(type='button', onclick='$(this).parent().remove();')
+        .header= lang.info.error
+        p=lang.user.input_error.front_cover_file
+    if (err.msg)
+      .ui.error.message
+        i.close.icon(type='button', onclick='$(this).parent().remove();')
+        .header= lang.info.error
+        p=err.msg
+    if (err.success)
+      .ui.success.message
+        i.close.icon(type='button', onclick='$(this).parent().remove();')
+        .header= lang.info.success
+        p=lang.user.input_tips.change_success
+    .ui.teal.ribbon.label= lang.user.avatar
+    .example.field#user-avatar-controls
+      .controls
+        .uploader-avatar.clearfix
+          .user-avatar.size73
+            if (user.avatar_url)
+              img.avatar#avatar_preview(src=user.avatar_url)
+            else
+              img.avatar#avatar_preview(src=base.rooturl + '/static/img/user/def-avatar.png')
+          .uploader-tools
+            .photo-selector
+              input.file-input#user_avatar_file(type="file", name='user[avatar_file]')
+              button.ui.blue.small.button.uploader-button#user_avatar(type='button')= lang.user.change_avatar
+              span.file-path#user_avatar_file_path
+              p= lang.user.input_tips.change_avatar
+
+    .ui.teal.ribbon.label= lang.user.front_cover
+    .example.field#user-front-cover-controls
+      .controls
+        .uploader-image.clearfix
+          if (user.front_cover_url)
+            img.front-cover.size73#front_cover_preview(src=user.front_cover_url)
+          else
+            img.front-cover.size73#front_cover_preview(src=base.rooturl + '/static/img/user/def-front-cover.jpg')
+          .uploader-tools
+            .photo-selector
+              input.file-input#user_front_cover_file(type="file", name='user[front_cover_file]')
+              button.ui.blue.small.button.uploader-button#user_front_cover(type='button')= lang.user.change_front_cover
+              span.file-path#user_front_cover_file_path
+              p= lang.user.input_tips.change_front_cover
+
+    .ui.ribbon.label= lang.user.username
+    .example.field(class=(err.username ? 'error' : ''))
+      .ui.left.labeled.icon.input
+        input#user_username(maxlength='20', type='text', name='user[username]', value=user.page.name)
+        i.user.icon
+        if (err.username)
+          div.ui.red.pointing.above.ui.label= lang.user.input_error.username
+        p= lang.user.input_tips.username
+    if (!user.inpage)
+      .ui.ribbon.label= lang.user.realname
+      .example.field
+        .ui.left.labeled.icon.input
+          input#user_realname(maxlength='20', type='text', name='user[realname]', value=user.realname, disabled='disabled')
+          i.user.icon
+          p= lang.user.input_tips.realname
+      .ui.ribbon.label= lang.user.studentid
+      .example.field
+        .ui.left.labeled.icon.input
+          input#user_studentid(maxlength='20', type='text', name='user[studentid]', value=user.student_id, disabled='disabled')
+          i.user.icon
+          p= lang.user.input_tips.studentid
+
+    .ui.ribbon.label= lang.user.contact
+    .example.field(class=(err.contact ? 'error' : ''))
+      .ui.left.labeled.icon.input
+        input#user_contact(maxlength='20', type='text', name='user[contact]', value=user.page.contact)
+        i.mobile.icon
+        if (err.contact)
+          div.ui.red.pointing.above.ui.label= lang.user.input_error.contact
+    .ui.ribbon.label= lang.user.bio
+    .example.field
+      textarea.input-xlarge#user_bio(name='user[bio]')= user.page.bio
+      p= lang.user.input_tips.bio
+    if (!user.inpage)
+      .ui.red.ribbon.label= lang.user.email
+      .example.field(class=(err.email ? 'error' : ''))
+        .ui.left.labeled.icon.input
+          input#user_email(type='text', name='user[email]', autocomplete='off', value=user.email)
+          i.mail.icon
+          if (err.email)
+            div.ui.red.pointing.above.ui.label= lang.user.input_error.email
+      
+      .ui.red.ribbon.label= lang.user.password
+      .example.field
+        .field(class=(err.new_password ? 'error' : ''))
+          label.control-label(for='user_new_password')= lang.user.new_password
+          .ui.left.labeled.icon.input
+            input#user_new_password(maxlength='36', type='password', name='user[new_password]', autocomplete='off', value='')
+            i.lock.icon
+            if (err.new_password)
+              div.ui.red.pointing.above.ui.label= lang.user.input_error.new_password
+        .field
+          label.control-label(for='user_new_password_again')= lang.user.new_password_again
+          .ui.left.labeled.icon.input
+            input#user_new_password_again(maxlength='36', type='password', name='user[new_password_again]', autocomplete='off', value='')
+            i.lock.icon
+        .field(class=(err.password ? 'error' : ''))
+          label.control-label(for='user_password')= lang.user.ori_password
+          .ui.left.labeled.icon.input
+            input#user_password(maxlength='36', type='password', name='user[password]', autocomplete='off', value='')
+            i.lock.icon
+            if (err.password)
+              div.ui.red.pointing.above.ui.label= lang.user.input_error.password
+            p= lang.user.input_tips.ori_password
+    .form-actions
+      button.ui.blue.disabled.submit.button#config_save(type='submit', disabled='disabled')= lang.info.save

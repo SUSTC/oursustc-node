@@ -1,0 +1,18 @@
+.user-cover
+  .user-front-cover
+    if (u.front_cover_url)
+      img(src=u.front_cover_url)
+    else
+      img(src=base.rooturl + '/static/img/user/def-front-cover.jpg')
+  .user-info-shadow
+  .user-info
+    .user-info-bar
+      .user-info-block
+        .user-avatar.img-rounded
+          if (u.avatar_url)
+            img(src=u.avatar_url)
+          else
+            img(src=base.rooturl + '/static/img/user/def-avatar.png')
+        .user-text
+          .user-text-block
+            .user-name= u.name

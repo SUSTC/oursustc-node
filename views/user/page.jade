@@ -1,0 +1,168 @@
+extends ./userlayout
+
+block nav-tabs
+  a.item(href=base.rooturl + '/user')= lang.user.profile
+  a.item(href=base.rooturl + '/user/activity')= lang.user.activity
+  a.active.item(href=base.rooturl + '/user/page')= lang.user.page
+  if (page.flags == 0)
+    a.item(href=base.rooturl + '/user/urp')= lang.user.urp
+  a.item(href=base.rooturl + '/user/settings')= lang.user.settings
+
+block user-form
+  - if (user.is_page_manger && user.inpage)
+    .ui.form.raised.segment
+      .ui.top.attached.label
+        i.user.icon
+        span= lang.info.user.current_page_manager
+      .example.field
+        - if (user.page_manager.length > 0)
+          .ui.items
+            each u in user.page_manager
+              .item.user-page
+                - u.noheader = true;
+                include ./user-card
+                .content
+                  - if (u.uid == user.uid)
+                    .user-page-info
+                      span.ui.label= lang.info.my
+                  .user-page-control
+                    - if (u.uid != user.uid)
+                      a.ui.red.small.button(href=base.rooturl + '/user/page/manage?action=remove&uid=' + u.uid + '&csrf=' + user.csrf)= lang.user.remove_page
+        - else
+          .alert.alert-block
+            h4= lang.info.oops
+            p= lang.info.user.no_page_manager
+      .field
+        form.ui.form#manage_page_form(enctype='application/x-www-form-urlencoded', method='POST', action='/user/page/manage')
+          div(style='display:none')
+            input(type='hidden', name='csrf', value=user.csrf)
+            input(type='hidden', name='action', value='add')
+          .ui.teal.ribbon.label= lang.info.user.add_page_member
+          div(style='margin-top: 20px')
+            .field
+              .ui.checkbox
+                input#user_manager(name='user_page[set_manager]', type='checkbox')
+                label(for='user_manager')= lang.user.manager
+            .two.fields
+              .field#studentid
+                .ui.left.labeled.icon.action.input
+                  input#user_studentid(maxlength='20', type='text', name='user_page[studentid]', placeholder=lang.user.studentid)
+                  i.icon.user
+                  .ui.blue.button(onclick='check_add();')= lang.info.add
+
+  .ui.form.raised.segment
+    .ui.top.attached.label
+      i.user.icon
+      span= lang.user.my_page
+    .example.field
+      .ui.items
+        each u in user.page_list
+          .item.user-page
+            - u.noheader = true;
+            - u.forpage = true;
+            include ./user-card
+            if (u._id == user.page_id)
+              .ui.corner.green.label
+                i.checkmark.icon
+            .content
+              .user-page-info
+                - if (u.noaccount)
+                  case (u.power)
+                    when 3
+                      span.ui.label= lang.user.owner
+                    when 2
+                      span.ui.label= lang.user.owner
+                    when 1
+                      span.ui.label= lang.user.manager
+                - else
+                  span.ui.label= lang.user.body
+              .user-page-control
+                - if (u.noaccount && u._id != user.page_id)
+                  a.ui.red.small.button(href=base.rooturl + '/user/page/manage?action=remove&page_id=' + u._id + '&csrf=' + user.csrf)= lang.user.remove_page
+                  | 
+                - if (u.noaccount && u.power >= 3 && user.page_id != u._id)
+                  a.ui.red.small.button.disabled(href=base.rooturl + '/user/page/delete?page_id=' + u._id + '&csrf=' + user.csrf)= lang.user.delete_page
+                  | 
+                - if (u._id != user.page_id && (u.flags == 0 || ((u.flags == 1 || u.flags == 2) && u.power >= 3)))
+                  a.ui.blue.small.button(href=base.rooturl + '/user/page/switch?page_id=' + u._id + '&csrf=' + user.csrf)= lang.user.switch_page
+    .field
+      button.ui.red.button(onclick="show_create_modal();")= lang.user.create_page
+block other-content
+  .ui.small.modal#user_page_create_modal(tabindex='-1', role='dialog', aria-labelledby='create_page_label', aria-hidden='true')
+    i.close.icon
+    .header#create_page_label=lang.user.create_page
+    form.ui.form.content#create_page_form(enctype='application/x-www-form-urlencoded', method='POST', action='/user/page/create')
+      div(style='display:none')
+        input(type='hidden', name='csrf', value=user.csrf)
+      .example.field#pagename
+        label(for='user_pagename')= lang.user.pagename
+        .ui.left.labeled.icon.input
+          input#user_pagename(maxlength='20', type='text', name='user_page[name]', value='')
+          i.icon.user
+          .ui.corner.label
+            i.icon.asterisk
+        p= lang.user.input_tips.username
+      .example.field
+        label(for='user_bio')= lang.user.bio
+        textarea.input-xlarge#user_bio(name='user_page[bio]')
+        p= lang.user.input_tips.bio
+
+    .actions
+      .ui.black.button= lang.info.cancel
+      button.ui.positive.right.labeled.icon.button
+        = lang.info.create
+        i.checkmark.icon
+
+block subscript
+  script(type='text/javascript').
+    function show_create_modal() {
+      $('#user_page_create_modal')
+        .modal('setting', {
+          onApprove: function() {
+            return check_create();
+          }
+        })
+        .modal('show');
+    }
+    function check_add() {
+      var form = $('#manage_page_form');
+      var checkThings = ['.field#studentid'];
+      var checkPass = true;
+
+      $.each(checkThings, function (i, value) {
+        var field = form.find(value);
+        var input = field.find('input');
+        if (!input.val()) {
+          field.addClass('error');
+          checkPass = false;
+        } else {
+          field.removeClass('error');
+        }
+      });
+
+      if (checkPass) {
+        form.submit();
+      }
+    }
+    function check_create() {
+      var form = $('#create_page_form');
+      var checkThings = ['.field#pagename'];
+      var checkPass = true;
+
+      $.each(checkThings, function (i, value) {
+        var field = form.find(value);
+        var input = field.find('input');
+        if (!input.val()) {
+          field.addClass('error');
+          checkPass = false;
+        } else {
+          field.removeClass('error');
+        }
+      });
+
+      if (checkPass) {
+        form.submit();
+      }
+
+      return checkPass;
+    }

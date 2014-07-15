@@ -1,0 +1,64 @@
+if (u._id)
+  .ui.segment.user-card
+    - if (!u.noheader)
+      .ui.top.attached.label
+        i.user.icon
+        | 
+        - if (u.title)
+          span.col_fade= u.title
+        - else if (u.uid === user.uid || u._id = user.page_id)
+          span.col_fade= lang.info.my
+        - else
+          span.col_fade= lang.title.user.index
+    .user-cover
+      .user-front-cover
+        if (u.front_cover_url)
+          img(src=u.front_cover_url)
+        else
+          img(src=base.rooturl + '/static/img/user/def-front-cover.jpg')
+      .user-info
+        .user-info-bar
+          .user-info-block
+            .user-avatar.img-circle
+              if (u.avatar_url)
+                img(src=u.avatar_url)
+              else
+                img(src=base.rooturl + '/static/img/user/def-avatar.png')
+            .user-text
+              .user-text-block
+                .user-name
+                  if (u.url)
+                    a(href=u.url, target='blank_')= u.name
+                  else if (u.forpage)
+                    a(href=base.rooturl + '/user/' + u._id, target='blank_')
+                      if (u.name)
+                        = u.name
+                      else
+                        span.muted (#{lang.user.nousername})
+                  else
+                    a(href=base.rooturl + '/user/' + u._id, target='blank_')= u.name
+                    if (u.balance && u.inpage)
+                      .user-realname
+                        | (
+                        = user.realname
+                        | )
+
+      .user-bottom
+    .inner
+      - if (u.show_store_controls)
+        .user-page-control
+          a.btn.btn-primary(href=base.rooturl + '/store/house')= lang.store.house
+          | 
+          a.btn.btn-primary(href=base.rooturl + '/store/settle')= lang.store.settle
+      if (u.balance)
+        .user-balance #{lang.user.balance} ¥ 
+          span= u.balance.str
+      .clearfix
+else
+  .ui.segment
+    - if (!u.noheader)
+      .ui.top.attached.label
+        i.user.icon
+        span.col_fade= lang.user.login
+    .inner
+      a.btn.btn-primary(href=base.rooturl + '/user/login?url=' + base.url)= lang.user.login

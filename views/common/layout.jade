@@ -1,0 +1,121 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    if (title) 
+      title #{title} - #{lang.base_title}
+    else 
+      title #{lang.base_title}
+
+    meta(http-equiv='X-UA-Compatible', content='IE=edge,chrome=1')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    meta(name='keywords', content='南方科技大学,南科大,学生,SUSTC')
+    meta(name='description', content='南方科技大学学生网站')
+
+    link(rel='shortcut icon', href=base.rooturl + '/favicon.ico')
+    link(rel='stylesheet', href=base.rooturl + '/static/css/all.min.css?v=#{version.css}')
+    //link(rel='stylesheet', href='//fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700', type='text/css')
+    link(rel='stylesheet', href='/static/css/font-OpenSans.css')
+    block stylesheet
+
+    //if lt IE 9
+      script(src=base.rooturl + '/static/js/html5shiv.js')
+
+  body#example
+    block bg-content
+
+    div.ui.fixed.transparent.inverted.main.menu
+      div.container
+        a.brand(href='#') #{lang.nav_text}
+        div.right.menu
+          if (user.uid)
+            .ui.dropdown.link.item
+              div.user-avatar.small.img-rounded
+                if (user.avatar_url)
+                  img(src=user.avatar_url)
+                else
+                  img(src=base.rooturl + '/static/img/user/def-avatar.png')
+              span.displayname= user.showname
+              i.icon.dropdown
+              div.menu.ui.transition.hidden
+                a.item(href=base.rooturl + '/user')= lang.user.profile
+                a.item(href=base.rooturl + '/user/activity')= lang.user.activity
+                div.item.divider
+                a.item(href=base.rooturl + '/user/page')= lang.user.page
+                div.item.divider
+                a.item(href=base.rooturl + '/user/settings')= lang.user.settings
+                div.item.divider
+                a.item(href=base.rooturl + '/user/logout?csrf=' + user.csrf)= lang.user.logout
+          else
+            - var loginClass = 'item icon';
+            - if ('user' == active)
+              - loginClass += ' active';
+            a(class=loginClass, href=base.rooturl + '/user/login')
+              i.icon.user
+              = lang.title.user.login
+        - var itemClass = '';
+        - if ('index' == active)
+          - itemClass += ' active';
+        - if (user.page.permission > 0)
+          .menu.inline-item
+            .ui.dropdown.link.item.icon(class=itemClass)
+              i.icon.home
+              i.icon.dropdown
+              .menu.ui.transition.hidden
+                a.item(href='/')= lang.title.index
+                a.item(href=base.rooturl + '/dashboard')= lang.title.dashboard.index
+        - else
+          a.item(class=itemClass, href='/')
+            i.icon.home
+        .menu.mobile.only
+          .ui.dropdown.link.item
+            span= lang.info.nav
+            i.icon.dropdown
+            .menu.ui.transition.hidden
+              each page in navpages
+                - itemClass = '';
+                - if (page.id == active)
+                  - itemClass += 'active';
+                a.item(class=itemClass, href=page.url) !{page.name}
+        .inline-item.non.mobile.only
+          each page in navpages
+            - itemClass = '';
+            - if (page.id == active)
+              - itemClass += 'active';
+            a.item(class=itemClass, href=page.url) !{page.name}
+    div.header
+      block bodyheader
+
+    div.main.container
+      block content
+
+    block other-content
+
+    div.footer
+      div.ui.divider
+      div.ui.divided.horizontal.footer.link.list
+        div.item !{lang.copyright}
+        a.item(href=base.rooturl + '/page/privacypolicy') #{lang.title.page.privacypolicy}
+        a.item(href=base.rooturl + '/page/about') #{lang.title.page.about}
+        a.item(href=base.rooturl + '/page/thanks') #{lang.title.page.thanks}
+
+    script(src=base.rooturl + '/static/js/all.min.js?v=#{version.js}')
+    block script
+    block extra-script
+    script(type='text/javascript').
+      $(document).ready(function () {
+        $menuDropdown = $('.ui.main.menu .dropdown');
+        $menuDropdown.dropdown({
+            on         : 'hover',
+            action     : 'none'
+          })
+        ;
+      });
+      
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-33507165-3', 'sustcsu.org');
+      ga('send', 'pageview');

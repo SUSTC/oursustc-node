@@ -1,0 +1,18 @@
+extends ../common/layout
+
+block bodyheader
+  div.segment
+    div.container#overview
+      div.introduction
+        h1.ui.dividing.header #{title}
+        p(class='lead') #{pageinfo}
+
+block content
+  #guide
+    block pageguide
+  #page
+    block pagecontent
+
+block script
+  script(src=base.rooturl + '/static/js/waypoints.js?v=#{version.js}')
+  script(src=base.rooturl + '/static/js/waypoints-ready.js?v=#{version.js}')

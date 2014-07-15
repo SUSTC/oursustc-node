@@ -1,0 +1,24 @@
+extends ../common/layout
+
+block bodyheader
+  div.segment
+    div.container#overview
+      div.introduction
+        h1.ui.dividing.header
+          i.dashboard.icon
+          = title
+
+block content
+  .ui.segment
+    .dashboard-links
+      .ui.animated.list
+        a.item(href="/dashboard/user")
+          i.users.icon
+          .content
+            .header= lang.dashboard.user_management
+      hr
+      .ui.animated.list
+        a.item(href="/dashboard/install")
+          i.building.icon
+          .content
+            .header= lang.dashboard.install

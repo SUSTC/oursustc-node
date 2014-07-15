@@ -1,0 +1,66 @@
+extends ../common/layout
+
+block bodyheader
+  div.segment
+    div.container
+      div.introduction#login-welcome
+        h1.ui.dividing.header 家
+        p(class='lead') 欢迎回来
+
+block content
+  div.span7
+    div.login-board.login-signin
+      form.ui.form.segment#login_form(autocomplete='on', action='/user/login', method='POST')
+        div(style='display:none')
+          input(type='hidden', name='url', value=redirect)
+        div.field(class=(err.accountid ? 'error' : ''))#account-id
+          label= lang.user.studentid
+          div.ui.left.labeled.icon.input
+            input(type='text', id='signin-account-id', name='user[account_id]', autocomplete='on', tabindex='1', placeholder=lang.user.studentid)
+            i.icon.user
+            div.ui.corner.label
+              i.icon.asterisk
+            if (err.accountid)
+              div.ui.red.pointing.above.ui.label= err.msg
+        div.field(class=(err.password ? 'error' : ''))#password
+          label= lang.user.password
+          div.ui.left.labeled.icon.input
+            input(type='password', id='signin-password', name='user[password]', autocomplete='on', tabindex='2')
+            i.icon.lock
+            div.ui.corner.label
+              i.icon.asterisk
+          if (err.password)
+            div.ui.red.pointing.above.ui.label= err.msg
+        div.inline.field#remember-forgot
+          div.ui.checkbox
+            input(type='checkbox', value='1', name='remember_me', tabindex='3', checked='checked')
+            label= lang.user.remember_me
+        div.inline.field
+          a.item(href="/user/forgot")= lang.user.forgot_password
+        div.ui.blue.submit.button#btnsubmit(class='btn btn-primary', tabindex='4', onclick='check_login();')= lang.user.login
+
+block script
+  script(type='text/javascript').
+    $(document).ready(function () {
+      $('.ui.checkbox').checkbox();
+    });
+    function check_login() {
+      var form = $('#login_form');
+      var checkThings = ['.field#account-id', '.field#password'];
+      var checkPass = true;
+
+      $.each(checkThings, function (i, value) {
+        var field = form.find(value);
+        var input = field.find('input');
+        if (!input.val()) {
+          field.addClass('error');
+          checkPass = false;
+        } else {
+          field.removeClass('error');
+        }
+      });
+
+      if (checkPass) {
+        form.submit();
+      }
+    }

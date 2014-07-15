@@ -1,0 +1,6 @@
+a.ui.image.label(href=base.rooturl + '/user/' + u._id, target='_blank')
+  if (u.avatar_url)
+    img(src=u.avatar_url)
+  else
+    img(src=base.rooturl + '/static/img/user/def-avatar.png')
+  = u.name

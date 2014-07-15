@@ -1,0 +1,49 @@
+extends page-layout
+
+block pageguide
+  div.peek
+    div.ui.vertical.pointing.secondary.menu
+      a.active.item= lang.info.page.privacypolicy.security
+      a.item= lang.info.page.privacypolicy.privacy
+      a.item= lang.info.page.privacypolicy.policy
+
+block pagecontent
+  h2.ui.dividing.header #{lang.info.page.privacypolicy.security}
+  section(id='security')
+
+    h3 密码
+    p 本网站不会使用明文或可逆的加密方式来储存您的密码。
+      br
+      | 同时，本网站使用了目前流行且安全的密码加盐取哈希值的密码储存方式，这样能确保如果网站服务器被攻破，入侵者也无法还原您的原始密码。
+
+    h3 登录
+    p 本网站目前仍没有可信任机构颁发的SSL证书，故无法给您提供安全连接，如果您要登录网站请确保您位于安全的网络环境下。
+      br
+      | 另外，出于安全考虑，本网站最长的在线状态时间为一个月。
+
+  h2.ui.dividing.header #{lang.info.page.privacypolicy.privacy}
+  section(id='privacy')
+
+    h3 个人信息
+    p 本网站不会公开您要求隐藏的个人资料
+
+    h3 完全匿名
+    p 在本网站声明了 
+      strong 完全匿名
+      |  的地方，我们将不会使用任何手段保存任何有关您的账号或IP地址等信息用于对应您所的上传信息。如果网站要求您登录，那只是为了确认您是网站的注册用户，我们仍不会记录有关您的信息。
+
+    h3 不完全匿名
+    p 在本网站声明了 
+      strong 不完全匿名
+      |  的地方，我们可能会在数据库中记录有关您的账号信息或IP地址等 (不同功能要求不同) 用于对应您所的上传信息，但我们不会将其公开展示给所有人。
+
+  h2.ui.dividing.header #{lang.info.page.privacypolicy.policy}
+  section(id='policy')
+
+    h3 自由
+    p 在遵循当地法律法规的前提下，本网站是自由。
+      br
+      | 本网站不会过滤、限制您上传信息，但是请对自己的发言负责。
+
+    h3 限制
+    p 本网站并不会限制您的任何行为，但请文明。

@@ -1,0 +1,97 @@
+extends page-layout
+
+block pageguide
+  div.peek
+    div.ui.vertical.pointing.secondary.menu
+      a.active.item 基本事项
+      a.item 自定义打印
+      a.item 合作事项
+
+block pagecontent
+  h2.ui.dividing.header 基本事项
+  section(id='base')
+
+    h3 费用
+    p 0.2元每面 (黑白)
+
+    h3 打印机类型
+    p 黑白激光自动双面打印机，仅支持黑白打印
+
+    h3 时间
+    p 7x24小时
+
+    h3 位置
+    p 目前取纸点位于学生宿舍3栋306
+
+    h3 需要注意
+    p 
+      | 为了减少不必要的麻烦，请大家在有需要的时候再进行打印，打印完成后请尽快到取纸点取纸，避免和其他人的混在一起。
+      br
+      | 也请大家在取纸走之前注意一下有没有错拿到别人打印的纸。
+
+    h3 交流或反馈
+    p QQ群 40148035
+
+  h2.ui.dividing.header 自定义打印
+  section(id='custom')
+
+    h3 文件格式
+    p *.xps / *.oxps
+    h3 如何使用 (word)
+    p 首先先使用 Word 打开需要进行打印的文档。点击打印选项准备打印。
+    p 
+      | 此时我们选择使用 
+      strong Microsoft XPS Document Writer
+      |  设备进行打印。
+    img(src='/static/img/print/xps-print-word-01.png')
+    br
+    br
+    p 接下来我们可以自定义打印的范围和每版打印的页数。
+    img(src='/static/img/print/xps-print-word-02.png')
+    br
+    br
+    img(src='/static/img/print/xps-print-word-03.png')
+    br
+    br
+    p 
+      | 接着点击打印按钮，开始打印，出现保存文件的对话框，我们这里选择 
+      strong XPS文档
+      |  ，并输入文件名，保存。
+    img(src='/static/img/print/xps-print-word-04.png')
+    br
+    br
+    p 最后将保存的文档上传到云打印的添加页面开始进行打印。
+
+    h3 如何使用 (pdf)
+    p 方法类似前面提到的 Word 文档中的设置。
+    p 先打开需要进行打印的文档。点击打印选项准备打印。
+    p 
+      | 此时我们选择使用 
+      strong Microsoft XPS Document Writer
+      |  设备进行打印。
+    img(src='/static/img/print/xps-print-pdf-01.png')
+    br
+    br
+    p 接下来我们可以自定义打印的范围和每版打印的页数。
+    img(src='/static/img/print/xps-print-pdf-02.png')
+    br
+    br
+    p 
+      | 接着点击打印按钮，开始打印，出现保存文件的对话框，我们这里选择 
+      strong XPS文档
+      |  ，并输入文件名，保存。
+    img(src='/static/img/print/xps-print-word-04.png')
+    br
+    br
+    p 最后将保存的文档上传到云打印的添加页面开始进行打印。
+    h3 注意
+    p 建议不要在本机上设置打印份数 (copies) 的选项 (保持默认为 1 份)，以免和云打印的选项中的份数造成混淆。
+
+  h2.ui.dividing.header 合作事项
+  section(id='cooperation')
+
+    h3 联系
+    p QQ群 198106532
+
+    h3 方式
+    p 我们的服务支持添加更多的打印节点，如果你有打印机想分享给大家使用可以联系我们。我们在进行兼容性测试之后会将打印机添加到节点选项中。

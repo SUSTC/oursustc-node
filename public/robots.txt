@@ -1,0 +1,17 @@
+#
+# robots.txt for SUSTC.US
+#
+
+User-agent: *
+Disallow: /dashboard/
+Disallow: /data/
+Disallow: /src/
+
+User-agent: 360Spider
+Disallow: /
+
+User-agent: 360Spider-Image
+Disallow: /
+
+User-agent: 360Spider-Video
+Disallow: /
