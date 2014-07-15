@@ -1,69 +1,58 @@
-
 (function() {
 
-  var util = require('util');
-  var EventProxy = require('eventproxy');
-  var Util = require('../common/util');
-  var markdown = require('../common/markdown').Markdown;
-  var sanitize = require('validator').sanitize;
+    var util = require('util');
+    var EventProxy = require('eventproxy');
+    var Util = require('../common/util');
+    var markdown = require('../common/markdown').Markdown;
+    var sanitize = require('validator').sanitize;
 
-  var view = require("./../common/view"),
-    functions = require("./../common/functions"),
-    string = require("./../common/string"),
-    constdata = require("./../common/constdata"),
-    model = require("./../model"),
-    proxy = require("./../proxy"),
-    config = require("./../config/config.json"),
-    UserPageProxy = proxy.UserPage,
-    TopicProxy = proxy.Topic,
-    TopicAttachmentProxy = proxy.TopicAttachment,
-    ReplyProxy = proxy.Reply;
+    var view = require("./../common/view"),
+      functions = require("./../common/functions"),
+      string = require("./../common/string"),
+      constdata = require("./../common/constdata"),
+      model = require("./../model"),
+      proxy = require("./../proxy"),
+      config = require("./../config/config.json"),
+      UserPageProxy = proxy.UserPage,
+      TopicProxy = proxy.Topic,
+      TopicAttachmentProxy = proxy.TopicAttachment,
+      ReplyProxy = proxy.Reply;
 
-  var TOPIC_TYPE = {
-    NEWS: 1,
-    COURSEWARE: 2,
-    BBS: 3
-  };
+    var TOPIC_TYPE = {
+      NEWS: 1,
+      COURSEWARE: 2,
+      BBS: 3
+    };
 
-  var permission = constdata.permission;
+    var permission = constdata.permission;
 
-  function Topic(type) {
-    this.init(type);
-  }
+    function Topic(type) {
+      this.init(type);
+    }
 
-  Topic.prototype.init = function(type) {
-    this.type = 0;
-    switch (type) {
-      case 'news':
-        this.type = TOPIC_TYPE.NEWS;
-        break;
-      case 'courseware':
-        this.type = TOPIC_TYPE.COURSEWARE;
-        break;
-      case 'bbs':
-        this.type = TOPIC_TYPE.BBS;
-        break;
+    Topic.prototype.init = function(type) {
+      if (typeof(type) == 'number') {
+        this.type = type;
+      } else {
+        throw new TypeError("Type Mismatch during Topic Initialization");
+      }
     }
 
     this.active = type;
   };
 
-  Topic.prototype.canPost = function (res) {
+  Topic.prototype.canPost = function(res) {
     if (!res.locals.core.isLogin()) {
       return false;
     }
-    return ((this.type == TOPIC_TYPE.NEWS && (res.locals.core.user.page.permission & permission.ADD_NEWS))
-          || (this.type == TOPIC_TYPE.COURSEWARE && (res.locals.core.user.page.permission & permission.ADD_COURSEWARE))
-          || (this.type == TOPIC_TYPE.BBS));
+    return ((this.type == TOPIC_TYPE.NEWS && (res.locals.core.user.page.permission & permission.ADD_NEWS)) || (this.type == TOPIC_TYPE.COURSEWARE && (res.locals.core.user.page.permission & permission.ADD_COURSEWARE)) || (this.type == TOPIC_TYPE.BBS));
   };
 
-  Topic.prototype.canManage = function (res, topic) {
+  Topic.prototype.canManage = function(res, topic) {
     if (!res.locals.core.isLogin()) {
       return false;
     }
-    return ((topic.type == TOPIC_TYPE.NEWS && (res.locals.core.user.page.permission & permission.MANAGE_NEWS))
-          || (topic.type == TOPIC_TYPE.COURSEWARE && (res.locals.core.user.page.permission & permission.MANAGE_COURSEWARE))
-          || (res.locals.core.user.page_id == topic.author_id));
+    return ((topic.type == TOPIC_TYPE.NEWS && (res.locals.core.user.page.permission & permission.MANAGE_NEWS)) || (topic.type == TOPIC_TYPE.COURSEWARE && (res.locals.core.user.page.permission & permission.MANAGE_COURSEWARE)) || (res.locals.core.user.page_id == topic.author_id));
   };
 
   Topic.prototype.index = function(req, res, data, callback) {
@@ -78,11 +67,20 @@
     var limit = view.PAGINATION_LIMIT;
 
     var page = parseInt(req.query.p, 10) || 1;
-    var query = {'type': this.type};
-    var options = { skip: (page - 1) * limit, limit: limit, sort: [ ['top', 'desc' ], [ 'last_reply_at', 'desc' ] ] };
+    var query = {
+      'type': this.type
+    };
+    var options = {
+      skip: (page - 1) * limit,
+      limit: limit,
+      sort: [
+        ['top', 'desc'],
+        ['last_reply_at', 'desc']
+      ]
+    };
 
     var events = ['topics', 'pagination'];
-    var ep = EventProxy.create(events, function (topics, pagination) {
+    var ep = EventProxy.create(events, function(topics, pagination) {
       for (var i in topics) {
         topics[i].friendly_create_at = Util.format_date(topics[i].create_at, true);
         topics[i].friendly_update_at = Util.format_date(topics[i].update_at, true);
@@ -98,12 +96,12 @@
       data.pagination = pagination;
       callback();
     });
-    
+
     TopicProxy.getTopicsByQuery(query, options, ep.done('topics'));
 
     // 取分页数据
     var active = this.active;
-    TopicProxy.getCountByQuery(query, ep.done(function (all_topics_count) {
+    TopicProxy.getCountByQuery(query, ep.done(function(all_topics_count) {
       var pages = Math.ceil(all_topics_count / limit);
       var pagination = view.pagination(page, pages, '/' + active);
       ep.emit('pagination', pagination);
@@ -121,11 +119,23 @@
     var limit = view.PAGINATION_LIMIT;
 
     var page = parseInt(req.query.p, 10) || 1;
-    var query = {'type': this.type, 'author_id': { $in: page_ids } };
-    var options = { skip: (page - 1) * limit, limit: limit, sort: [ ['top', 'desc' ], [ 'last_reply_at', 'desc' ] ] };
+    var query = {
+      'type': this.type,
+      'author_id': {
+        $in: page_ids
+      }
+    };
+    var options = {
+      skip: (page - 1) * limit,
+      limit: limit,
+      sort: [
+        ['top', 'desc'],
+        ['last_reply_at', 'desc']
+      ]
+    };
 
     var events = ['topics', 'pagination'];
-    var ep = EventProxy.create(events, function (topics, pagination) {
+    var ep = EventProxy.create(events, function(topics, pagination) {
       for (var i in topics) {
         topics[i].friendly_create_at = Util.format_date(topics[i].create_at, true);
         topics[i].friendly_update_at = Util.format_date(topics[i].update_at, true);
@@ -142,17 +152,17 @@
     });
 
     var active = this.active;
-    ep.fail(function (err) {
+    ep.fail(function(err) {
       data.topics = [];
       data.pagination = view.pagination(0, 0, '/' + active);
       callback();
     });
-    
+
     TopicProxy.getTopicsByQuery(query, options, ep.done('topics'));
 
     // 取分页数据
-    
-    TopicProxy.getCountByQuery(query, ep.done(function (all_topics_count) {
+
+    TopicProxy.getCountByQuery(query, ep.done(function(all_topics_count) {
       var pages = Math.ceil(all_topics_count / limit);
       var pagination = view.pagination(page, pages, '/' + active);
       ep.emit('pagination', pagination);
@@ -170,7 +180,7 @@
     }
 
     var events = ['topic', 'other_topics'];
-    var ep = EventProxy.create(events, function (topic, other_topics) {
+    var ep = EventProxy.create(events, function(topic, other_topics) {
       data.topic = topic;
       data.author_other_topics = other_topics;
       if (topic.title) {
@@ -181,7 +191,7 @@
 
     var active = this.active;
     var that = this;
-    TopicProxy.getFullTopic(topic_id, ep.done(function (message, topic, tags, attachments, author, replies) {
+    TopicProxy.getFullTopic(topic_id, ep.done(function(message, topic, tags, attachments, author, replies) {
 
       if (message) {
         //err msg
@@ -192,14 +202,14 @@
         var _canManage = that.canManage(res, topic);
 
         topic.visit_count += 1;
-        topic.save(ep.done(function () {
+        topic.save(ep.done(function() {
           // format date
           topic.friendly_create_at = Util.format_date(topic.create_at, true);
           topic.friendly_update_at = Util.format_date(topic.update_at, true);
 
           topic.tags = tags;
 
-          
+
           if (replies) {
             for (var i = 0; i < replies.length; i++) {
               replies[i].content = markdown(replies[i].content);
@@ -220,7 +230,7 @@
           }
 
           topic.attachments = attachments;
-          
+
 
           topic.canManage = _canManage;
 
@@ -229,8 +239,19 @@
           ep.emit('topic', topic);
         }));
 
-        var options = { limit: 5, sort: [ [ 'create_at', 'desc' ] ]};  //[ 'last_reply_at', 'desc' ]
-        var query = { type: type, author_id: topic.author_id, _id: { '$nin': [ topic._id ] } };
+        var options = {
+          limit: 5,
+          sort: [
+            ['create_at', 'desc']
+          ]
+        }; //[ 'last_reply_at', 'desc' ]
+        var query = {
+          type: type,
+          author_id: topic.author_id,
+          _id: {
+            '$nin': [topic._id]
+          }
+        };
         TopicProxy.getTopicsByQuery(query, options, ep.done('other_topics'));
       } else {
         view.showMessage(data, res.locals.core.lang.topic.topic_not_found, 'error', '/' + active, callback);
@@ -262,7 +283,7 @@
         title = req.body.topic.title;
         content = req.body.topic.content;
 
-        if (title) {  
+        if (title) {
           title = sanitize(title).trim();
           title = sanitize(title).xss();
         }
@@ -271,16 +292,16 @@
       if (title && title.length <= 30 && content) {
         var active = this.active;
 
-        TopicProxy.newAndSave(this.type, title, content, res.locals.core.user.page_id, function (err, topic) {
+        TopicProxy.newAndSave(this.type, title, content, res.locals.core.user.page_id, function(err, topic) {
           if (err) {
             view.showMessage(data, String(err), 'error', '/' + active + '/add', callback);
           } else {
             var ep = EventProxy.create();
-            ep.all('attachment_saved', 'score_saved', function (reply) {
+            ep.all('attachment_saved', 'score_saved', function(reply) {
               view.showMessage(data, '', 'success', '/' + active + '/topic/' + topic._id, callback);
             });
 
-            UserPageProxy.getUserById(res.locals.core.user.page_id, ep.done(function (user) {
+            UserPageProxy.getUserById(res.locals.core.user.page_id, ep.done(function(user) {
               //user.score += 5;
               user.topic_count += 1;
               user.save();
@@ -300,7 +321,7 @@
               }
               if (!errIds) {
                 //add attachment
-                TopicAttachmentProxy.newAndSave(topic._id, attachmentIds, function (err) {
+                TopicAttachmentProxy.newAndSave(topic._id, attachmentIds, function(err) {
                   ep.emit('attachment_saved', true);
                 });
                 return;
@@ -340,7 +361,7 @@
 
     var active = this.active;
     var that = this;
-    TopicProxy.getFullTopic(topic_id, function (err, message, topic, tags, attachments, author, replies) {
+    TopicProxy.getFullTopic(topic_id, function(err, message, topic, tags, attachments, author, replies) {
       if (topic && topic.type == type) {
         var _canManage = that.canManage(res, topic);
         if (!_canManage) {
@@ -350,7 +371,7 @@
 
         if (req.method == 'POST') {
           var events = ['err', 'topic', 'new_attachments', 'del_attachments'];
-          var ep = EventProxy.create(events, function (err, topic, newAttachments, delAttachments) {
+          var ep = EventProxy.create(events, function(err, topic, newAttachments, delAttachments) {
             if (err) {
               view.showMessage(data, String(err), 'error', '/' + active + '/edit/' + topic._id, callback);
             } else {
@@ -372,7 +393,8 @@
 
           if (!attachments) attachments = [];
           var attachmentIds = req.body.topic.attachment;
-          var newAttachIds = [], delAttachIds = [];
+          var newAttachIds = [],
+            delAttachIds = [];
           if (attachmentIds && (attachmentIds instanceof Array) && attachmentIds.length > 0) {
             var errIds = false;
             //check first
@@ -434,7 +456,7 @@
             topic.title = title;
             topic.content = content;
             topic.update_at = new Date();
-            topic.save(function (err, topic) {
+            topic.save(function(err, topic) {
               ep.emit('topic', topic);
               ep.emit('err', err);
             });
@@ -470,17 +492,15 @@
     }
 
     var active = this.active;
-    TopicProxy.getTopic(topic_id, function (err, topic) {
+    TopicProxy.getTopic(topic_id, function(err, topic) {
       if (topic && topic.type == type) {
-        var canManage = ((topic.type == TOPIC_TYPE.NEWS && (res.locals.core.user.page.permission & permission.MANAGE_NEWS))
-              || (topic.type == TOPIC_TYPE.COURSEWARE && (res.locals.core.user.page.permission & permission.MANAGE_COURSEWARE))
-              || res.locals.core.user.page_id == topic.author_id);
+        var canManage = ((topic.type == TOPIC_TYPE.NEWS && (res.locals.core.user.page.permission & permission.MANAGE_NEWS)) || (topic.type == TOPIC_TYPE.COURSEWARE && (res.locals.core.user.page.permission & permission.MANAGE_COURSEWARE)) || res.locals.core.user.page_id == topic.author_id);
         if (!canManage) {
           view.showMessage(data, res.locals.core.lang.errmsg.no_permission, 'error', '/' + active + '/topic/' + topic._id, callback);
           return;
         }
-        topic.remove(function (err) {
-          TopicAttachmentProxy.removeByTopicId(topic._id, function (err) {
+        topic.remove(function(err) {
+          TopicAttachmentProxy.removeByTopicId(topic._id, function(err) {
             view.showMessage(data, res.locals.core.lang.topic.topic_delete_succeed, 'success', '/' + active, callback);
           });
         });
@@ -516,26 +536,26 @@
     }
 
     var active = this.active;
-    TopicProxy.getTopic(topic_id, function (err, topic) {
+    TopicProxy.getTopic(topic_id, function(err, topic) {
       if (topic && topic.type == type) {
         if (req.method == 'POST') {
 
           var ep = EventProxy.create();
-          ep.fail(function () {
+          ep.fail(function() {
             view.showMessage(data, res.locals.core.lang.errmsg.error_params, 'error', '/' + this.active + '/edit/' + topic_id, callback);
             return;
           });
 
           var r_content = req.body.topic.reply;
-          ReplyProxy.newAndSave(r_content, topic_id, res.locals.core.user.page_id, ep.done(function (reply) {
-            TopicProxy.updateLastReply(topic_id, reply._id, ep.done(function () {
+          ReplyProxy.newAndSave(r_content, topic_id, res.locals.core.user.page_id, ep.done(function(reply) {
+            TopicProxy.updateLastReply(topic_id, reply._id, ep.done(function() {
               ep.emit('reply_saved', reply);
               //发送at消息
               //at.sendMessageToMentionUsers(content, topic_id, req.session.user._id, reply._id);
             }));
           }));
 
-          UserPageProxy.getUserById(res.locals.core.user.page_id, ep.done(function (user) {
+          UserPageProxy.getUserById(res.locals.core.user.page_id, ep.done(function(user) {
             //user.score += 5;
             user.reply_count += 1;
             user.save();
@@ -543,7 +563,7 @@
             ep.emit('score_saved');
           }));
 
-          ep.all('reply_saved',　/*'message_saved',*/ 'score_saved', function (reply) {
+          ep.all('reply_saved', 　 /*'message_saved',*/ 'score_saved', function(reply) {
             if (req.params.api) {
               var r = {
                 err: {
@@ -567,7 +587,6 @@
     });
   };
 
-  exports.Topic = Topic;
-  exports.TopicType = TOPIC_TYPE;
+  exports.Topic = Topic; exports.TopicType = TOPIC_TYPE;
 
 }).call(this);
