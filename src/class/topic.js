@@ -18,12 +18,6 @@
       TopicAttachmentProxy = proxy.TopicAttachment,
       ReplyProxy = proxy.Reply;
 
-    var TOPIC_TYPE = {
-      NEWS: 1,
-      COURSEWARE: 2,
-      BBS: 3
-    };
-
     var permission = constdata.permission;
 
     function Topic(type) {
