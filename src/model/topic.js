@@ -4,6 +4,7 @@ var ObjectId = Schema.ObjectId;
 var config = require("./../config/config.json");
 
 var TopicSchema = new Schema({
+  board_id: { type: ObjectId },
   type: { type: Number, default: 0 },
   title: { type: String },
   content: { type: String },

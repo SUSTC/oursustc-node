@@ -239,9 +239,9 @@ exports.reduceCount = function (id, callback) {
   });
 };
 
-exports.newAndSave = function (type, title, content, authorId, callback) {
+exports.newAndSave = function (boardId, title, content, authorId, callback) {
   var topic = new Topic();
-  topic.type = type;
+  topic.board_id = boardId;
   topic.title = title;
   topic.content = content;
   topic.author_id = authorId;

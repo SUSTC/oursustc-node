@@ -7,6 +7,16 @@ var BoardSchema = new Schema({
   name: {
     type: String
   },
+  shortcut: {
+    type: String
+  },
+  type: {
+    type: Number,
+    default: 0
+  },
+  parent: {
+    type: ObjectId
+  },
   administrators: {
     type: [ObjectId]
   },
@@ -14,9 +24,6 @@ var BoardSchema = new Schema({
     type: String
   },
   tag:{
-    type: String
-  }
-  shortcut: {
     type: String
   },
   topic_count: {
@@ -48,4 +55,4 @@ var BoardSchema = new Schema({
   }
 });
 
-mongoose.model('Topic', TopicSchema, config.DB_PREFIX + 'topic');
+mongoose.model('Board', TopicSchema, config.DB_PREFIX + 'board');
