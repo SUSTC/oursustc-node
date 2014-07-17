@@ -1,35 +1,34 @@
 (function() {
 
-    var util = require('util');
-    var EventProxy = require('eventproxy');
-    var Util = require('../common/util');
-    var markdown = require('../common/markdown').Markdown;
-    var sanitize = require('validator').sanitize;
+  var util = require('util');
+  var EventProxy = require('eventproxy');
+  var Util = require('../common/util');
+  var markdown = require('../common/markdown').Markdown;
+  var sanitize = require('validator').sanitize;
 
-    var view = require("./../common/view"),
-      functions = require("./../common/functions"),
-      string = require("./../common/string"),
-      constdata = require("./../common/constdata"),
-      model = require("./../model"),
-      proxy = require("./../proxy"),
-      config = require("./../config/config.json"),
-      UserPageProxy = proxy.UserPage,
-      TopicProxy = proxy.Topic,
-      TopicAttachmentProxy = proxy.TopicAttachment,
-      ReplyProxy = proxy.Reply;
+  var view = require("./../common/view"),
+    functions = require("./../common/functions"),
+    string = require("./../common/string"),
+    constdata = require("./../common/constdata"),
+    model = require("./../model"),
+    proxy = require("./../proxy"),
+    config = require("./../config/config.json"),
+    UserPageProxy = proxy.UserPage,
+    TopicProxy = proxy.Topic,
+    TopicAttachmentProxy = proxy.TopicAttachment,
+    ReplyProxy = proxy.Reply;
 
-    var permission = constdata.permission;
+  var permission = constdata.permission;
 
-    function Topic(type) {
-      this.init(type);
-    }
+  function Topic(shortcut) {
+    this.init(shortcut);
+  }
 
-    Topic.prototype.init = function(type) {
-      if (typeof(type) == 'number') {
-        this.type = type;
-      } else {
-        throw new TypeError("Type Mismatch during Topic Initialization");
-      }
+  Topic.prototype.init = function(shortcut) {
+    if (typeof(type) == 'number') {
+      this.type = type;
+    } else {
+      throw new TypeError("Type Mismatch during Topic Initialization");
     }
 
     this.active = type;

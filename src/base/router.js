@@ -28,6 +28,10 @@
     app.all('/:controller', function(req, res, next) {
       return routeMvc(req.params.controller, 'index', req, res, next);
     });
+    //fix for board shortcut url
+    app.all('/board/:shortcut', function(req, res, next) {
+      return routeMvc('board', 'index', req, res, next);
+    });
     app.all('/:controller/:method', function(req, res, next) {
       return routeMvc(req.params.controller, req.params.method, req, res, next);
     });
