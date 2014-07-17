@@ -1,7 +1,7 @@
 var EventProxy = require('eventproxy');
 
 var models = require('../model');
-var Board = models.board;
+var Board = models.Board;
 var string = require("./../common/string");
 
 /**
@@ -22,12 +22,13 @@ exports.getBoardByShortcut = function (shortcut, callback) {
   Board.findOne({shortcut: shortcut_clean}, callback);
 };
 
-exports.newAndSave = function (shortcut, name, type, description, parent, callback) {
+exports.newAndSave = function (shortcut, name, type, access, description, parent, callback) {
   var board = new Board();
   var shortcut_clean = string.clean(shortcut);
   board.shortcut = shortcut_clean;
   board.name = name;
   board.type = type;
+  board.access = access;
   board.description = description;
   if (parent) {
     board.parent = parent;

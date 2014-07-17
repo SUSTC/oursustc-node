@@ -4,8 +4,10 @@
   var EventProxy = require('eventproxy');
 
   var proxy = require("./../proxy"),
+    BoardProxy = proxy.Board;
     TopicProxy = proxy.Topic;
-  var TopicType = require("./../class/topic").TopicType;
+
+  var NEWS_board_id = false;
 
   exports.index = function(req, res, data, callback) {
 
@@ -19,8 +21,23 @@
     });
 
     var options = { limit: 5, sort: [ [ 'create_at', 'desc' ] ]};  //[ 'last_reply_at', 'desc' ]
-    var query = { type: TopicType.NEWS };
-    TopicProxy.getTopicsByQuery(query, options, ep.done('latest_topics'));
+    if (NEWS_board_id === false) {
+      BoardProxy.getBoardByShortcut('news', function (err, board) {
+        if (err || !board) {
+          NEWS_board_id = null;
+          return;
+        }
+        NEWS_board_id = board._id;
+        var query = { board_id: NEWS_board_id };
+        TopicProxy.getTopicsByQuery(query, options, ep.done('latest_topics'));
+      });
+    } else if (NEWS_board_id) {
+      var query = { board_id: NEWS_board_id };
+      TopicProxy.getTopicsByQuery(query, options, ep.done('latest_topics'));
+    } else {
+      ep.emit('latest_topics', null);
+    }
+    
   };
 
 }).call(this);

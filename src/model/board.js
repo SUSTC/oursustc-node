@@ -14,6 +14,10 @@ var BoardSchema = new Schema({
     type: Number,
     default: 0
   },
+  access: {
+    type: Number,
+    default: 0
+  },
   parent: {
     type: ObjectId
   },

@@ -2,17 +2,17 @@
   {
     "url": "/board/news",
     "name": "#{lang.title.news.index}",
-    "id": "news"
+    "id": "board/news"
   },
   {
     "url": "/board/courseware",
     "name": "#{lang.title.courseware.index}",
-    "id": "courseware"
+    "id": "board/courseware"
   },
   {
     "url": "/board/bbs",
     "name": "#{lang.title.bbs.index}",
-    "id": "bbs"
+    "id": "board/bbs"
   },
   {
     "url": "/print",

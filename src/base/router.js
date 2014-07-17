@@ -34,10 +34,15 @@
     router.all('/:controller', function(req, res, next) {
       return routeMvc(req.params.controller, 'index', req, res, next);
     });
+
     //fix for board shortcut url
     router.all('/board/:shortcut', function(req, res, next) {
       return routeMvc('board', 'index', req, res, next);
     });
+    router.all('/board/:shortcut/:method', function(req, res, next) {
+      return routeMvc('board', req.params.method, req, res, next);
+    });
+
     router.all('/:controller/:method', function(req, res, next) {
       return routeMvc(req.params.controller, req.params.method, req, res, next);
     });

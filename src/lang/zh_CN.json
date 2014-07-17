@@ -341,6 +341,7 @@
         "invalid_submit": "无效的数据提交",
         "invalid_file_format": "错误的文件格式",
         "no_permission": "您没有权限访问此页面",
+        "board_not_found": "没有找到该版块",
         "update_failed": "数据更新失败",
         "error_params": "错误的参数",
         "upload_failed": "上传失败",

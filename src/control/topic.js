@@ -21,17 +21,6 @@
     data.active = 'news';
   }
 
-  exports.index = function(req, res, data, callback) {
-
-    //TODO: fetch board info
-
-    initData(res, data);
-
-    var topic = new Topic('news');
-    topic.index(req, res, data, callback);
-
-  };
-
   exports.page = function(req, res, data, callback) {
     initData(res, data);
 
@@ -44,21 +33,16 @@
     topic.list(req, res, page_ids, data, callback);
   };
 
-  exports.topic = function(req, res, data, callback) {
+  exports.show = function(req, res, data, callback) {
 
     initData(res, data);
 
-    var topic = new Topic('news');
+    var topic = new Topic();
     topic.show(req, res, data, callback);
 
   };
 
-  exports.add = function(req, res, data, callback) {
-    initData(res, data, res.locals.core.lang.topic.add);
-
-    var topic = new Topic('news');
-    topic.add(req, res, data, callback);
-  };
+  exports.index = exports.show;
 
   exports.edit = function(req, res, data, callback) {
     initData(res, data, res.locals.core.lang.topic.edit);

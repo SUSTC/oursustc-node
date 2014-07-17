@@ -14,6 +14,7 @@
     proxy = require("./../proxy"),
     config = require("./../config/config.json"),
     UserPageProxy = proxy.UserPage,
+    BoardProxy = proxy.Board,
     TopicProxy = proxy.Topic,
     TopicAttachmentProxy = proxy.TopicAttachment,
     ReplyProxy = proxy.Reply;
@@ -28,43 +29,96 @@
   }
 
   Topic.prototype.init = function(shortcut) {
-    if (typeof(type) == 'number') {
-      this.type = type;
-    } else {
-      throw new TypeError("Type Mismatch during Topic Initialization");
-    }
+    this.shortcut = shortcut;
+    this.active = shortcut;
+    this.board = null;
+  };
 
-    this.active = type;
+  Topic.prototype.canView = function(res) {
+    /*if ((this.type == TOPIC_TYPE.COURSEWARE || this.type == TOPIC_TYPE.BBS) && !res.locals.core.isLogin()) {
+      
+    }*/
+    if (!res.locals.core.isLogin()) {
+      return false;
+    }
+    return true;
   };
 
   Topic.prototype.canPost = function(res) {
     if (!res.locals.core.isLogin()) {
       return false;
     }
-    return ((this.type == TOPIC_TYPE.NEWS && (res.locals.core.user.page.permission & permission.ADD_NEWS)) || (this.type == TOPIC_TYPE.COURSEWARE && (res.locals.core.user.page.permission & permission.ADD_COURSEWARE)) || (this.type == TOPIC_TYPE.BBS));
+    return true;
+    //return ((this.type == TOPIC_TYPE.NEWS && (res.locals.core.user.page.permission & permission.ADD_NEWS)) || (this.type == TOPIC_TYPE.COURSEWARE && (res.locals.core.user.page.permission & permission.ADD_COURSEWARE)) || (this.type == TOPIC_TYPE.BBS));
   };
 
   Topic.prototype.canManage = function(res, topic) {
     if (!res.locals.core.isLogin()) {
       return false;
     }
-    return ((topic.type == TOPIC_TYPE.NEWS && (res.locals.core.user.page.permission & permission.MANAGE_NEWS)) || (topic.type == TOPIC_TYPE.COURSEWARE && (res.locals.core.user.page.permission & permission.MANAGE_COURSEWARE)) || (res.locals.core.user.page_id == topic.author_id));
+    return true;
+    //return ((topic.type == TOPIC_TYPE.NEWS && (res.locals.core.user.page.permission & permission.MANAGE_NEWS)) || (topic.type == TOPIC_TYPE.COURSEWARE && (res.locals.core.user.page.permission & permission.MANAGE_COURSEWARE)) || (res.locals.core.user.page_id == topic.author_id));
+  };
+
+  Topic.prototype.getBoard = function (req, res, data, rescallback, callback) {
+    var that = this;
+    if (this.shortcut) {
+      BoardProxy.getBoardByShortcut(this.shortcut, function (err, board) {
+        if (err || !board) {
+          view.showMessage(data, res.locals.core.lang.errmsg.board_not_found, 'error', '/board', rescallback);
+          return;
+        }
+        that.board = board;
+        callback();
+      });
+    } else {
+      var topic_id = req.params.id;
+      if (topic_id && string.is_objectid(topic_id)) {
+        TopicProxy.getTopic(topic_id, function (err, topic) {
+          if (err || !topic) {
+            view.showMessage(data, res.locals.core.lang.topic.topics_not_found, 'error', '/board', rescallback);
+            return;
+          }
+          that.topic = topic;
+          if (topic.board_id) {
+            BoardProxy.getBoard(topic.board_id, function (err, board) {
+              if (err || !board) {
+                view.showMessage(data, res.locals.core.lang.errmsg.board_not_found, 'error', '/board', rescallback);
+                return;
+              }
+              that.board = board;
+              that.active = board.shortcut;
+              callback();
+            });
+          }
+        });
+      } else {
+        view.showMessage(data, res.locals.core.lang.errmsg.error_params, 'error', '/board', rescallback);
+        return;
+      }
+    }
   };
 
   Topic.prototype.index = function(req, res, data, callback) {
+    var that = this;
+    this.getBoard(req, res, data, callback, function (err) {
+      that._index(req, res, data, callback);
+    });
+  };
 
-    if ((this.type == TOPIC_TYPE.COURSEWARE || this.type == TOPIC_TYPE.BBS) && !res.locals.core.isLogin()) {
+  Topic.prototype._index = function(req, res, data, callback) {
+
+    if (!this.canView(res)) {
       view.showMessage(data, res.locals.core.lang.errmsg.no_permission, 'error', '/', callback);
       return;
     }
-
     data.canPost = this.canPost(res);
 
     var limit = view.PAGINATION_LIMIT;
 
     var page = parseInt(req.query.p, 10) || 1;
     var query = {
-      'type': this.type
+      'board_id': this.board._id
     };
     var options = {
       skip: (page - 1) * limit,
@@ -76,7 +130,9 @@
     };
 
     var events = ['topics', 'pagination'];
+    var that = this;
     var ep = EventProxy.create(events, function(topics, pagination) {
+
       for (var i in topics) {
         topics[i].friendly_create_at = Util.format_date(topics[i].create_at, true);
         topics[i].friendly_update_at = Util.format_date(topics[i].update_at, true);
@@ -166,11 +222,18 @@
   };
 
   Topic.prototype.show = function(req, res, data, callback) {
+    var that = this;
+    this.getBoard(req, res, data, callback, function (err) {
+      that._show(req, res, data, callback);
+    });
+  };
+
+  Topic.prototype._show = function(req, res, data, callback) {
 
     var type = this.type;
     var topic_id = req.params.id;
 
-    if (this.type == TOPIC_TYPE.COURSEWARE && !res.locals.core.isLogin()) {
+    if (!this.canView(res)) {
       view.showMessage(data, res.locals.core.lang.errmsg.no_permission, 'error', '/', callback);
       return;
     }
@@ -193,7 +256,7 @@
         //err msg
       }
 
-      if (topic && topic.type == type) {
+      if (topic) {
 
         var _canManage = that.canManage(res, topic);
 
@@ -256,12 +319,15 @@
   };
 
   Topic.prototype.add = function(req, res, data, callback) {
+    var that = this;
+    this.getBoard(req, res, data, callback, function (err) {
+      that._add(req, res, data, callback);
+    });
+  };
 
-    if (!res.locals.core.isLogin()) {
-      view.showMessage(data, res.locals.core.lang.errmsg.no_permission, 'error', callback);
-      return;
-    }
-    if (!this.canPost(res)) {
+  Topic.prototype._add = function(req, res, data, callback) {
+
+    if (!this.canView(res) || !this.canPost(res)) {
       view.showMessage(data, res.locals.core.lang.errmsg.no_permission, 'error', callback);
       return;
     }
@@ -288,13 +354,13 @@
       if (title && title.length <= 30 && content) {
         var active = this.active;
 
-        TopicProxy.newAndSave(this.type, title, content, res.locals.core.user.page_id, function(err, topic) {
+        TopicProxy.newAndSave(this.board._id, title, content, res.locals.core.user.page_id, function(err, topic) {
           if (err) {
             view.showMessage(data, String(err), 'error', '/' + active + '/add', callback);
           } else {
             var ep = EventProxy.create();
             ep.all('attachment_saved', 'score_saved', function(reply) {
-              view.showMessage(data, '', 'success', '/' + active + '/topic/' + topic._id, callback);
+              view.showMessage(data, '', 'success', '/topic/' + topic._id, callback);
             });
 
             UserPageProxy.getUserById(res.locals.core.user.page_id, ep.done(function(user) {
@@ -358,10 +424,10 @@
     var active = this.active;
     var that = this;
     TopicProxy.getFullTopic(topic_id, function(err, message, topic, tags, attachments, author, replies) {
-      if (topic && topic.type == type) {
+      if (topic) {
         var _canManage = that.canManage(res, topic);
         if (!_canManage) {
-          view.showMessage(data, res.locals.core.lang.errmsg.no_permission, 'error', '/' + active + '/topic/' + topic._id, callback);
+          view.showMessage(data, res.locals.core.lang.errmsg.no_permission, 'error', '/topic/' + topic._id, callback);
           return;
         }
 
@@ -371,7 +437,7 @@
             if (err) {
               view.showMessage(data, String(err), 'error', '/' + active + '/edit/' + topic._id, callback);
             } else {
-              view.showMessage(data, '', 'success', '/' + active + '/topic/' + topic._id, callback);
+              view.showMessage(data, '', 'success', '/topic/' + topic._id, callback);
             }
           });
 
@@ -476,7 +542,7 @@
 
     var type = this.type;
     var topic_id = req.params.id;
-
+    
     if (!res.locals.core.isLogin()) {
       view.showMessage(data, res.locals.core.lang.errmsg.no_permission, 'error', callback);
       return;
@@ -488,11 +554,12 @@
     }
 
     var active = this.active;
+    var that = this;
     TopicProxy.getTopic(topic_id, function(err, topic) {
-      if (topic && topic.type == type) {
-        var canManage = ((topic.type == TOPIC_TYPE.NEWS && (res.locals.core.user.page.permission & permission.MANAGE_NEWS)) || (topic.type == TOPIC_TYPE.COURSEWARE && (res.locals.core.user.page.permission & permission.MANAGE_COURSEWARE)) || res.locals.core.user.page_id == topic.author_id);
-        if (!canManage) {
-          view.showMessage(data, res.locals.core.lang.errmsg.no_permission, 'error', '/' + active + '/topic/' + topic._id, callback);
+      if (topic) {
+        var _canManage = that.canManage(res, topic);
+        if (!_canManage) {
+          view.showMessage(data, res.locals.core.lang.errmsg.no_permission, 'error', '/topic/' + topic._id, callback);
           return;
         }
         topic.remove(function(err) {
@@ -533,7 +600,7 @@
 
     var active = this.active;
     TopicProxy.getTopic(topic_id, function(err, topic) {
-      if (topic && topic.type == type) {
+      if (topic) {
         if (req.method == 'POST') {
 
           var ep = EventProxy.create();
@@ -570,7 +637,7 @@
               };
               callback(true, r);
             } else {
-              res.redirect('/' + active + '/topic/' + topic._id + '#' + reply._id);
+              res.redirect('/topic/' + topic._id + '#' + reply._id);
               callback(true);
             }
           });
@@ -583,6 +650,6 @@
     });
   };
 
-  exports.Topic = Topic; exports.TopicType = TOPIC_TYPE;
+  exports.Topic = Topic;
 
 }).call(this);
