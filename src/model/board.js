@@ -55,4 +55,4 @@ var BoardSchema = new Schema({
   }
 });
 
-mongoose.model('Board', TopicSchema, config.DB_PREFIX + 'board');
+mongoose.model('Board', BoardSchema, config.DB_PREFIX + 'board');

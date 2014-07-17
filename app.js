@@ -8,7 +8,7 @@ var express = require('express'),
   multipart = require('connect-multiparty'),
   cookieParser = require('cookie-parser'),
   //session      = require('express-session'),
-  serveStatic = require('serve-static'),
+  //serveStatic = require('serve-static'),
   methodOverride = require('method-override'),
   morgan  = require('morgan'), //logger
   errorHandler = require('errorhandler');
@@ -27,7 +27,7 @@ var constdata = require('./src/common/constdata'),
 
 var app = express();
 
-//3.x app.configure
+//app.configure
 (function() {
   app.set('port', process.env.PORT || 3005);
 
@@ -57,10 +57,13 @@ var app = express();
   }));*/
   app.use(methodOverride());
 
+  //nginx process
+  app.use(express.static(constdata.PUBLIC_DIR));
+
   app.use(core.coreMiddleware);
 
-  //nginx process
-  app.use(serveStatic(constdata.PUBLIC_DIR));
+  router.route(app, express);
+  router.routeErrorPage(app, express);
 })();
 
 var node_env = process.env.NODE_ENV;
@@ -80,17 +83,6 @@ switch (node_env) {
     app.set('view cache', true);
     break;
 }
-//3.x
-/*app.configure('development', function () {
-  app.use(express.logger('dev'));
-  app.use(express.errorHandler());
-});
-app.configure('production', function () {
-  app.use(express.errorHandler());
-  app.set('view cache', true);
-});*/
-
-router.route(app, express);
 
 http.createServer(app).listen(app.get('port'), function() {
   console.log("Express server listening on port " + app.get('port'));

@@ -1,42 +1,20 @@
 (function() {
+  var express = require('express');
+  var router = express.Router();
+
   var mvc = require("./mvc"),
     string = require("./../common/string"),
     functions = require("./../common/functions"),
     routeMvc;
 
-  exports.route = function(app, express) {
-    app.all('/', function(req, res, next) {
-      return routeMvc('index', 'index', req, res, next);
-    });
-    //for api route
-    app.all('/api/:controller', function(req, res, next) {
-      req.params.api = true;
-      res.locals.core.api = true;
-      return routeMvc(req.params.controller, 'index', req, res, next);
-    });
-    app.all('/api/:controller/:method', function(req, res, next) {
-      req.params.api = true;
-      res.locals.core.api = true;
-      return routeMvc(req.params.controller, req.params.method, req, res, next);
-    });
-    app.all('/api/:controller/:method/:id', function(req, res, next) {
-      req.params.api = true;
-      res.locals.core.api = true;
-      return routeMvc(req.params.controller, req.params.method, req, res, next);
-    });
-    //default html page
-    app.all('/:controller', function(req, res, next) {
-      return routeMvc(req.params.controller, 'index', req, res, next);
-    });
-    //fix for board shortcut url
-    app.all('/board/:shortcut', function(req, res, next) {
-      return routeMvc('board', 'index', req, res, next);
-    });
-    app.all('/:controller/:method', function(req, res, next) {
-      return routeMvc(req.params.controller, req.params.method, req, res, next);
-    });
-    app.all('/:controller/:method/:id', function(req, res, next) {
-      return routeMvc(req.params.controller, req.params.method, req, res, next);
+  exports.routeErrorPage = function(app, express) {
+    app.use(function(req, res, next) {
+      mvc.warn("error 404: ", req.url);
+
+      var data = { 'title': res.locals.core.lang.title.error404, 'active': '' };
+      res.locals.core.renderData(data);
+
+      return res.status(404).render('error/404', data);
     });
     app.use(function(err, req, res, next) {
       mvc.error('error 500: ', err.stack);
@@ -46,14 +24,36 @@
 
       return res.status(500).render('error/500', data);
     });
-    return app.all('/*', function(req, res) {
-      mvc.warn("error 404: ", req.url);
+  };
 
-      var data = { 'title': res.locals.core.lang.title.error404, 'active': '' };
-      res.locals.core.renderData(data);
-      
-      return res.status(404).render('error/404', data);
+  exports.route = function(app, express) {
+    router.all('/', function(req, res, next) {
+      return routeMvc('index', 'index', req, res, next);
     });
+
+    router.all('/:controller', function(req, res, next) {
+      return routeMvc(req.params.controller, 'index', req, res, next);
+    });
+    //fix for board shortcut url
+    router.all('/board/:shortcut', function(req, res, next) {
+      return routeMvc('board', 'index', req, res, next);
+    });
+    router.all('/:controller/:method', function(req, res, next) {
+      return routeMvc(req.params.controller, req.params.method, req, res, next);
+    });
+    router.all('/:controller/:method/:id', function(req, res, next) {
+      return routeMvc(req.params.controller, req.params.method, req, res, next);
+    });
+
+    //for api route
+    app.use('/api', function(req, res, next) {
+      req.params.api = true;
+      res.locals.core.api = true;
+      next();
+    }, router);
+
+    //default html page
+    app.use('/', router);
   };
 
   routeMvc = function(controllerName, methodName, req, res, next) {

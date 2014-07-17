@@ -95,6 +95,11 @@
       res.redirect(status, url);
     };
 
+    //core debug
+    if (config.DEBUG_CORE) {
+      
+    }
+
     core.user.checklogin(req.cookies, req, function () {
       next();
     });

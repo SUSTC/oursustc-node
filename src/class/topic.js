@@ -20,6 +20,9 @@
 
   var permission = constdata.permission;
 
+  //Waiting for mod to BoardId
+  var TOPIC_TYPE = {};
+
   function Topic(shortcut) {
     this.init(shortcut);
   }

@@ -3,6 +3,7 @@
   "DEBUG_WARN": true,
   "DEBUG_ERROR": true,
   "DEBUG_CLIENT": true,
+  "DEBUG_CORE": true,
 
   "HOST": "sustc.us",
   "ROOT_URL": "",
