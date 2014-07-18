@@ -47,21 +47,21 @@
   exports.edit = function(req, res, data, callback) {
     initData(res, data, res.locals.core.lang.topic.edit);
 
-    var topic = new Topic('news');
+    var topic = new Topic();
     topic.edit(req, res, data, callback);
   };
 
   exports.delete = function(req, res, data, callback) {
     initData(res, data, res.locals.core.lang.topic.delete);
 
-    var topic = new Topic('news');
+    var topic = new Topic();
     topic.delete(req, res, data, callback);
   };
   
   exports.reply = function(req, res, data, callback) {
     initData(res, data, res.locals.core.lang.topic.reply);
 
-    var topic = new Topic('news');
+    var topic = new Topic();
     topic.reply(req, res, data, callback);
   };
 

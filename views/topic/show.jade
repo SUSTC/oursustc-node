@@ -24,7 +24,7 @@ block content
       if (topic.canManage || (topic.author && topic.author._id == user.page_id))
         .ui.segment
           .ui.text.menu
-            a.item(href=base.rooturl + '/#{active}/edit/#{topic._id}')
+            a.item(href=base.rooturl + '/topic/edit/#{topic._id}')
               i.edit.icon
               = lang.info.edit
             a.item(onclick="$('#topic_delete_confirm').modal('show');")
@@ -60,7 +60,7 @@ block content
           i.edit.icon
           = lang.topic.reply
         if (user.uid)
-          form.ui.form#topic_reply_form(method='POST', action='/#{active}/reply')
+          form.ui.form#topic_reply_form(method='POST', action='/topic/reply')
             div(style='display:none')
               input(type='hidden', name='csrf', value=user.csrf)
               input(type='hidden', name='topic[id]', value=topic._id)
@@ -71,7 +71,7 @@ block content
         else
           .ui.message
             = lang.info.please_first
-            a(href=base.rooturl + '/user/login?redirect=/#{active}/#{topic._id}')= lang.user.login
+            a(href=base.rooturl + '/user/login?redirect=/topic/#{topic._id}')= lang.user.login
 
     .four.wide.column.desktop.only
       if (topic.author)
@@ -84,7 +84,7 @@ block content
           = lang.topic.author_other_topics
         .ui.selection.divided.list
           each t in author_other_topics
-            a.item(href=base.rooturl + '/#{active}/topic/#{t._id}')
+            a.item(href=base.rooturl + '/topic/#{t._id}')
               .content
                 .header= t.title
               //span.time.pull-right= t.friendly_create_at
@@ -99,7 +99,7 @@ block other-content
     .content= lang.topic.topic_delete_confirm
     .actions
       .ui.negative.button= lang.info.no
-      a.ui.positive.right.labeled.icon.button(href=base.rooturl + '/#{active}/delete/' + topic._id + '?csrf=' + user.csrf)
+      a.ui.positive.right.labeled.icon.button(href=base.rooturl + '/topic/delete/' + topic._id + '?csrf=' + user.csrf)
         = lang.info.yes
         i.checkmark.icon
 
