@@ -1,4 +1,3 @@
-
 (function() {
 
   var EventProxy = require('eventproxy');
@@ -12,7 +11,7 @@
 
   var Topic = require("./../class/topic").Topic;
 
-  /*BoardProxy.newAndSave('news', '新闻', 0, 0, '', null, function (err, b) {
+  /*BoardProxy.newAndSave('bla', 'baba', 0, 0, '', null, function (err, b) {
     console.log(err, b);
   });*/
 
@@ -35,8 +34,32 @@
       topic.index(req, res, data, callback);
     } else {
       //TODO: index, show all boards
-      data.active = 'board';
-      callback();
+      var e = EventProxy.create(['render'], function(status) {
+        data.active = 'board';
+        console.log('[BOARD] Callback Executed');
+        callback();
+
+      });
+
+      e.once('treebuilt', function(tree) {
+        console.log('[BOARD] Index Rendered');
+        e.emit('render', record)
+      });
+      console.log("aaa");
+      BoardProxy.fetchAll(function(err, list) {
+        tree={};
+        var build = function(parent) {
+
+        };
+        for(var i=0;i<list.length;i++){
+          if(ibuild(list[i]._id);
+          console.log(list[i]);
+        }
+        console.log('[BOARD] Tree Built');
+        e.emit('treebuilt', list);
+
+      });
+
     }
 
   };
