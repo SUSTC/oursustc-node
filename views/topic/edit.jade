@@ -7,14 +7,14 @@ block bodyheader
         h1.ui.dividing.header= lang.info.edit
 
 block content
-  form.ui.form.segment#topic_edit_form(method='POST', action='/#{active}/edit')
+  form.ui.form.segment#topic_edit_form(method='POST', action='/topic/edit')
     div(style='display:none')
       input(type='hidden', name='csrf', value=user.csrf)
       input(type='hidden', name='topic[id]', value=topic._id)
     .ui.ribbon.label= lang.topic.title
     .example.field#title
       p
-        a(href=base.rooturl + '/#{active}/topic/#{topic._id}', target='_blank')
+        a(href=base.rooturl + '/topic/#{topic._id}', target='_blank')
           | #{lang.info.view}: #{topic.title}
           i.right.arrow.icon
       .ui.left.labeled.input
