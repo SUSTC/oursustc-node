@@ -25,7 +25,7 @@
     initData(res, data);
 
     var page_ids = [];
-    var topic = new Topic('news');
+    var topic = new Topic();
     var page_id = req.params ? req.params.id : null;
     if (page_id && string.is_objectid(page_id)) {
       page_ids.push(page_id);

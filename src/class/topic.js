@@ -161,18 +161,20 @@
   };
 
   Topic.prototype.list = function(req, res, page_ids, data, callback) {
-    if ((this.type == TOPIC_TYPE.COURSEWARE || this.type == TOPIC_TYPE.BBS) && !res.locals.core.isLogin()) {
+    //can view
+    if (!res.locals.core.isLogin()) {
       view.showMessage(data, res.locals.core.lang.errmsg.no_permission, 'error', '/', callback);
       return;
     }
 
-    data.canPost = this.canPost(res);
+    //all cannot post in list
+    data.canPost = false;
 
     var limit = view.PAGINATION_LIMIT;
 
     var page = parseInt(req.query.p, 10) || 1;
     var query = {
-      'type': this.type,
+      //'board_id': this.type,
       'author_id': {
         $in: page_ids
       }
@@ -213,7 +215,6 @@
     TopicProxy.getTopicsByQuery(query, options, ep.done('topics'));
 
     // 取分页数据
-
     TopicProxy.getCountByQuery(query, ep.done(function(all_topics_count) {
       var pages = Math.ceil(all_topics_count / limit);
       var pagination = view.pagination(page, pages, '/' + active);

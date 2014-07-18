@@ -35,7 +35,7 @@ block content
             if (topic.author)
               - var u = topic.author;
               include ../user/user-label
-            a(href=base.rooturl + '/#{active}/page/#{topic.author_id}')
+            a(href=base.rooturl + '/topic/page/#{topic.author_id}')
               i.suitcase.icon
             span &nbsp;&nbsp;#{lang.topic.visit_count}: #{topic.visit_count}
             span.time 
