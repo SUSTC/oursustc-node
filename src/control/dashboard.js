@@ -213,6 +213,26 @@
     }
   };
 
+  exports.board = function (req, res, data, callback) {
+    data.title = res.locals.core.lang.title.dashboard.board + ' - ' + res.locals.core.lang.title.dashboard.index;
+    data.active = 'dashboard';
+
+    data.err = {};
+
+    if (res.locals.core.isLogin()) {
+      if (!haveDashboardPermission(res)) {
+        view.showMessage(data, res.locals.core.lang.errmsg.no_permission, 'error', '/', callback);
+        return;
+      }
+      if (req.method == 'POST') {
+      }
+      callback();
+    } else {
+      res.redirect('/user/login?url=/dashboard/board');
+      callback(true);
+    }
+  };
+
   exports.user = function (req, res, data, callback) {
     data.title = res.locals.core.lang.title.dashboard.user + ' - ' + res.locals.core.lang.title.dashboard.index;
     data.active = 'dashboard';
