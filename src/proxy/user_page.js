@@ -170,7 +170,7 @@ exports.urpNewAndSave = function (name, flags, callback) {
   user.name = name;
   user.name_clean = string.clean(name);
   user.noaccount = true;
-  user.permission = permission.ADD_COURSEWARE | permission.MANAGE_COURSEWARE;
+//  user.permission = permission.ADD_COURSEWARE | permission.MANAGE_COURSEWARE;
   user.flags = flags;
   user.save(callback);
 };

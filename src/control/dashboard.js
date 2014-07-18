@@ -20,7 +20,7 @@
 
   var tablepre = config.DB_PREFIX;
 
-  var permission = constdata.permission;
+  var permission = constdata.user_permission;
 
   function _in_array(searchString, array) {
     for (i=0; i<array.length; i++) {
