@@ -305,6 +305,10 @@
         }
     },
 
+    "board": {
+        "boards_not_found": "没有找到板块"
+    },
+
     "dashboard": {
         "user_management": "用户管理",
         "board_management": "板块管理",

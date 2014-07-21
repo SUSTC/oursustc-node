@@ -34,10 +34,10 @@
       topic.index(req, res, data, callback);
     } else {
       // All preprocessing completed, Render the page
-      var e = EventProxy.create(['render'], function(status) {
+      var e = EventProxy.create(['render'], function(boards) {
         data.active = 'board';
+        data.boards = boards;
         callback();
-
       });
       // Tree has been built, Do preprocessing here PLS
       e.once('treebuilt', function(tree) {
@@ -56,11 +56,11 @@
       });
       //Here we build the tree structure BEGIN
       BoardProxy.fetchAll(function(err, list) {
-        var tree = [];
+        var tree = {};
         // build function BEGIN
         var build = function(parent) {
           var current = parent;
-          current.children = [];
+          current.children = {};
 
           for (var i = 0; i < list.length; i++) {
             if ((typeof(list[i].parent) !== 'undefined') && (list[i].parent == parent._id.toString())) {
@@ -79,7 +79,6 @@
           }
         }
         e.emit('treebuilt', tree);
-
       });
       // Tree building END
     }
