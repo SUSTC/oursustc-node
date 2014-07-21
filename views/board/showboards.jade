@@ -1,0 +1,30 @@
+extends ../common/layout
+
+block script
+
+mixin board_list(boards)
+  if (boards)
+    .ui.divided.list
+      each board, id in boards
+        .item
+          .content
+            a.header(href='/board/' + board.shortcut)= board.name
+            = board.description
+          +board_list(board.children)
+
+block bodyheader
+  //include ../user/user-bar
+  include ../common/banner
+
+block content
+  div(id=active)
+    if (boards)
+      .ui.form.raised.segment
+        +board_list(boards)
+
+    else
+      .ui.icon.message
+        i.icon.exclamation
+        .content
+          .header= lang.info.tips
+          p= lang.board.boards_not_found
