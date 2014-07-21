@@ -164,10 +164,19 @@
         "dashboard": {
             "change_password": "修改密码",
             "set_page_permission": "设置用户页权限",
-            "set_relation_power": "设置关系权限"
+            "set_relation_power": "设置关系权限",
+            "new_board": "新建版块",
+            "set_board_info": "修改版块信息",
+            "board_list": "板块列表"
         }
     },
-
+    "board":{
+        "name": "名称",
+        "description": "简介",
+        "parent": "父节点",
+        "shortcut": "短链接",
+        "image": "封面"
+        },
     "user": {
         "login": "登录",
         "logout": "退出",

@@ -1,0 +1,84 @@
+extends ../common/layout
+
+block bodyheader
+  div.segment
+    div.container#overview
+      div.introduction
+        h1.ui.dividing.header
+          i.dashboard.icon
+          = lang.dashboard.board_management
+
+block content
+  .ui.three.column.grid
+    .column
+      .ui.form.raised.segment
+        .ui.top.attached.label
+          i.lock.icon
+          span= lang.info.dashboard.new_board
+        .field
+          form.ui.form(enctype='application/x-www-form-urlencoded', method='POST', action='/dashboard/board')
+            div(style='display:none')
+              input(type='hidden', name='csrf', value=user.csrf)
+              input(type='hidden', name='action', value='new_board')
+            .field(class=(err.creation.board_name ? 'error' : ''))
+              .ui.left.labeled.icon.input
+                input(maxlength='20', type='text', name='board[name]', placeholder=lang.board.name)
+                i.icon.user
+                .ui.corner.label
+                  i.icon.asterisk
+            .field(class=(err.creation.board_description ? 'error' : ''))
+              .ui.left.labeled.icon.input
+                textarea(name='board_description', placeholder=lang.board.description)
+                i.icon.lock
+                .ui.corner.label
+                  i.icon.asterisk
+            .field(class=(err.creation.parent ? 'error' : ''))
+              .ui.left.labeled.icon.input
+                input(type='text', name='board[parent]', placeholder=lang.board.parent)
+                i.icon.user
+                .ui.corner.label
+                  i.icon.asterisk
+            .field(class=(err.creation.shortcut ? 'error' : ''))
+              .ui.left.labeled.icon.input
+                input(type='text', name='board[shortcut]', placeholder=lang.board.shortcut)
+                i.icon.user
+                .ui.corner.label
+                  i.icon.asterisk
+            .form-actions
+              button.ui.blue.submit.button(type='submit')= lang.info.submit
+    .column
+      .ui.form.raised.segment
+        .ui.top.attached.label
+          i.lock.icon
+          span= lang.info.dashboard.set_board_info
+        .field
+          form.ui.form(enctype='application/x-www-form-urlencoded', method='POST', action='/dashboard/board')
+            div(style='display:none')
+              input(type='hidden', name='csrf', value=user.csrf)
+              input(type='hidden', name='action', value='set_board_info')
+            .field(class=(err.creation.board_name ? 'error' : ''))
+              .ui.left.labeled.icon.input
+                input(maxlength='20', type='text', name='board[name]', placeholder=lang.board.name)
+                i.icon.user
+                .ui.corner.label
+                  i.icon.asterisk
+            .field(class=(err.creation.board_description ? 'error' : ''))
+              .ui.left.labeled.icon.input
+                textarea(name='board_description', placeholder=lang.board.description)
+                i.icon.lock
+                .ui.corner.label
+                  i.icon.asterisk
+            .field(class=(err.creation.parent ? 'error' : ''))
+              .ui.left.labeled.icon.input
+                input(type='text', name='board[parent]', placeholder=lang.board.parent)
+                i.icon.user
+                .ui.corner.label
+                  i.icon.asterisk
+            .field(class=(err.creation.shortcut ? 'error' : ''))
+              .ui.left.labeled.icon.input
+                input(type='text', name='board[shortcut]', placeholder=lang.board.shortcut)
+                i.icon.user
+                .ui.corner.label
+                  i.icon.asterisk
+            .form-actions
+              button.ui.blue.submit.button(type='submit')= lang.info.submit
