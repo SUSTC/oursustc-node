@@ -16,7 +16,8 @@
     models = require('./../model'),
     UserAccountProxy = proxy.UserAccount,
     UserPageProxy = proxy.UserPage,
-    UserPageRelationProxy = proxy.UserPageRelation;
+    UserPageRelationProxy = proxy.UserPageRelation,
+    BoardProxy = proxy.Board;
 
   var tablepre = config.DB_PREFIX;
 
@@ -224,9 +225,128 @@
         view.showMessage(data, res.locals.core.lang.errmsg.no_permission, 'error', '/', callback);
         return;
       }
-      if (req.method == 'POST') {
-      }
-      callback();
+      var ndo = function () {
+        if (req.method == 'POST') {
+          if (res.locals.core.user.checkcsrf(req.body.csrf)
+              && req.body.board && req.body.board.shortcut) {
+            var b = req.body.board;
+            var events = ['board', 'parent'];
+            var ep = EventProxy.create(events, function (board, parent) {
+              if (b.parent && !parent) {
+                data.err.parent = true;
+                ep.emit('finish', false);
+                return;
+              }
+              switch (req.body.action) {
+                case 'new_board':
+                  if (!b.name) {
+                    data.err.board_name = true;
+                    ep.emit('finish', false);
+                  } else if (board) {
+                    data.err.shortcut = true;
+                    ep.emit('finish', false);
+                  } else {
+                    BoardProxy.newAndSave(b.shortcut, b.name, 0, 0,
+                        b.description, parent ? parent._id : null, ep.done('finish'));
+                  }
+                  break;
+                case 'set_board_info':
+                  if (!b.name) {
+                    data.err.board_name = true;
+                    ep.emit('finish', false);
+                  } else if (!board) {
+                    data.err.shortcut = true;
+                    ep.emit('finish', false);
+                  } else {
+                    board.name = b.name;
+                    board.description = b.description;
+                    board.parent = parent ? parent._id : null;
+                    board.save(ep.done('finish'));
+                  }
+                  break;
+                case 'set_board_administrators':
+                  if (!board) {
+                    data.err.shortcut = true;
+                    ep.emit('finish', false);
+                  } else {
+                    var administrator_ids = [];
+                    if (b.administrator_ids && b.administrator_ids.length > 0) {
+                      //check is_objectid 
+                      for (var i = 0; i < b.administrator_ids.length; i++) {
+                        if (string.is_objectid(b.administrator_ids[i])) {
+                          administrator_ids.push(b.administrator_ids[i]);
+                        }
+                      }
+                    }
+                    board.administrator_ids = administrator_ids;
+                    board.save(ep.done('finish'));
+                  }
+                  break;
+                case 'delete_board':
+                  if (!board) {
+                    data.err.shortcut = true;
+                    ep.emit('finish', false);
+                  } else {
+                    BoardProxy.removeBoardById(board._id, ep.done('finish'));
+                  }
+                  break;
+                default:
+                  ep.emit('finish', false);
+                  break;
+              }
+            });
+            ep.once('finish', function (succeed) {
+              if (succeed) {
+                view.showMessage(data, res.locals.core.lang.info.success, 'success', '/dashboard/board', callback);
+              } else {
+                callback();
+              }
+            });
+            BoardProxy.getBoardByShortcut(b.shortcut, ep.done('board'));
+            if (b.parent) {
+              if (string.is_objectid(b.parent)) {
+                BoardProxy.getBoard(b.parent, ep.done('parent'));
+              } else {
+                BoardProxy.getBoardByShortcut(b.parent, ep.done('parent'));
+              }
+            } else {
+              ep.emit('parent', null);
+            }
+          } else {
+            view.showMessage(data, res.locals.core.lang.errmsg.error_params, 'error', callback);
+          }
+          return;
+        }
+        callback();
+      };
+      BoardProxy.fetchAll(function (err, boards) {
+        data.boards = boards;
+
+        var admin_ids = [];
+        for (var i = 0; i < boards.length; i++) {
+          for (var j = 0; j < boards[i].administrator_ids.length; j++) {
+            if (admin_ids.indexOf(boards[i].administrator_ids[j]) === -1) {
+              admin_ids.push(boards[i].administrator_ids[j]);
+            }
+          }
+        }
+
+        if (admin_ids.length > 0) {
+          UserPageProxy.getUsersByIds(admin_ids, function (err, pages) {
+            var administrators = {};
+            if (pages) {
+              for (var i = 0; i < pages.length; i++) {
+                administrators[pages[i]._id] = pages[i];
+              }
+            }
+            data.administrators = JSON.stringify(administrators);
+            ndo();
+          });
+        } else {
+          data.administrators = '{}';
+          ndo();
+        }
+      });
     } else {
       res.redirect('/user/login?url=/dashboard/board');
       callback(true);
@@ -245,7 +365,7 @@
         return;
       }
       if (req.method == 'POST') {
-        if (req.body.csrf === res.locals.core.user.csrf && req.body.user) {
+        if (res.locals.core.user.checkcsrf(req.body.csrf) && req.body.user) {
           var events = ['account', 'page'];
           var ep = EventProxy.create(events, function (account, page) {
             switch (req.body.action) {
@@ -328,27 +448,6 @@
           view.showMessage(data, res.locals.core.lang.errmsg.error_params, 'error', callback);
         }
         return;
-      }
-      callback();
-    } else {
-      res.redirect('/user/login?url=/dashboard/user');
-      callback(true);
-    }
-  };
-
-  exports.board = function (req, res, data, callback) {
-    data.title = res.locals.core.lang.title.dashboard.board + ' - ' + res.locals.core.lang.title.dashboard.index;
-    data.active = 'dashboard';
-
-    data.err = {};
-
-    if (res.locals.core.isLogin()) {
-      if (!haveDashboardPermission(res)) {
-        view.showMessage(data, res.locals.core.lang.errmsg.no_permission, 'error', '/', callback);
-        return;
-      }
-      if (req.method == 'POST') {
-
       }
       callback();
     } else {

@@ -8,7 +8,9 @@ var BoardSchema = new Schema({
     type: String
   },
   shortcut: {
-    type: String
+    type: String,
+    unique: true,
+    index: true
   },
   type: {
     type: Number,
@@ -21,7 +23,7 @@ var BoardSchema = new Schema({
   parent: {
     type: ObjectId
   },
-  administrators: {
+  administrator_ids: {
     type: [ObjectId]
   },
   description:{

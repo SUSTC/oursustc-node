@@ -137,7 +137,7 @@
         topics[i].friendly_create_at = Util.format_date(topics[i].create_at, true);
         topics[i].friendly_update_at = Util.format_date(topics[i].update_at, true);
         topics[i].friendly_last_reply_at = Util.format_date(topics[i].last_reply_at, true);
-        if (req.params.api) {
+        if (res.locals.core.api) {
           var _author = JSON.parse(JSON.stringify(topics[i].author));
           topics[i] = JSON.parse(JSON.stringify(topics[i]));
           topics[i].author = _author;
@@ -194,7 +194,7 @@
         topics[i].friendly_create_at = Util.format_date(topics[i].create_at, true);
         topics[i].friendly_update_at = Util.format_date(topics[i].update_at, true);
         topics[i].friendly_last_reply_at = Util.format_date(topics[i].last_reply_at, true);
-        if (req.params.api) {
+        if (res.locals.core.api) {
           var _author = JSON.parse(JSON.stringify(topics[i].author));
           topics[i] = JSON.parse(JSON.stringify(topics[i]));
           topics[i].author = _author;
@@ -276,7 +276,7 @@
             }
           }
 
-          if (req.params.api) {
+          if (res.locals.core.api) {
             topic = JSON.parse(JSON.stringify(topic));
             topic.author = JSON.parse(JSON.stringify(author));
             var _replies = JSON.parse(JSON.stringify(replies));
@@ -628,7 +628,7 @@
           }));
 
           ep.all('reply_saved', 　 /*'message_saved',*/ 'score_saved', function(reply) {
-            if (req.params.api) {
+            if (res.locals.core.api) {
               var r = {
                 err: {
                   no: 0

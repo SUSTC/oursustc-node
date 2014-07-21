@@ -52,7 +52,7 @@
 
     //for api route
     app.use('/api', function(req, res, next) {
-      req.params.api = true;
+      //req.params.api = true;
       res.locals.core.api = true;
       next();
     }, router);
@@ -104,7 +104,7 @@
             res.write(resdata ? resdata : data);
             return res.end();
           } else {
-            if (req.params.api) {
+            if (res.locals.core.api) {
               data = JSON.stringify(data);
               res.write(data);
               return res.end();

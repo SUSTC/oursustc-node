@@ -15,11 +15,7 @@ exports.getBoard = function(id, callback) {
   }, callback);
 };
 
-exports.getBoardById = function(id, callback) {
-  Board.findOne({
-    _id: id
-  }, callback);
-};
+exports.getBoardById = exports.getBoard;
 
 exports.getBoardByShortcut = function(shortcut, callback) {
   var shortcut_clean = string.clean(shortcut);
@@ -50,4 +46,10 @@ exports.findChildrenById = function(parent_id, callback) {
 
 exports.fetchAll = function(callback) {
   Board.find(callback);
+};
+
+exports.removeBoardById = function(id, callback) {
+  Board.remove({
+    _id: id
+  }, callback);
 };

@@ -52,6 +52,9 @@
             "user": "用户",
             "board": "板块"
         },
+        "board": {
+            "index": "板块"
+        },
         "error404": "404 找不到",
         "error500": "500 服务器内部错误"
     },
@@ -167,16 +170,18 @@
             "set_relation_power": "设置关系权限",
             "new_board": "新建版块",
             "set_board_info": "修改版块信息",
+            "set_board_administrators": "设置板块管理员",
+            "delete_board": "删除板块",
             "board_list": "板块列表"
         }
     },
     "board":{
         "name": "名称",
         "description": "简介",
-        "parent": "父节点",
+        "parent": "父板块",
         "shortcut": "短链接",
-        "image": "封面"
-        },
+        "cover": "封面"
+    },
     "user": {
         "login": "登录",
         "logout": "退出",

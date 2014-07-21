@@ -100,7 +100,7 @@
           }
         });
       } else {
-        if (req.params.api) {
+        if (res.locals.core.api) {
           res.locals.core.user.renderData(data);
         }
         data.page = res.locals.core.user.page;
@@ -297,7 +297,7 @@
       if (!redirectUrl) {
         redirectUrl = '/user';
       }
-      if (req.params.api) {
+      if (res.locals.core.api) {
         data.islogin = 1;
         data.cookies = res.locals.core.user.cookies;
       } else {
