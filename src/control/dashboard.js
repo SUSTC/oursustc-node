@@ -77,7 +77,8 @@
           var objuser = {
             studentId: studentid_,
             name: userdata[1],
-            password: functions.password_hash(studentid_.toString())
+            password: functions.password_hash(studentid_.toString()),
+            accounttype: constdata.account_type.STUDENT
           };
 
           accounts.push(objuser);
