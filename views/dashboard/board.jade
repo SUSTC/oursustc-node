@@ -25,6 +25,18 @@ block script
             </div>';
     }
 
+    function getparentshortcut(parent) {
+      var boards = !{JSON.stringify(boards)};
+      if (parent) {
+        for (var i = 0; i < boards.length; i++) {
+          if (boards[i]._id == parent) {
+            return boards[i].shortcut;
+          }
+        }
+      }
+      return '_top';
+    }
+
     function setboard(bitem) {
       var item = $(bitem);
       item.parent().find('.item').removeClass('active');
@@ -40,10 +52,10 @@ block script
       form_info.find('input[name*=shortcut]').val(b.shortcut);
       form_info.find('input[name*=name]').val(b.name);
       form_info.find('input[name*=description]').val(b.description);
-      form_info.find('input[name*=parent]').val(b.parent);
+      form_info.find('input[name*=parent]').val(getparentshortcut(b.parent));
       
       var form_info_pd = form_info.find('.ui.dropdown');
-      form_info_pd.dropdown('set selected', b.parent ? b.parent : '_top');
+      form_info_pd.dropdown('set selected', getparentshortcut(b.parent));
 
       // admin
       form_admin.find('input[name*=shortcut]').val(b.shortcut);
