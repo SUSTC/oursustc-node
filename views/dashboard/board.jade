@@ -41,6 +41,10 @@ block script
       form_info.find('input[name*=name]').val(b.name);
       form_info.find('input[name*=description]').val(b.description);
       form_info.find('input[name*=parent]').val(b.parent);
+      
+      var form_info_pd = form_info.find('.ui.dropdown');
+      form_info_pd.dropdown('set selected', b.parent ? b.parent : '_top');
+
       // admin
       form_admin.find('input[name*=shortcut]').val(b.shortcut);
       // delete

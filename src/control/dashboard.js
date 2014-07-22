@@ -290,6 +290,9 @@
                   } else if (board) {
                     data.err.shortcut = true;
                     ep.emit('finish', false);
+                  } else if (b.parent == b.shortcut) {
+                    data.err.parent = true;
+                    ep.emit('finish', false);
                   } else {
                     BoardProxy.newAndSave(b.shortcut, b.name, 1, 0,
                         b.description, parent ? parent._id : null, ep.done('finish'));
