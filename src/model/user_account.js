@@ -1,11 +1,17 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var config = require("./../config/config.json");
+var constdata = require("./../common/constdata");
 
 var UserAccountSchema = new Schema({
   //uid: { type: Number, default: 0, unique: true, index: true },
   student_id: { type: String, unique: true, index: true },
   name: { type: String },
+
+  accounttype: {
+    type: Number,
+    default: constdata.account_type.EXTERNAL
+  },
 
   loginname: { type: String },
   loginname_clean: { type: String },  //, unique: true

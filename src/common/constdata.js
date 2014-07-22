@@ -39,6 +39,13 @@
     TEACHER_POST:      0x00000010,
     EXTERNAL_ACCESS:   0x00000020,
     EXTERNAL_POST:     0x00000040,
-
+    NOACCOUNT_ACCESS:  0x00000080
   };
+
+  exports.account_type = {
+    EXTERNAL:          0,
+    TEACHER:           1,
+    STUDENT:           2
+  };
+  
 }).call(this);
