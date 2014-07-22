@@ -134,7 +134,7 @@
     });
 
     for (var i = 0; i < accounts.length; i++) {
-      UserAccountProxy.newAndSave(accounts[i].studentId, accounts[i].name, '',
+      UserAccountProxy.newAndSave(accounts[i].studentId, accounts[i].name, accounts[i].accounttype, '',
         accounts[i].password, '', false,
         ep.group('account'));
     }

@@ -37,7 +37,7 @@
   User.prototype.init = function() {
     /* UserAccountProxy.newAndSave(
       '11210000',
-      '测试者', 'test',
+      '测试者', 0, 'test',
       functions.password_hash('123456'),
       'test@sustc.us',
       true, function (err, user) {
