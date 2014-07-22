@@ -97,7 +97,7 @@ block script
       if (page_id) {
         $('#page_id').val('');
         $.ajax({
-          url: '/api/user/page/' + page_id,
+          url: '/api/user/' + page_id,
           success: successHandler
         });
       }
