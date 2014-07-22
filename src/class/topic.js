@@ -55,7 +55,8 @@
         break;
     }
 
-    
+    if (this.board.administrator_ids.indexOf(res.locals.core.user.page_id) !== -1) return true;
+
     return false;
   };
 
@@ -98,6 +99,10 @@
     return false;
     //return ((topic.type == TOPIC_TYPE.NEWS && (res.locals.core.user.page.permission & permission.MANAGE_NEWS)) || (topic.type == TOPIC_TYPE.COURSEWARE && (res.locals.core.user.page.permission & permission.MANAGE_COURSEWARE)) || (res.locals.core.user.page_id == topic.author_id));
   };
+
+  Topic.prototype.canReply = function(res, topic) {
+    return true;
+  }; // STUB: Can reply
 
   Topic.prototype.getBoard = function (req, res, data, rescallback, callback) {
     var that = this;
