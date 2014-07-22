@@ -272,6 +272,9 @@
           if (res.locals.core.user.checkcsrf(req.body.csrf)
               && req.body.board && req.body.board.shortcut) {
             var b = req.body.board;
+            if (b.parent == '_top') {
+              b.parent = null;
+            }
             var events = ['board', 'parent'];
             var ep = EventProxy.create(events, function (board, parent) {
               if (b.parent && !parent) {

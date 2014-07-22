@@ -175,14 +175,7 @@
             "board_list": "板块列表"
         }
     },
-    "board":{
-        "name": "名称",
-        "description": "简介",
-        "parent": "父板块",
-        "shortcut": "短链接",
-        "cover": "封面",
-        "top_board": "顶级板块"
-    },
+
     "user": {
         "login": "登录",
         "logout": "退出",
@@ -321,6 +314,12 @@
     },
 
     "board": {
+        "name": "名称",
+        "description": "简介",
+        "parent": "父板块",
+        "shortcut": "短链接",
+        "cover": "封面",
+        "top_board": "顶级板块",
         "boards_not_found": "没有找到板块"
     },
 

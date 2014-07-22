@@ -2,16 +2,20 @@ extends ../common/layout
 
 mixin show_board_parent_list
   .ui.selection.dropdown
-    input(type='hidden', name='board[parent]')
+    input(type='hidden', name='board[parent]', value='_top')
     .default.text= lang.board.top_board
     i.dropdown.icon
     .menu
-      .item(data-value='')= lang.board.top_board
+      .item(data-value='_top')= lang.board.top_board
       each board in boards
         .item(data-value=board.shortcut)= board.name
 
 block script
   script(type='text/javascript').
+    $(document).ready(function () {
+      $('.ui.dropdown').dropdown();
+    });
+
     var administrators = !{administrators};
     function gen_pagelabelhtml(page_id, name) {
       return '\
