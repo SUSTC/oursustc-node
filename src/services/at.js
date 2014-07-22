@@ -10,7 +10,7 @@
  */
 
 var User = require('../proxy').UserPage;
-var Message = require('./message');
+var Message = require('./notification');
 var EventProxy = require('eventproxy');
 
 /**

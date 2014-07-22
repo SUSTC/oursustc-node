@@ -1,7 +1,7 @@
 var models = require('../model');
-var Message = models.Message;
+var Message = models.Notification;
 var User = require('../proxy').User;
-var messageProxy = require('../proxy/message');
+var messageProxy = require('../proxy/notification');
 var mail = require('./mail');
 
 exports.sendReplyMessage = function (master_id, author_id, topic_id, reply_id) {
