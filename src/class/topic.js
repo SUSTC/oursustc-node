@@ -43,7 +43,8 @@
     if (!res.locals.core.isLogin()) {
       return false;
     }
-    switch (res.locals.core.user.account.accounttype){
+
+    switch (res.locals.core.user.accounttype){
       case constdata.account_type.STUDENT:
         if(this.board.access & constdata.board_permission.STUDENT_ACCESS) return true;
         break;
@@ -65,7 +66,7 @@
       return false;
     }
 
-    switch(res.locals.core.user.account.accounttype){
+    switch(res.locals.core.user.accounttype){
       case constdata.account_type.STUDENT:
         if(this.board.access & constdata.board_permission.STUDENT_POST) return true;
         break;

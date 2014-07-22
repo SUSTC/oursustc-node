@@ -405,6 +405,7 @@
             is_login = true;
 
             that.account = user;
+            that.accounttype = parseInt(user.accounttype);
 
             that.showname = user.name;
             that.uid = user.uid;
