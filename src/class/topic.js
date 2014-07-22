@@ -38,12 +38,12 @@
     /*if ((this.type == TOPIC_TYPE.COURSEWARE || this.type == TOPIC_TYPE.BBS) && !res.locals.core.isLogin()) {
       
     }*/
-    if(this.board.access & constdata.board_permission.NOACCOUNT_ACCESS) return true;
+    if (this.board.access & constdata.board_permission.NOACCOUNT_ACCESS) return true;
 
     if (!res.locals.core.isLogin()) {
       return false;
     }
-    switch(res.locals.core.user.account.accounttype){
+    switch (res.locals.core.user.account.accounttype){
       case constdata.account_type.STUDENT:
         if(this.board.access & constdata.board_permission.STUDENT_ACCESS) return true;
         break;
@@ -76,7 +76,9 @@
         break;
     }
 
-    if(this.author==res.locals.core.user._id) return true;
+    if (this.author == res.locals.core.user._id) return true;
+
+    if (this.board.administrator_ids.indexOf(res.locals.core.user.page_id) !== -1) return true;
     
     return false;
     //return ((this.type == TOPIC_TYPE.NEWS && (res.locals.core.user.page.permission & permission.ADD_NEWS)) || (this.type == TOPIC_TYPE.COURSEWARE && (res.locals.core.user.page.permission & permission.ADD_COURSEWARE)) || (this.type == TOPIC_TYPE.BBS));
@@ -87,11 +89,11 @@
       return false;
     }
 
-    if(this.author == res.locals.core.user._id) return true;
+    if (this.author == res.locals.core.user._id) return true;
 
-    if(res.locals.core.user.page.permission & constdata.user_permission.DASHBOARD) return true;
+    if (res.locals.core.user.page.permission & constdata.user_permission.DASHBOARD) return true;
 
-    if(this.board.administrator_ids.indexOf(res.locals.core.user._id) !== -1) return true;
+    if (this.board.administrator_ids.indexOf(res.locals.core.user.page_id) !== -1) return true;
 
     return false;
     //return ((topic.type == TOPIC_TYPE.NEWS && (res.locals.core.user.page.permission & permission.MANAGE_NEWS)) || (topic.type == TOPIC_TYPE.COURSEWARE && (res.locals.core.user.page.permission & permission.MANAGE_COURSEWARE)) || (res.locals.core.user.page_id == topic.author_id));
