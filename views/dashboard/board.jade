@@ -1,5 +1,15 @@
 extends ../common/layout
 
+mixin show_board_parent_list
+  .ui.selection.dropdown
+    input(type='hidden', name='board[parent]')
+    .default.text= lang.board.top_board
+    i.dropdown.icon
+    .menu
+      .item(data-value='')= lang.board.top_board
+      each board in boards
+        .item(data-value=board.shortcut)= board.name
+
 block script
   script(type='text/javascript').
     var administrators = !{administrators};
@@ -120,9 +130,7 @@ block content
                   textarea(name='board[description]', placeholder=lang.board.description)
                   i.icon.info
               .field(class=(err.parent ? 'error' : ''))
-                .ui.left.labeled.icon.input
-                  input(type='text', name='board[parent]', placeholder=lang.board.parent)
-                  i.icon.chat
+                +show_board_parent_list
               .form-actions
                 button.ui.blue.submit.button(type='submit')= lang.info.submit
       .column
@@ -200,8 +208,6 @@ block content
                   textarea(name='board[description]', placeholder=lang.board.description)
                   i.icon.info
               .field(class=(err.parent ? 'error' : ''))
-                .ui.left.labeled.icon.input
-                  input(type='text', name='board[parent]', placeholder=lang.board.parent)
-                  i.icon.chat
+                +show_board_parent_list
               .form-actions
                 button.ui.blue.submit.button(type='submit')= lang.info.submit
