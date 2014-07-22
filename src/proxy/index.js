@@ -7,4 +7,4 @@ exports.Board = require('./board');
 exports.Topic = require('./topic');
 exports.TopicAttachment = require('./topic_attachment');
 exports.Reply = require('./reply');
-exports.Message = require('./message');
+exports.Notification = require('./notification');

@@ -1,6 +1,6 @@
 var EventProxy = require('eventproxy');
 
-var Message = require('../model').Message;
+var Message = require('../model').Notification;
 
 var User = require('./user_page');
 var Topic = require('./topic');

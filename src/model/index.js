@@ -11,7 +11,7 @@ require('./board');
 require('./topic');
 require('./topic_attachment');
 require('./reply');
-require('./message');
+require('./notification');
 
 exports.UserAccount = mongoose.model('UserAccount');
 exports.UserPage = mongoose.model('UserPage');
@@ -22,4 +22,4 @@ exports.Board = mongoose.model('Board');
 exports.Topic = mongoose.model('Topic');
 exports.TopicAttachment = mongoose.model('TopicAttachment');
 exports.Reply = mongoose.model('Reply');
-exports.Message = mongoose.model('Message');
+exports.Notification = mongoose.model('Notification');
