@@ -193,6 +193,48 @@
 */
   }
 
+  function install_board(data, res, callback) {
+    var count = 0;
+    var boards = [];
+    lineSplit('src/data/board.csv', function(line) {
+      var boarddata = line.split(',');
+      if (boarddata && boarddata.length >= 3) {
+        var shortcut_ = string.clean(boarddata[0]);
+        var access_ = parseInt(boarddata[2]);
+        if (shortcut_ && boarddata[1]) {
+          var objboard = {
+            shortcut: shortcut_,
+            name: boarddata[1],
+            access: access_
+          };
+
+          boards.push(objboard);
+
+          count++;
+        }
+      }
+    });
+
+    if (count <= 0) {
+      callback();
+      return;
+    }
+
+    var ep = new EventProxy();
+    ep.after('board', boards.length, function (list) {
+      callback();
+    });
+
+    ep.fail(function (err) {
+      callback();
+    });
+
+    for (var i = 0; i < boards.length; i++) {
+      BoardProxy.newAndSave(boards[i].shortcut, boards[i].name, 0, boards[i].access,
+        '', null, ep.done('board'));
+    }
+  }
+
   function haveDashboardPermission(res) {
     return ((res.locals.core.user.page.permission & permission.DASHBOARD) 
         && res.locals.core.user.page.power >= 3);
@@ -246,7 +288,7 @@
                     data.err.shortcut = true;
                     ep.emit('finish', false);
                   } else {
-                    BoardProxy.newAndSave(b.shortcut, b.name, 0, 0,
+                    BoardProxy.newAndSave(b.shortcut, b.name, 1, 0,
                         b.description, parent ? parent._id : null, ep.done('finish'));
                   }
                   break;
@@ -480,8 +522,10 @@
     }
 
     //v0.10.0 ~> {encoding: 'utf8'}
-    var install_step = ['', 'drop', 'base', 'data', 'user'];
-    var install_method = [null, install_database_drop, 'src/data/db_install.sql', 'src/data/db_install_data.sql', install_user];
+    var install_step = ['', 'drop', 'base', 'data', 'user', 'board'];
+    var install_method = [null, install_database_drop,
+        'src/data/db_install.sql', 'src/data/db_install_data.sql',
+        install_user, install_board];
     var istep = -1;
     if (!req.query.do) {
       istep = 0;
@@ -493,11 +537,13 @@
       data.err = null;
 
       var callbackFunction = function () {
+        var isfinish = false;
         data.step = install_step[istep];
         if (!data.err) {
           if (istep < install_step.length - 1) {
             res.redirect('/dashboard/install?do=' + install_step[istep + 1]);
           } else {
+            isfinish = true;
             fs.writeFile(INSTALL_LOCK, 'SUSTC', function (err) {
               if (err) {
                 mvc.error(err);
@@ -509,7 +555,11 @@
         var endTime = Date.now();
         mvc.log(((endTime - startTime) / 1000).toFixed(2) + 's');
 
-        callback(true);
+        if (isfinish) {
+          view.showMessage(data, res.locals.core.lang.info.success, 'success', '/dashboard', callback);
+        } else {
+          callback(true);
+        }
       };
 
       if (install_method[istep] instanceof Function) {
