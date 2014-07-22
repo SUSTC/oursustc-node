@@ -33,8 +33,8 @@
   exports.board_permission = {
     BASE:              0x00000000,
     RESERVE:           0x00000001,
-    STU_ACCESS:        0x00000002,
-    STU_POST:          0x00000004,
+    STUDENT_ACCESS:    0x00000002,
+    STUDENT_POST:      0x00000004,
     TEACHER_ACCESS:    0x00000008,
     TEACHER_POST:      0x00000010,
     EXTERNAL_ACCESS:   0x00000020,
