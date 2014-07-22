@@ -19,10 +19,10 @@ var BoardSchema = new Schema({
   },
   access: {
     type: Number,
-    default: constdata.board_permission.STU_ACCESS ||
-      constdata.board_permission.STU_POST ||
-      constdata.board_permission.TEACHER_ACCESS ||
-      constdata.board_permission.TEACHER_POST ||
+    default: constdata.board_permission.STU_ACCESS |
+      constdata.board_permission.STU_POST |
+      constdata.board_permission.TEACHER_ACCESS |
+      constdata.board_permission.TEACHER_POST
   },
   parent: {
     type: ObjectId
