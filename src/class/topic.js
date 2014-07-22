@@ -38,17 +38,48 @@
     /*if ((this.type == TOPIC_TYPE.COURSEWARE || this.type == TOPIC_TYPE.BBS) && !res.locals.core.isLogin()) {
       
     }*/
+    if(this.board.access & constdata.board_permission.NOACCOUNT_ACCESS) return true;
+
     if (!res.locals.core.isLogin()) {
       return false;
     }
-    return true;
+
+    switch(res.locals.core.user){
+      case constdata.account_type.STUDENT:
+        if(this.board.access & constdata.board_permission.STUDENT_ACCESS) return true;
+        break;
+      case constdata.account_type.TEACHER:
+        if(this.board.access & constdata.board_permission.TEACHER_ACCESS) return true;
+        break;
+      case constdata.account_type.EXTERNAL:
+        if(this.board.access & constdata.board_permission.EXTERNAL_ACCESS) return true;
+        break;
+    }
+
+    
+    return false;
   };
 
   Topic.prototype.canPost = function(res) {
     if (!res.locals.core.isLogin()) {
       return false;
     }
-    return true;
+
+    switch(res.locals.core.user){
+      case constdata.account_type.STUDENT:
+        if(this.board.access & constdata.board_permission.STUDENT_POST) return true;
+        break;
+      case constdata.account_type.TEACHER:
+        if(this.board.access & constdata.board_permission.TEACHER_POST) return true;
+        break;
+      case constdata.account_type.EXTERNAL:
+        if(this.board.access & constdata.board_permission.EXTERNAL_POST) return true;
+        break;
+    }
+
+    if(this.author==res.locals.core.user._id) return true;
+    
+    return false;
     //return ((this.type == TOPIC_TYPE.NEWS && (res.locals.core.user.page.permission & permission.ADD_NEWS)) || (this.type == TOPIC_TYPE.COURSEWARE && (res.locals.core.user.page.permission & permission.ADD_COURSEWARE)) || (this.type == TOPIC_TYPE.BBS));
   };
 
@@ -56,7 +87,14 @@
     if (!res.locals.core.isLogin()) {
       return false;
     }
-    return true;
+
+    if(this.author == res.locals.core.user._id) return true;
+
+    if(res.locals.core.user.page.permission & constdata.user_permission.DASHBOARD) return true;
+
+    if(this.board.administrator_ids.indexOf(res.locals.core.user._id) !== -1) return true;
+
+    return false;
     //return ((topic.type == TOPIC_TYPE.NEWS && (res.locals.core.user.page.permission & permission.MANAGE_NEWS)) || (topic.type == TOPIC_TYPE.COURSEWARE && (res.locals.core.user.page.permission & permission.MANAGE_COURSEWARE)) || (res.locals.core.user.page_id == topic.author_id));
   };
 

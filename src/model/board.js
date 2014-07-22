@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
 var config = require("./../config/config.json");
+var constdata = require("./../common/constdata");
 
 var BoardSchema = new Schema({
   name: {
@@ -18,7 +19,10 @@ var BoardSchema = new Schema({
   },
   access: {
     type: Number,
-    default: 0
+    default: constdata.board_permission.STU_ACCESS ||
+      constdata.board_permission.STU_POST ||
+      constdata.board_permission.TEACHER_ACCESS ||
+      constdata.board_permission.TEACHER_POST ||
   },
   parent: {
     type: ObjectId
@@ -26,10 +30,10 @@ var BoardSchema = new Schema({
   administrator_ids: {
     type: [ObjectId]
   },
-  description:{
+  description: {
     type: String
   },
-  tag:{
+  tag: {
     type: String
   },
   topic_count: {
