@@ -1,5 +1,8 @@
 extends ../common/layout
 
+block stylesheet
+  link(rel='stylesheet', href=base.rooturl + '/static/css/topic.css?v=#{version.css}')
+
 block script
 
 mixin board_list(boards, level)
@@ -7,17 +10,17 @@ mixin board_list(boards, level)
       if (level == 0)
         if(Object.keys(boards).length!=1)
           each board, id in boards
-            .ui.segment.attached.top.blue
+            .ui.segment.attached.left.blue
               a.header(href='/board/' + board.shortcut)= board.name
               .text
-                = board.description? board.description: '暂无介绍'
+                = board.description? board.description: lang.board.no_description
             +board_list(board.children, level + 1)
         else
           each board, id in boards
-            .ui.segment.blue
+            .ui.segment.attached.left.blue
               a.header(href='/board/' + board.shortcut)= board.name
               .text
-                = board.description? board.description: '暂无介绍'
+                = board.description? board.description: lang.board.no_description
             +board_list(board.children, level + 1)
       else
         if(Object.keys(boards).length!=0)
@@ -31,7 +34,7 @@ block bodyheader
 block content
   div(id=active)
     if (boards)
-      .ui.segment
+      .ui.segment#board_list
         +board_list(boards, 0)
 
     else

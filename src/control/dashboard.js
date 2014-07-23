@@ -292,7 +292,7 @@
                     data.err.shortcut = true;
                     ep.emit('finish', false);
                   } else {
-                    BoardProxy.newAndSave(b.shortcut, b.name, 1, 0,
+                    BoardProxy.newAndSave(b.shortcut, b.name, 1, parseInt(b.access),
                         b.description, parent ? parent._id : null, ep.done('finish'));
                   }
                   break;
@@ -308,6 +308,7 @@
                     ep.emit('finish', false);
                   } else {
                     board.name = b.name;
+                    board.access = parseInt(b.access);
                     board.description = b.description;
                     board.parent = parent ? parent._id : null;
                     board.save(ep.done('finish'));

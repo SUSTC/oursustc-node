@@ -56,3 +56,8 @@
   border-top: .2em solid rgba(0,0,0,.2);
   border-radius: .33em;
 }
+
+#board_list .left.blue {
+  border-top: none;
+  border-left: .2em solid #6ECFF5;
+}

@@ -52,6 +52,7 @@ block script
       form_info.find('input[name*=shortcut]').val(b.shortcut);
       form_info.find('input[name*=name]').val(b.name);
       form_info.find('input[name*=description]').val(b.description);
+      form_info.find('input[name*=access]').val(b.access);
       form_info.find('input[name*=parent]').val(getparentshortcut(b.parent));
       
       var form_info_pd = form_info.find('.ui.dropdown');
@@ -145,6 +146,12 @@ block content
                   i.icon.comment
                   .ui.corner.label
                     i.icon.asterisk
+              .field(class=(err.board_access ? 'error' : ''))
+                .ui.left.labeled.icon.input
+                  input(type='number', name='board[access]', placeholder=lang.board.access)
+                  i.icon.certificate
+                  .ui.corner.label
+                    i.icon.asterisk
               .field(class=(err.board_description ? 'error' : ''))
                 .ui.left.labeled.icon.input
                   textarea(name='board[description]', placeholder=lang.board.description)
@@ -221,6 +228,12 @@ block content
                 .ui.left.labeled.icon.input
                   input(maxlength='20', type='text', name='board[name]', placeholder=lang.board.name)
                   i.icon.comment
+                  .ui.corner.label
+                    i.icon.asterisk
+              .field(class=(err.board_access ? 'error' : ''))
+                .ui.left.labeled.icon.input
+                  input(type='number', name='board[access]', placeholder=lang.board.access, value='30')
+                  i.icon.certificate
                   .ui.corner.label
                     i.icon.asterisk
               .field(class=(err.board_description ? 'error' : ''))
