@@ -1,8 +1,10 @@
 extends ../common/layout
+include ./tree
 
 block stylesheet
   link(rel='stylesheet', href=base.rooturl + '/static/css/topic.css?v=#{version.css}')
   link(rel='stylesheet', href=base.rooturl + '/static/css/treeview.css?v=#{version.css}')
+
 block script
   script(type='text/javascript').
     function itemClick(e) {
@@ -17,15 +19,31 @@ block script
       }
     }
     $('#topic_list .item').on('click', itemClick);
+  block treescript
 
 block bodyheader
   //include ../user/user-bar
   include ../common/banner
 
-
-
 block content
-  div(id=active)
+  .treeview
+    .ui.segment
+      if (boards)
+        .tree
+          ul
+            li
+              span
+                a(href='/board')
+                  = lang.title.board.index
+              +board_list(boards, 1)
+      else
+        .ui.icon.message
+          i.icon.exclamation
+          .content
+            .header= lang.info.tips
+            p= lang.board.boards_not_found
+
+  div.mainview(id=active)
     .ui.segment
       .ui.breadcrumb
         a.section(href='/')= lang.title.index
@@ -36,8 +54,7 @@ block content
           .active.section= board.name
         else
           .active.section ...
-    block treeview
-      include ./tree
+
     if (canPost)
       .ui.segment
         a.ui.blue.button(href=base.rooturl + '/#{active}/add')
