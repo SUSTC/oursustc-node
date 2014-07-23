@@ -30,7 +30,11 @@
     if (page_id && string.is_objectid(page_id)) {
       page_ids.push(page_id);
     }
-    topic.list(req, res, page_ids, data, callback);
+    topic.getboardstree(function (err, boards) {
+      data.showtopics = true;
+      data.boards = boards;
+      topic.list(req, res, page_ids, data, callback);
+    });
   };
 
   exports.show = function(req, res, data, callback) {
