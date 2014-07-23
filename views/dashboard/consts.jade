@@ -19,9 +19,9 @@ block script
                   cls = 'str';
               }
           } else if (/true|false/.test(match)) {
-              cls = 'boolean';
+              cls = 'atv'; //'boolean';
           } else if (/null/.test(match)) {
-              cls = 'null';
+              cls = 'atv'; //'null';
           } else if (/[,.}{\[\]]/.test(match)) {
               cls = 'pun';
           } else if (/^\s+$/.test(match)) {
