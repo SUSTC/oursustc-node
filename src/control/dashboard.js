@@ -257,6 +257,11 @@
     }
   };
 
+  exports.consts = function (req, res, data, callback) {
+    
+    
+  };
+
   exports.board = function (req, res, data, callback) {
     data.title = res.locals.core.lang.title.dashboard.board + ' - ' + res.locals.core.lang.title.dashboard.index;
     data.active = 'dashboard';
