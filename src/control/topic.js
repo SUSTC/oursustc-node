@@ -14,11 +14,11 @@
 
   function initData(res, data, subtitle) {
     if (subtitle) {
-      data.title = subtitle + ' - ' + res.locals.core.lang.title.news.index;
+      data.title = subtitle + ' - ' + res.locals.core.lang.title.topic.index;
     } else {
-      data.title = res.locals.core.lang.title.news.index;
+      data.title = res.locals.core.lang.title.topic.index;
     }
-    data.active = 'news';
+    data.active = 'topic';
   }
 
   exports.page = function(req, res, data, callback) {

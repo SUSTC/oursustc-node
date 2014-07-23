@@ -15,17 +15,9 @@
     console.log(err, b);
   }); */
 
-  /*function initData(res, data, subtitle) {
-    if (subtitle) {
-      data.title = subtitle + ' - ' + res.locals.core.lang.title.bbs.index;
-    } else {
-      data.title = res.locals.core.lang.title.bbs.index;
-    }
-  }*/
-
   exports.index = function(req, res, data, callback) {
 
-    //initData(res, data);
+    data.title = res.locals.core.lang.title.board.index;
 
     if (req.params.shortcut) {
       data.active = 'board/' + req.params.shortcut;

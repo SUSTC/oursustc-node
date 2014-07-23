@@ -189,6 +189,8 @@
         }
       }
 
+      data.title = that.board.name + ' - ' + data.title;
+
       data.topics = topics;
       data.pagination = pagination;
       callback();
