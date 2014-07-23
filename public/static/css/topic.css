@@ -39,9 +39,9 @@
 }
 
 #topic_list .user-topics {
+  float: left;
   position: absolute;
-  left: 62px;
-  top: 60px;
+  margin: -15px 0 0 42px;
 }
 
 #topic_content {

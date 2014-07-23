@@ -36,10 +36,6 @@ block content
           if (topic.author)
             - var u = topic.author;
             include ../user/user-round
-          if (topic.author_id)
-            .user-topics
-              a(href=base.rooturl + '/topic/page/#{topic.author_id}')
-                i.suitcase.icon
           .content
             .header
               a(href=base.rooturl + '/topic/#{topic._id}')= topic.title
@@ -56,6 +52,10 @@ block content
               .info
                 strong.number= topic.reply_count
                 | #{lang.topic.reply_count}
+          if (topic.author_id)
+            .user-topics
+              a(href=base.rooturl + '/topic/page/#{topic.author_id}')
+                i.suitcase.icon
 
       else
         .ui.icon.message
