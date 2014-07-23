@@ -144,6 +144,58 @@
     }
   };
 
+  Topic.prototype.getboardstree = function(callback) {
+    // All preprocessing completed, Render the page
+    var e = EventProxy.create(['render'], function(boards) {
+      callback(null, boards);
+    });
+    // Tree has been built, Do preprocessing here PLS
+    e.once('treebuilt', function(tree) {
+      var record = tree; //This is for debugging only
+      /*
+      var dumptree = function(tree, level) {
+        if (tree)
+          for (var i in tree) {
+            console.log(level, tree[i]._id);
+            dumptree(tree[i].children, level + 1);
+          }
+      }
+      dumptree(tree, 1); // For debugging
+      */
+      e.emit('render', record)
+    });
+    e.fail(function (err) {
+      callback(err);
+    });
+    //Here we build the tree structure BEGIN
+    BoardProxy.fetchAll(function(err, list) {
+      var tree = {};
+      // build function BEGIN
+      var build = function(parent) {
+        var current = parent;
+        current.children = {};
+
+        for (var i = 0; i < list.length; i++) {
+          if ((typeof(list[i].parent) !== 'undefined') && (list[i].parent == parent._id.toString())) {
+            var child = build(list[i]);
+            current.children[child._id] = child;
+          }
+        }
+        return current;
+      };
+      // build function END
+
+      for (var i = 0; i < list.length; i++) {
+        if (list[i].parent == null) {
+          var child = build(list[i]);
+          tree[child._id] = child;
+        }
+      }
+      e.emit('treebuilt', tree);
+    });
+    // Tree building END
+  };
+
   Topic.prototype.index = function(req, res, data, callback) {
     var that = this;
     this.getBoard(req, res, data, callback, function (err) {

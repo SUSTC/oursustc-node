@@ -23,56 +23,19 @@
       data.active = 'board/' + req.params.shortcut;
 
       var topic = new Topic(req.params.shortcut);
-      topic.index(req, res, data, callback);
+      topic.getboardstree(function (err, boards) {
+        data.showtopics = true;
+        data.boards = boards;
+        topic.index(req, res, data, callback);
+      });
     } else {
-      // All preprocessing completed, Render the page
-      var e = EventProxy.create(['render'], function(boards) {
+      var topic = new Topic();
+      topic.getboardstree(function (err, boards) {
+        data.showboards = true;
         data.active = 'board';
         data.boards = boards;
         callback();
       });
-      // Tree has been built, Do preprocessing here PLS
-      e.once('treebuilt', function(tree) {
-        var record = tree; //This is for debugging only
-        /*
-        var dumptree = function(tree, level) {
-          if (tree)
-            for (var i in tree) {
-              console.log(level, tree[i]._id);
-              dumptree(tree[i].children, level + 1);
-            }
-        }
-        dumptree(tree, 1); // For debugging
-        */
-        e.emit('render', record)
-      });
-      //Here we build the tree structure BEGIN
-      BoardProxy.fetchAll(function(err, list) {
-        var tree = {};
-        // build function BEGIN
-        var build = function(parent) {
-          var current = parent;
-          current.children = {};
-
-          for (var i = 0; i < list.length; i++) {
-            if ((typeof(list[i].parent) !== 'undefined') && (list[i].parent == parent._id.toString())) {
-              var child = build(list[i]);
-              current.children[child._id] = child;
-            }
-          }
-          return current;
-        };
-        // build function END
-
-        for (var i = 0; i < list.length; i++) {
-          if (list[i].parent == null) {
-            var child = build(list[i]);
-            tree[child._id] = child;
-          }
-        }
-        e.emit('treebuilt', tree);
-      });
-      // Tree building END
     }
 
   };
