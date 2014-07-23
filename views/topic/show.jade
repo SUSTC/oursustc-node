@@ -1,6 +1,7 @@
 extends ../common/layout
 
 block stylesheet
+  link(rel='stylesheet', href=base.rooturl + '/static/css/topic.css?v=#{version.css}')
   link(rel='stylesheet', href=base.rooturl + '/static/editor/google-code-prettify/prettify.css', type='text/css')
   link(rel='stylesheet', href=base.rooturl + '/static/editor/editor.css?v=#{version.css}')
 

@@ -1,0 +1,58 @@
+#topic_list .item {
+  padding: 15px 0 15px 20px;
+}
+
+#topic_list .header {
+  font-size: 1.2em;
+}
+
+#topic_list img.avatar {
+  width: 60px;
+  height: 60px;
+  margin-right: 1em;
+}
+
+#topic_list .item .floated {
+  width: 30%;
+}
+
+#topic_list .item .floated .numbers {
+  color: #bbb;
+}
+
+#topic_list .item .floated .column {
+  margin: 0px;
+}
+
+#topic_list .item .floated .numbers .number {
+  display: block;
+  font-size: 2em;
+  color: #333;
+}
+
+#topic_list .item .floated .numbers div {
+  float: left;
+  margin-left: 1em;
+  text-align: center;
+  line-height: 2em;
+  font-family: Helvetica;
+}
+
+#topic_list .user-topics {
+  position: absolute;
+  left: 62px;
+  top: 60px;
+}
+
+#topic_content {
+  padding-top: 1em;
+  min-height: 100px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-box-shadow: 0 0 0 1px rgba(0,0,0,.1);
+  box-shadow: 0 0 0 1px rgba(0,0,0,.1);
+  border-top: .2em solid rgba(0,0,0,.2);
+  border-radius: .33em;
+}
