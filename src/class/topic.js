@@ -290,6 +290,7 @@
     var events = ['topic', 'other_topics'];
     var ep = EventProxy.create(events, function(topic, other_topics) {
       data.topic = topic;
+      data.board = that.board;
       data.author_other_topics = other_topics;
       if (topic.title) {
         data.title = topic.title + ' - ' + data.title;

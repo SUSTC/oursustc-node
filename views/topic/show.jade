@@ -22,6 +22,19 @@ block bodyheader
 block content
   .ui.grid
     .twelve.wide.column#topic_wrapper
+      .ui.segment
+        .ui.breadcrumb
+          a.section(href='/')= lang.title.index
+          .divider /
+          a.section(href='/board')= lang.title.board.index
+          .divider /
+          if (board)
+            a.section(href='/board/' + board.shortcut)= board.name
+          else
+            a.section ...
+          .divider /
+          .active.section= topic.title
+
       if (topic.canManage || (topic.author && topic.author._id == user.page_id))
         .ui.segment
           .ui.text.menu
