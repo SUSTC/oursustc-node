@@ -324,12 +324,14 @@
         "parent": "父板块",
         "shortcut": "短链接",
         "cover": "封面",
+        "board_list": "板块列表",
         "top_board": "顶级板块",
         "boards_not_found": "没有找到板块",
         "no_description": "暂无介绍"
     },
 
     "dashboard": {
+        "consts": "常量",
         "user_management": "用户管理",
         "board_management": "板块管理",
         "install": "安装"
