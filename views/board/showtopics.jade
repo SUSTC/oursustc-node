@@ -24,6 +24,17 @@ block bodyheader
 
 block content
   div(id=active)
+    .ui.segment
+      .ui.breadcrumb
+        a.section(href='/')= lang.title.index
+        .divider /
+        a.section(href='/board')= lang.title.board.index
+        .divider /
+        if (board)
+          .active.section= board.name
+        else
+          .active.section ...
+
     if (canPost)
       .ui.segment
         a.ui.blue.button(href=base.rooturl + '/#{active}/add')

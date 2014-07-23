@@ -190,6 +190,7 @@
       }
 
       data.title = that.board.name + ' - ' + data.title;
+      data.board = that.board;
 
       data.topics = topics;
       data.pagination = pagination;

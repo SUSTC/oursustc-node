@@ -33,6 +33,12 @@ block bodyheader
 
 block content
   div(id=active)
+    .ui.segment
+      .ui.breadcrumb
+        a.section(href='/')= lang.title.index
+        .divider /
+        .active.section= lang.title.board.index
+
     if (boards)
       .ui.segment#board_list
         +board_list(boards, 0)
