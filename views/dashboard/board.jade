@@ -51,7 +51,7 @@ block script
       // info
       form_info.find('input[name*=shortcut]').val(b.shortcut);
       form_info.find('input[name*=name]').val(b.name);
-      form_info.find('input[name*=description]').val(b.description);
+      form_info.find('textarea[name*=description]').html(htmlspecialchars(b.description));
       form_info.find('input[name*=access]').val(b.access);
       form_info.find('input[name*=parent]').val(getparentshortcut(b.parent));
       
