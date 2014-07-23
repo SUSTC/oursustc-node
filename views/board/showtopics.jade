@@ -22,8 +22,7 @@ block bodyheader
   //include ../user/user-bar
   include ../common/banner
 
-block treeview
-  include ./tree
+
 
 block content
   div(id=active)
@@ -37,7 +36,8 @@ block content
           .active.section= board.name
         else
           .active.section ...
-
+    block treeview
+      include ./tree
     if (canPost)
       .ui.segment
         a.ui.blue.button(href=base.rooturl + '/#{active}/add')

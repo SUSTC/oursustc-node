@@ -1,33 +1,43 @@
 mixin board_list(boards, level)
-    if (boards)
-      if (level == 0)
-        if(Object.keys(boards).length!=1)
-          each board, id in boards
-            li
-              i
-                = board.name
-              a(href='/board/' + board.shortcut)= 'Go'
-              +board_list(board.children, level + 1)
-        else
-          each board, id in boards
-            li
-              i
-                = board.name
-              a(href='/board/' + board.shortcut)= 'Go'
-              +board_list(board.children, level + 1)
-      else
-        if(Object.keys(boards).length!=0)
-          ul
-            +board_list(boards, level - 1)
+  if (boards)
+    if (level == 0)
+      each board, id in boards
+        li
+          span
+            a(href='/board/' + board.shortcut)
+              = board.name
+          +board_list(board.children, level + 1)
+    else
+      if(Object.keys(boards).length!=0)
+        ul
+          +board_list(boards, level - 1)
 
 block treeview
-    if (boards)
-      .tree
-        ul
-          +board_list(boards, 0)
-    else
-      .ui.icon.message
-        i.icon.exclamation
-        .content
-          .header= lang.info.tips
-          p= lang.board.boards_not_found
+  if (boards)
+    .tree
+      ul
+        li
+          span
+            a(href='/board')
+              = lang.title.board.index
+          +board_list(boards, 1)
+  else
+    .ui.icon.message
+      i.icon.exclamation
+      .content
+        .header= lang.info.tips
+        p= lang.board.boards_not_found
+$(function () {
+    $('.tree li:has(ul)').addClass('parent_li').find(' > span').attr('title', 'Collapse this branch');
+    $('.tree li.parent_li > span').on('click', function (e) {
+        var children = $(this).parent('li.parent_li').find(' > ul > li');
+        if (children.is(":visible")) {
+            children.hide('fast');
+            $(this).attr('title', 'Expand this branch').find(' > i').addClass('icon-plus-sign').removeClass('icon-minus-sign');
+        } else {
+            children.show('fast');
+            $(this).attr('title', 'Collapse this branch').find(' > i').addClass('icon-minus-sign').removeClass('icon-plus-sign');
+        }
+        e.stopPropagation();
+    });
+});
