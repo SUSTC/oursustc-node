@@ -2,15 +2,27 @@ extends ../common/layout
 
 block script
 
-mixin board_list(boards)
-  if (boards)
-    .ui.divided.list
-      each board, id in boards
-        .item
-          .content
-            a.header(href='/board/' + board.shortcut)= board.name
-            = board.description
-          +board_list(board.children)
+mixin board_list(boards, level)
+    if (boards)
+      if (level == 0)
+        if(Object.keys(boards).length!=1)
+          each board, id in boards
+            .ui.segment.attached.top.blue
+              a.header(href='/board/' + board.shortcut)= board.name
+              .text
+                = board.description? board.description: '暂无介绍'
+            +board_list(board.children, level + 1)
+        else
+          each board, id in boards
+            .ui.segment.blue
+              a.header(href='/board/' + board.shortcut)= board.name
+              .text
+                = board.description? board.description: '暂无介绍'
+            +board_list(board.children, level + 1)
+      else
+        if(Object.keys(boards).length!=0)
+          .ui.segment.attached
+            +board_list(boards, level - 1)
 
 block bodyheader
   //include ../user/user-bar
@@ -19,8 +31,8 @@ block bodyheader
 block content
   div(id=active)
     if (boards)
-      .ui.form.raised.segment
-        +board_list(boards)
+      .ui.segment
+        +board_list(boards, 0)
 
     else
       .ui.icon.message
