@@ -1,0 +1,50 @@
+extends ../common/layout
+
+block stylesheet
+  link(rel='stylesheet', href=base.rooturl + '/static/editor/google-code-prettify/prettify.css', type='text/css')
+
+block script
+  script(type='text/javascript').
+    function syntaxHighlightJSON(json) {
+      if (typeof json != 'string') {
+           json = JSON.stringify(json, undefined, 2);
+      }
+      json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|\s+|[,.}{\[\]]|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+          var cls = 'dec';
+          if (/^"/.test(match)) {
+              if (/:$/.test(match)) {
+                  cls = 'kwd';
+              } else {
+                  cls = 'str';
+              }
+          } else if (/true|false/.test(match)) {
+              cls = 'boolean';
+          } else if (/null/.test(match)) {
+              cls = 'null';
+          } else if (/[,.}{\[\]]/.test(match)) {
+              cls = 'pun';
+          } else if (/^\s+$/.test(match)) {
+              cls = 'pln';
+          }
+          return '<span class="' + cls + '">' + match + '</span>';
+      });
+    }
+
+    $(document).ready(function () {
+      var constdata = !{JSON.stringify(constdata)};
+      var html = syntaxHighlightJSON(constdata);
+      $('#constdata').html(html);
+    });
+
+block bodyheader
+  div.segment
+    div.container#overview
+      div.introduction
+        h1.ui.dividing.header
+          i.dashboard.icon
+          = lang.dashboard.consts
+
+block content
+  .ui.segment
+    pre.prettyprint(style="box-shadow:none;")#constdata

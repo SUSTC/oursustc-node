@@ -50,7 +50,8 @@
         "dashboard": {
             "index": "仪表盘",
             "user": "用户",
-            "board": "板块"
+            "board": "板块",
+            "consts": "常量"
         },
         "board": {
             "index": "板块"

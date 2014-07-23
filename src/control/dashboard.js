@@ -258,8 +258,24 @@
   };
 
   exports.consts = function (req, res, data, callback) {
+    data.title = res.locals.core.lang.title.dashboard.consts + ' - ' + res.locals.core.lang.title.dashboard.index;
+    data.active = 'dashboard';
     
-    
+    data.err = {};
+
+    if (res.locals.core.isLogin()) {
+      if (!haveDashboardPermission(res)) {
+        view.showMessage(data, res.locals.core.lang.errmsg.no_permission, 'error', '/', callback);
+        return;
+      }
+
+      data.constdata = constdata;
+      callback();
+
+    } else {
+      res.redirect('/user/login?url=/dashboard/consts');
+      callback(true);
+    }
   };
 
   exports.board = function (req, res, data, callback) {

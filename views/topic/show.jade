@@ -19,6 +19,7 @@ block bodyheader
             | &nbsp;&nbsp;#{lang.info.create_at}: #{topic.friendly_create_at} 
             if (topic.update_at - topic.create_at > 10000)
               | (#{lang.topic.modified})
+
 block content
   .ui.grid
     .twelve.wide.column#topic_wrapper
