@@ -78,12 +78,9 @@
         break;
     }
 
-    if (this.author == res.locals.core.user._id) return true;
-
     if (this.board.administrator_ids.indexOf(res.locals.core.user.page_id) !== -1) return true;
     
     return false;
-    //return ((this.type == TOPIC_TYPE.NEWS && (res.locals.core.user.page.permission & permission.ADD_NEWS)) || (this.type == TOPIC_TYPE.COURSEWARE && (res.locals.core.user.page.permission & permission.ADD_COURSEWARE)) || (this.type == TOPIC_TYPE.BBS));
   };
 
   Topic.prototype.canManage = function(res, topic) {
@@ -91,14 +88,13 @@
       return false;
     }
 
-    if (this.author == res.locals.core.user._id) return true;
+    if (topic.author_id == res.locals.core.user.page_id) return true;
 
     if (res.locals.core.user.page.permission & constdata.user_permission.DASHBOARD) return true;
 
     if (this.board.administrator_ids.indexOf(res.locals.core.user.page_id) !== -1) return true;
 
     return false;
-    //return ((topic.type == TOPIC_TYPE.NEWS && (res.locals.core.user.page.permission & permission.MANAGE_NEWS)) || (topic.type == TOPIC_TYPE.COURSEWARE && (res.locals.core.user.page.permission & permission.MANAGE_COURSEWARE)) || (res.locals.core.user.page_id == topic.author_id));
   };
 
   Topic.prototype.canReply = function(res, topic) {
@@ -504,6 +500,13 @@
   };
 
   Topic.prototype.edit = function(req, res, data, callback) {
+    var that = this;
+    this.getBoard(req, res, data, callback, function (err) {
+      that._edit(req, res, data, callback);
+    });
+  };
+
+  Topic.prototype._edit = function(req, res, data, callback) {
 
     var type = this.type;
     var topic_id = req.params.id;
@@ -518,7 +521,7 @@
         topic_id = req.body.topic.id;
       }
       if (!res.locals.core.user.checkcsrf(req.body.csrf)) {
-        view.showMessage(data, res.locals.core.lang.errmsg.error_params, 'error', '/' + this.active + '/edit/' + topic_id, callback);
+        view.showMessage(data, res.locals.core.lang.errmsg.error_params, 'error', '/topic/edit/' + topic_id, callback);
         return;
       }
     }
@@ -641,6 +644,13 @@
   };
 
   Topic.prototype.delete = function(req, res, data, callback) {
+    var that = this;
+    this.getBoard(req, res, data, callback, function (err) {
+      that._delete(req, res, data, callback);
+    });
+  };
+
+  Topic.prototype._delete = function(req, res, data, callback) {
 
     var type = this.type;
     var topic_id = req.params.id;
@@ -651,7 +661,7 @@
     }
 
     if (!res.locals.core.user.checkcsrf(req.query.csrf)) {
-      view.showMessage(data, res.locals.core.lang.errmsg.error_params, 'error', '/' + this.active + '/topic/' + topic_id, callback);
+      view.showMessage(data, res.locals.core.lang.errmsg.error_params, 'error', '/topic/' + topic_id, callback);
       return;
     }
 
@@ -676,6 +686,13 @@
   };
 
   Topic.prototype.reply = function(req, res, data, callback) {
+    var that = this;
+    this.getBoard(req, res, data, callback, function (err) {
+      that._reply(req, res, data, callback);
+    });
+  };
+
+  Topic.prototype._reply = function(req, res, data, callback) {
     var type = this.type;
     var topic_id = req.params.id;
 
@@ -691,11 +708,11 @@
         r_content = sanitize(req.body.topic.reply).trim();
       }
       if (!topic_id || !r_content) {
-        view.showMessage(data, res.locals.core.lang.errmsg.error_params, 'error', '/' + this.active + '/edit/' + topic_id, callback);
+        view.showMessage(data, res.locals.core.lang.errmsg.error_params, 'error', '/topic/edit/' + topic_id, callback);
         return;
       }
       if (!res.locals.core.user.checkcsrf(req.body.csrf)) {
-        view.showMessage(data, res.locals.core.lang.errmsg.error_params, 'error', '/' + this.active + '/edit/' + topic_id, callback);
+        view.showMessage(data, res.locals.core.lang.errmsg.error_params, 'error', '/topic/edit/' + topic_id, callback);
         return;
       }
     }
@@ -707,7 +724,7 @@
 
           var ep = EventProxy.create();
           ep.fail(function() {
-            view.showMessage(data, res.locals.core.lang.errmsg.error_params, 'error', '/' + this.active + '/edit/' + topic_id, callback);
+            view.showMessage(data, res.locals.core.lang.errmsg.error_params, 'error', '/topic/edit/' + topic_id, callback);
             return;
           });
 

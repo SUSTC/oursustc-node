@@ -60,11 +60,12 @@ block content
         i.browser.icon
         = lang.topic.latest_topics
       .ui.selection.divided.list
-        each t in latest_topics
-          a.item(href=base.rooturl + '/topic/' + t._id)
-            .content
-              .header= t.title
-            //span.time.pull-right= t.friendly_create_at
+        if (latest_topics && latest_topics.length > 0)
+          each t in latest_topics
+            a.item(href=base.rooturl + '/topic/' + t._id)
+              .content
+                .header= t.title
+              //span.time.pull-right= t.friendly_create_at
         else
           .ui.message
             p= lang.topic.topics_not_found
