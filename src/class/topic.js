@@ -30,7 +30,7 @@
 
   Topic.prototype.init = function(shortcut) {
     this.shortcut = shortcut;
-    this.active = shortcut;
+    this.active = 'board/' + shortcut;
     this.board = null;
   };
 
@@ -114,6 +114,9 @@
       });
     } else {
       var topic_id = req.params.id;
+      if (!topic_id && req.body.topic) {
+        topic_id = req.body.topic.id;
+      }
       if (topic_id && string.is_objectid(topic_id)) {
         TopicProxy.getTopic(topic_id, function (err, topic) {
           if (err || !topic) {
@@ -128,7 +131,7 @@
                 return;
               }
               that.board = board;
-              that.active = board.shortcut;
+              that.active = 'board/' + board.shortcut;
               callback();
             });
           }
@@ -540,7 +543,7 @@
           var events = ['err', 'topic', 'new_attachments', 'del_attachments'];
           var ep = EventProxy.create(events, function(err, topic, newAttachments, delAttachments) {
             if (err) {
-              view.showMessage(data, String(err), 'error', '/' + active + '/edit/' + topic._id, callback);
+              view.showMessage(data, String(err), 'error', '/topic/edit/' + topic._id, callback);
             } else {
               view.showMessage(data, '', 'success', '/topic/' + topic._id, callback);
             }
@@ -572,7 +575,7 @@
               }
             }
             if (errIds) {
-              view.showMessage(data, res.locals.core.lang.errmsg.error_params, 'error', '/' + active + '/edit/' + topic._id, callback);
+              view.showMessage(data, res.locals.core.lang.errmsg.error_params, 'error', '/topic/edit/' + topic._id, callback);
               return;
             }
 
@@ -680,7 +683,7 @@
           });
         });
       } else {
-        view.showMessage(data, res.locals.core.lang.topic.topic_not_found, 'error', '/' + active + '/edit/' + topic._id, callback);
+        view.showMessage(data, res.locals.core.lang.topic.topic_not_found, 'error', '/topic/edit/' + topic._id, callback);
       }
     });
   };
@@ -764,7 +767,7 @@
           callback();
         }
       } else {
-        view.showMessage(data, res.locals.core.lang.topic.topic_not_found, 'error', '/' + active + '/edit/' + topic._id, callback);
+        view.showMessage(data, res.locals.core.lang.topic.topic_not_found, 'error', '/topic/edit/' + topic._id, callback);
       }
     });
   };
