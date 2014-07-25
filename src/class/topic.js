@@ -406,7 +406,7 @@
           ]
         }; //[ 'last_reply_at', 'desc' ]
         var query = {
-          type: type,
+          //type: type,
           author_id: topic.author_id,
           _id: {
             '$nin': [topic._id]
