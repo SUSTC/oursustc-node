@@ -78,6 +78,8 @@
     return (this.user.uid != 0);
   }
 
+  exports.Core = Core;
+
   exports.coreMiddleware = function(req, res, next) {
     var core = new Core();
     core.init();

@@ -2,8 +2,10 @@
 (function() {
 
   var EventProxy = require('eventproxy');
-  var functions = require("./../common/functions"),
+  var util = require("./../common/util"),
+    functions = require("./../common/functions"),
     string = require("./../common/string"),
+    constdata = require("./../common/constdata"),
     model = require("./../model"),
     proxy = require("./../proxy"),
     config = require("./../config/config.json"),
@@ -568,6 +570,62 @@
     });
   };
 
+  function install_user_single(filename, callback) {
+    var count = 0, startStudentId = 0;
+    var accounts = [];
+    util.lineSplit('src/data/' + filename + '.csv', function(line) {
+      var userdata = line.split(',');
+      if (userdata && userdata.length >= 2) {
+        var studentid_ = parseInt(userdata[0]);
+        if (userdata[1] && studentid_ > 0) {
+          if (startStudentId === 0) {
+            startStudentId = studentid_;
+          }
+
+          var objuser = {
+            studentId: studentid_,
+            name: userdata[1],
+            password: functions.password_hash(studentid_.toString()),
+            accounttype: constdata.account_type.STUDENT
+          };
+
+          accounts.push(objuser);
+
+          count++;
+        }
+      }
+    });
+
+    var events = ['accounts', 'pages'];
+    var ep = new EventProxy();
+    ep.all(events, function (accounts, pages) {
+      callback();
+    });
+
+    ep.fail(function (err) {
+      callback(err);
+    });
+
+    ep.after('page', accounts.length, function (list) {
+      ep.emit('pages', list);
+    });
+
+    ep.after('account', accounts.length, function (list) {
+      for (var i = 0; i < list.length; i++) {
+        UserPageProxy.newAndSave(list[i]._id, 3, false, list[i].name, '', '', '',
+          ep.group('page'));
+      }
+      ep.emit('accounts', list);
+    });
+
+    for (var i = 0; i < accounts.length; i++) {
+      UserAccountProxy.newAndSave(accounts[i].studentId, accounts[i].name, accounts[i].accounttype, '',
+        accounts[i].password, '', false,
+        ep.group('account'));
+    }
+  }
+
   exports.User = User;
+  exports.install_user_single = install_user_single;
 
 }).call(this);
