@@ -36,7 +36,8 @@ var app = express();
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
   //app.use(express.favicon());
-  app.use(bodyParser({
+  app.use(bodyParser.urlencoded({
+    extended: true,
     uploadDir: constdata.TMP_DIR
   }));
   //4.x multipart
@@ -75,7 +76,7 @@ if (!node_env) {
 // 4.x
 switch (node_env) {
   case 'development':
-    app.use(morgan({ format: 'dev' }));
+    app.use(morgan('dev'));
     app.use(errorHandler());
     break;
   case 'production':
