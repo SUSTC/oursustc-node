@@ -33,6 +33,7 @@
     "iconv-lite": "*",
     "node-tesseract": "*",
 
-    "wechat": "*"
+    "wechat": "*",
+    "request": "*"
   }
 }

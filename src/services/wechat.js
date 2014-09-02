@@ -63,9 +63,7 @@ exports.Middleware = function () {
                   + '请先在我们的网站上激活自己的账号 https://sustc.us\n'
                   + '默认的账号和密码都是学号。\n'
                   + '\n'
-                  + '登录账号后就可以收到我们最新动态，可以用如下命令来登录自己的账号：\n'
-                  + 'login 学号:密码'
-                  + '\n');
+                  + '登录账号后就可以收到我们最新动态，可以输入login来登录自己的账号。\n');
               });
             } else {
               var rtext = '欢迎继续订阅南科大信息平台。\n'
@@ -73,9 +71,7 @@ exports.Middleware = function () {
                   + '请先在我们的网站上激活自己的账号 https://sustc.us\n'
                   + '默认的账号和密码都是学号。\n'
                   + '\n'
-                  + '登录账号后就可以收到我们最新动态，可以用如下命令来登录自己的账号：\n'
-                  + 'login 学号:密码'
-                  + '\n';
+                  + '登录账号后就可以收到我们最新动态，可以输入login来登录自己的账号。\n';
               wx.subscribe = true;
               wx.save(
               //UserWechatProxy.subscribe(open_id, true,
@@ -110,8 +106,8 @@ exports.Middleware = function () {
             res.reply('help');
             return;
             break;
-          case 'test':
-            res.reply('https://open.weixin.qq.com/connect/oauth2/authorize'
+          case 'login':
+            res.reply('登录链接: https://open.weixin.qq.com/connect/oauth2/authorize'
               + '?appid=' + config.WX_APPID
               + '&redirect_uri=' + 'https://sustc.us/user/login'
               + '&response_type=code'
