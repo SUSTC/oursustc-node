@@ -21,7 +21,7 @@
           if (content.type == UserContentType.Attachment) {
             //attachment
             res.set('Content-Disposition', 'attachment; filename*=UTF-8\'\'' + encodeURIComponent(content.name));
-            res.sendfile(content.path, {root: constdata.PUBLIC_DIR}, function (err) {
+            res.sendFile(content.path, {root: constdata.PUBLIC_DIR}, function (err) {
               if (err) {
                 res.set('Content-Disposition', 'inline;');
                 view.showMessage(data, res.locals.core.lang.errmsg.file_not_found, 'error', callback);

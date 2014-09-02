@@ -2,11 +2,13 @@
 
   var path = require('path');
 
+  var root_dir = path.resolve(__dirname, '../..') + '/';
   var public_dir = path.resolve(__dirname, '../../public') + '/';
 
   var upload_dir = public_dir + 'data/';
   var tmp_dir = public_dir + 'data/tmp/';
 
+  exports.ROOT_DIR = root_dir;
   exports.PUBLIC_DIR = public_dir;
 
   exports.UPLOAD_DIR = upload_dir;

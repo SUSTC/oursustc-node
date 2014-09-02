@@ -7,6 +7,7 @@
     path = require('path'),
     mvc = require('./../base/mvc'),
     functions = require('./../common/functions'),
+    util = require('./../common/util'),
     constdata = require("./../common/constdata"),
     string = require('./../common/string'),
     config = require('./../config/config.json');
@@ -30,20 +31,6 @@
     return false;
   }
 
-  function lineSplit(file, callback) {
-    var filedata = fs.readFileSync(file, 'utf8');
-    if (filedata) {
-      filedata = filedata.replace(/\r/g, '');
-      var strproducts = filedata.split('\n');
-      for (var i = 0; i < strproducts.length; i++) {
-        // 移除空行和注释行
-        if (strproducts[i] && strproducts[i].substr(0, 1) !== '#') {
-          callback(strproducts[i]);
-        }
-      }
-    }
-  }
-
   function install_database_drop(data, res, callback) {
     var ep = new EventProxy();
     var count = 0;
@@ -65,7 +52,7 @@
 
     var count = 0, startStudentId = 0;
     var accounts = [];
-    lineSplit('src/data/user_account.csv', function(line) {
+    util.lineSplit('src/data/user_account.csv', function(line) {
       var userdata = line.split(',');
       if (userdata && userdata.length >= 2) {
         var studentid_ = parseInt(userdata[0]);
@@ -140,7 +127,7 @@
     }
 
     var page_set = [];
-    lineSplit('src/data/user_page_owner.csv', function(line) {
+    util.lineSplit('src/data/user_page_owner.csv', function(line) {
       var pagedata = line.split(',');
       if (pagedata && pagedata.length >= 2) {
         var studentid_ = parseInt(pagedata[1]);
@@ -197,7 +184,7 @@
   function install_board(data, res, callback) {
     var count = 0;
     var boards = [];
-    lineSplit('src/data/board.csv', function(line) {
+    util.lineSplit('src/data/board.csv', function(line) {
       var boarddata = line.split(',');
       if (boarddata && boarddata.length >= 3) {
         var shortcut_ = string.clean(boarddata[0]);
@@ -543,7 +530,7 @@
       return;
     }*/
 
-    var INSTALL_LOCK = 'public/data/install.lock';
+    var INSTALL_LOCK = constdata.ROOT_DIR + 'public/data/install.lock';
     if (fs.existsSync(INSTALL_LOCK)) {
       data.err = 'installed';
       callback(true);
@@ -595,7 +582,7 @@
         install_method[istep](data, res, callbackFunction);
       } else {
         if (install_method[istep]) {
-          var filedata = fs.readFileSync(install_method[istep], 'utf8');
+          var filedata = fs.readFileSync(constdata.ROOT_DIR + install_method[istep], 'utf8');
           if (filedata) {
             //runquery(filedata);
           } else {
