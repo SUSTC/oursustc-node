@@ -3,6 +3,7 @@
   var util = require('util');
   var EventProxy = require('eventproxy');
   var Util = require('../common/util');
+  var _ = require('underscore');
   var markdown = require('../common/markdown').Markdown;
   var sanitize = require('validator').sanitize;
 
@@ -18,6 +19,9 @@
     TopicProxy = proxy.Topic,
     TopicAttachmentProxy = proxy.TopicAttachment,
     ReplyProxy = proxy.Reply;
+
+  var at = require("./../services/at"),
+    message = require("./../services/notification");
 
   var permission = constdata.permission;
 
@@ -464,6 +468,9 @@
               view.showMessage(data, '', 'success', '/topic/' + topic._id, callback);
             });
 
+            //发送at消息
+            at.sendMessageToMentionUsers(content, topic._id, res.locals.core.user.page_id, null);
+
             UserPageProxy.getUserById(res.locals.core.user.page_id, ep.done(function(user) {
               //user.score += 5;
               user.topic_count += 1;
@@ -731,12 +738,37 @@
             return;
           });
 
+          ep.all('reply_saved', 'topic', function (reply, topic) {
+            if (topic.author_id.toString() !== res.locals.core.user.page_id.toString()) {
+              message.sendReplyMessage(topic.author_id, res.locals.core.user.page_id, topic._id, reply._id);
+            }
+            ReplyProxy.getRepliesByTopicId(topic._id, function (err, replies) {
+              if (replies) {
+                var author_ids = [];
+                for (var i = 0; i < replies.length; i++) {
+                  author_ids.push(replies[i].author_id.toString());
+                }
+                var mention_ids = _.without(_.uniq(author_ids), res.locals.core.user.page_id.toString());
+                _.each(mention_ids, function (mention_id) {
+                  message.sendReply2Message(mention_id, res.locals.core.user.page_id, topic._id, reply._id);
+                });
+              }
+            });
+            ep.emit('message_saved');
+          });
+
+          ep.emit('topic', topic);
+
           var r_content = req.body.topic.reply;
           ReplyProxy.newAndSave(r_content, topic_id, res.locals.core.user.page_id, ep.done(function(reply) {
             TopicProxy.updateLastReply(topic_id, reply._id, ep.done(function() {
               ep.emit('reply_saved', reply);
+
+              if (topic.author_id.toString() !== res.locals.core.user.page_id.toString()) {
+                message.sendReplyMessage(topic.author_id, res.locals.core.user.page_id, topic._id, reply._id);
+              }
               //发送at消息
-              //at.sendMessageToMentionUsers(content, topic_id, req.session.user._id, reply._id);
+              at.sendMessageToMentionUsers(r_content, topic_id, res.locals.core.user.page_id, reply._id);
             }));
           }));
 
@@ -748,7 +780,7 @@
             ep.emit('score_saved');
           }));
 
-          ep.all('reply_saved', 　 /*'message_saved',*/ 'score_saved', function(reply) {
+          ep.all('reply_saved', 'message_saved', 'score_saved', function(reply) {
             if (res.locals.core.api) {
               var r = {
                 err: {

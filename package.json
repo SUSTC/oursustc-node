@@ -1,6 +1,6 @@
 {
   "name": "sustc.us",
-  "version": "0.1.8",
+  "version": "0.3.1",
   "private": true,
   "scripts": {
     "start": "node app.js"
@@ -27,6 +27,7 @@
     "nodemailer": "*",
     "marked-prettyprint": "0.2.8",
     "imagemagick": "*",
+    "underscore": "*",
     "csv": "*",
     "xss": "0.0.5",
     "bufferhelper": "*",

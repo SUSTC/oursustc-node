@@ -7,7 +7,7 @@ var config = require("./../config/config.json");
  * type:
  * message: 私信
  * reply: xx 回复了你的话题
- * reply2: xx 在话题中回复了你
+ * reply2: xx 回复 xx 话题 (曾经回复过的)
  * follow: xx 关注了你
  * at: xx ＠了你
  */

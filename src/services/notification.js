@@ -13,6 +13,7 @@ exports.sendReplyMessage = function (master_id, author_id, topic_id, reply_id) {
   message.reply_id = reply_id;
   message.save(function (err) {
     // TODO: 异常处理
+    return;
     User.getUserById(master_id, function (err, master) {
       // TODO: 异常处理
       if (master && master.receive_reply_mail) {
@@ -37,6 +38,7 @@ exports.sendReply2Message = function (master_id, author_id, topic_id, reply_id) 
   message.reply_id = reply_id;
   message.save(function (err) {
     // TODO: 异常处理
+    return;
     User.getUserById(master_id, function (err, master) {
       // TODO: 异常处理
       if (master && master.receive_reply_mail) {
@@ -61,6 +63,7 @@ exports.sendAtMessage = function (master_id, author_id, topic_id, reply_id, call
   message.reply_id = reply_id;
   message.save(function (err) {
     // TODO: 异常处理
+    return;
     User.getUserById(master_id, function (err, master) {
       // TODO: 异常处理
       if (master && master.receive_at_mail) {

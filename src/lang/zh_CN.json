@@ -20,7 +20,8 @@
             "index": "用户",
             "login": "登录",
             "forgot": "忘记密码",
-            "activate": "激活"
+            "activate": "激活",
+            "notification": "通知"
         },
         "page": {
             "thanks": "感谢",
@@ -222,6 +223,12 @@
         "bio": "简介",
         "my_page": "我的用户页",
         "activate_succeed": "激活成功！",
+        "in": "在",
+        "reply_you": "回复了你",
+        "reply2_you": "发表了新的回复",
+        "at_you": "提及了你",
+        "unread_notifications": "条未读通知",
+        "notifications_not_found": "没有新的通知",
         "input_tips": {
             "username": "请输入一个用于显示的用户名",
             "urp_username": "请输入您在URP教务系统中的用户名",

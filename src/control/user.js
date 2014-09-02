@@ -2,19 +2,22 @@
 (function() {
 
   var EventProxy = require('eventproxy');
+  var _ = require('underscore');
 
   //table = require("./../base/table");
   var config = require('./../config/config.json');
   var functions = require("./../common/functions"),
     string = require("./../common/string"),
     view = require("./../common/view"),
+    Util = require('../common/util'),
     constdata = require("./../common/constdata"),
     url = require('url'),
     proxy = require("./../proxy"),
     UserAccountProxy = proxy.UserAccount,
     UserPageProxy = proxy.UserPage,
     UserPageRelationProxy = proxy.UserPageRelation,
-    UserUrpProxy = proxy.UserUrp;
+    UserUrpProxy = proxy.UserUrp,
+    NotificationProxy = proxy.Notification;
   var URPSystem = require("./../class/urp").URPSystem;
   var Wechat = require("./../services/wechat");
 
@@ -36,13 +39,14 @@
     if (res.locals.core.isLogin()) {
       var _user = res.locals.core.user;
       resdata.islogin = true;
-      resdata.csrf = res.locals.core.user.csrf;
+      resdata.csrf = _user.csrf;
       resdata.user = {
         uid: _user.uid,
         studentid: _user.account.student_id,
         showname: _user.showname,
         'realname': _user.account.name,
         'email': _user.account.email,
+        new_notification: _user.page.new_notification
       };
     } else {
       resdata.islogin = false;
@@ -454,6 +458,46 @@
       }
     }
     
+  };
+
+  exports.notification = function(req, res, data, callback) {
+    data.title = res.locals.core.lang.title.user.notification;
+    data.active = 'user';
+    data.err = {};
+    if (res.locals.core.isLogin()) {
+      if (res.locals.core.user.page.new_notification) {
+        //Limit: 20
+        if (res.locals.core.user.page.new_notification > 20) {
+          data.next_page = true;
+        }
+        NotificationProxy.getUnreadMessageLimitByUserId(res.locals.core.user.page_id, function (err, msg_ids) {
+          var ep = new EventProxy();
+          ep.after('msg', msg_ids.length, function (msgs) {
+            var notifications = [];
+            for (var i = 0; i < msgs.length; i++) {
+              if (msgs[i].is_invalid) {
+                continue;
+              }
+              msgs[i].friendly_create_at = Util.format_date(msgs[i].create_at, true);
+              notifications.push(msgs[i]);
+            }
+            //mark as read
+            NotificationProxy.markAsRead(msg_ids, function () {});
+            
+            data.notifications = notifications;
+            callback();
+          });
+          _.each(msg_ids, function (msg_id) {
+            NotificationProxy.getMessageById(msg_id, ep.done('msg'));
+          });
+        });
+      } else {
+        callback();
+      }
+    } else {
+      res.redirect('/user/login?url=/user/notification');
+      callback(true);
+    }
   };
 
   exports.urp = function(req, res, data, callback) {

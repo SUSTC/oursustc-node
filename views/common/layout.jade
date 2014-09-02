@@ -29,6 +29,7 @@ html
         a.brand(href='#') #{lang.nav_text}
         div.right.menu
           if (user.uid)
+            a.popup.notification.item(class=(user.page.new_notification > 0 ? 'unread' : ''), href='/user/notification', title=user.page.new_notification + ' ' + lang.user.unread_notifications)= user.page.new_notification
             .ui.dropdown.link.item
               div.user-avatar.small.img-rounded
                 if (user.avatar_url)

@@ -87,3 +87,11 @@ exports.getMessagesByUserId = function (userId, callback) {
 exports.getUnreadMessageByUserId = function (userId, callback) {
   Message.find({master_id: userId, has_read: false}, callback);
 };
+
+exports.getUnreadMessageLimitByUserId = function (userId, callback) {
+  Message.find({master_id: userId, has_read: false}, ['_id'], {sort: [['create_at', 'desc']], limit: 20}, callback);
+};
+
+exports.markAsRead = function (ids, callback) {
+  Message.update({_id: {'$in': ids}}, {$set: {has_read: true}}, { multi: true }, callback);
+};

@@ -1880,6 +1880,20 @@ hr {
   text-align: left;
   border-bottom: 1px solid #ddd;
 }
+
+.notification.unread {
+  background-color: #cb4437;
+  color: #fff;
+}
+
+.notification.unread:hover {
+  background-color: #d34c3f !important;
+}
+.notification.unread:active {
+  background-color: #db5447 !important;
+}
+
+
 .user-board {
     height: 130px;
 }

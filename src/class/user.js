@@ -12,7 +12,8 @@
     crypto = require("crypto"),
     UserAccountProxy = proxy.UserAccount,
     UserPageProxy = proxy.UserPage,
-    UserPageRelationProxy = proxy.UserPageRelation;
+    UserPageRelationProxy = proxy.UserPageRelation,
+    NotificationProxy = proxy.Notification;
 
   var max_online_time = 2592000000; // a month
   var HTTP_ONLY = true;
@@ -329,6 +330,18 @@
     });
   };
 
+  User.prototype.getNotification = function(callback) {
+    var that = this;
+    NotificationProxy.getMessagesCount(this.page_id, function (err, count) {
+      if (err) {
+        callback(err);
+      } else {
+        that.page.new_notification = count;
+        callback(null, count);
+      }
+    });
+  };
+
   User.prototype.checklogin = function(cookie, req, callback) {
     if (req.query && req.query.cookies) {
       var _cookies = req.query.cookies;
@@ -446,6 +459,8 @@
               that.page_id = page._id.toString();
               that.page = page;
 
+              that.getNotification(ep.done('notification_count'));
+
               if (page.name) {
                 that.showname = page.name;
               }
@@ -479,7 +494,7 @@
           callback(false);
         });
 
-        ep.once('user_current_page', function (page) {
+        ep.all('user_current_page', 'notification_count', function (page) {
           if (page && page.noaccount && page.power >= 3) {
             //inpage
             UserPageRelationProxy.getRelationsByPageId(page._id, function (err, r) {

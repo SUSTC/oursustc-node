@@ -1,12 +1,12 @@
-#topic_list .item {
+#topic_list .item, #notification_list .item {
   padding: 15px 0 15px 20px;
 }
 
-#topic_list .header {
+#topic_list .header, #notification_list .header {
   font-size: 1.2em;
 }
 
-#topic_list img.avatar {
+#topic_list img.avatar, #notification_list img.avatar {
   width: 60px;
   height: 60px;
   margin-right: 1em;
