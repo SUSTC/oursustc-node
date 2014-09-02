@@ -31,6 +31,8 @@
     "xss": "0.0.5",
     "bufferhelper": "*",
     "iconv-lite": "*",
-    "node-tesseract": "*"
+    "node-tesseract": "*",
+
+    "wechat": "*"
   }
 }

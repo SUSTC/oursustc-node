@@ -19,6 +19,7 @@ var express = require('express'),
 var http = require('http'),
   path = require('path');
 
+var wechat = require('./src/services/wechat');
 
 var constdata = require('./src/common/constdata'),
   config = require('./src/config/config.json'),
@@ -62,6 +63,7 @@ var app = express();
   app.use(express.static(constdata.PUBLIC_DIR));
 
   app.use(core.coreMiddleware);
+  app.use('/wechat', wechat.Middleware());
 
   router.route(app, express);
   router.routeErrorPage(app, express);
