@@ -17,6 +17,12 @@ exports.getBoard = function(id, callback) {
 
 exports.getBoardById = exports.getBoard;
 
+exports.getBoardByName = function(name, callback) {
+  Board.findOne({
+    name: name
+  }, callback);
+};
+
 exports.getBoardByShortcut = function(shortcut, callback) {
   var shortcut_clean = string.clean(shortcut);
   Board.findOne({
