@@ -107,12 +107,19 @@ exports.Middleware = function () {
             return;
             break;
           case 'login':
-            res.reply('登录链接: https://open.weixin.qq.com/connect/oauth2/authorize'
-              + '?appid=' + config.WX_APPID
-              + '&redirect_uri=' + 'https://sustc.us/user/login'
-              + '&response_type=code'
-              + '&scope=snsapi_userinfo'
-              + '&state=wechatconnect#wechat_redirect');
+            res.reply([
+              {
+                title: '登录',
+                description: '点击登录',
+                //picurl: 'https://sustc.us/static/img/favicon-round.png',
+                url: 'https://open.weixin.qq.com/connect/oauth2/authorize'
+                          + '?appid=' + config.WX_APPID
+                          + '&redirect_uri=' + 'https://sustc.us/user/login'
+                          + '&response_type=code'
+                          + '&scope=snsapi_userinfo'
+                          + '&state=wechatconnect#wechat_redirect'
+              }
+            ]);
             return;
             break;
         }
@@ -156,7 +163,9 @@ exports.Middleware = function () {
                 res.reply('已登出');
               });
               break;
-            //TODO: news, courseware
+            case 'news':
+
+              break;
             default:
               res.reply('Unknown command');
               break;
