@@ -363,6 +363,11 @@
         }
     },
 
+    "wechat": {
+        "connecting_to_wechat": "连接到微信...",
+        "bind_success": "成功绑定微信账号"
+    },
+
     "errmsg": {
         "invalid_username": "无效的用户名",
         "invalid_account": "无效的用户",

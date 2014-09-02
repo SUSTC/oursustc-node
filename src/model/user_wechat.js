@@ -8,7 +8,8 @@ var UserWechatSchema = new Schema({
   subscribe: { type: Boolean, default: true },
   user_id: { type: ObjectId, index: true },
   student_id: { type: String },
-  create_at: { type: Date, default: Date.now }
+  create_at: { type: Date, default: Date.now },
+  update_at: { type: Date, default: Date.now }
 });
 
 mongoose.model('UserWechat', UserWechatSchema, config.DB_PREFIX + 'user_wechat');

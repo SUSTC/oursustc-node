@@ -16,6 +16,7 @@
     UserPageRelationProxy = proxy.UserPageRelation,
     UserUrpProxy = proxy.UserUrp;
   var URPSystem = require("./../class/urp").URPSystem;
+  var Wechat = require("./../services/wechat");
 
   var MIN_PASSWORD_LENGTH = constdata.MIN_PASSWORD_LENGTH;
 
@@ -325,7 +326,12 @@
     var is_login = res.locals.core.isLogin();
     var check_login_info = ((req.method == 'POST') && req.body && req.body.user);
 
+    data.wx_openid = '';
     if (check_login_info) {
+      if (req.body.wx_openid) {
+        data.wx_openid = req.body.wx_openid;
+      }
+
       if (!req.body.user.account_id) {
         errdata.accountid = true;
       } else if (!req.body.user.password) {
@@ -346,14 +352,31 @@
               data.err = errdata;
               data.goactivate = true;
               callback(true);
-              return;
+            } else {
+              if (is_login && data.wx_openid) {
+                Wechat.updateUserInfo(data.wx_openid, user._id, user.student_id, function (err, wx) {
+                  view.showMessage(data, res.locals.core.lang.wechat.bind_success, 'success',
+                    "javascript:WeixinJSBridge.invoke('closeWindow',{},function(res){});", callback);
+                });
+                return;
+              }
+              login_callback(is_login, errdata, req, res, data, callback);
             }
-            login_callback(is_login, errdata, req, res, data, callback);
           }
         );
       }
     } else {
-      login_callback(is_login, errdata, req, res, data, callback);
+      if (req.query.state === 'wechatconnect' && req.query.code) {
+        Wechat.getAccessToken(req.query.code, function (err, token) {
+          if (token && token.openid) {
+            data.wx_openid = token.openid;
+            is_login = false;
+          }
+          login_callback(is_login, errdata, req, res, data, callback);
+        });
+      } else {
+        login_callback(is_login, errdata, req, res, data, callback);
+      }
     }
   };
 

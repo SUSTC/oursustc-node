@@ -314,7 +314,8 @@
             res.locals.core.user.updatecookie(user.uid, remember_me, res);
           } else {
             if (!res.locals.core.api) {
-              res.redirect('/user/activate?key=' + res.locals.core.user.getactivatekey(user.uid));
+              var activateUrl = '/user/activate?key=' + res.locals.core.user.getactivatekey(user.uid);
+              res.redirect(activateUrl);
             }
             errdata.activate = true;
             callback(errdata, user, true);

@@ -1,19 +1,55 @@
 
 var EventProxy = require('eventproxy');
+var request = require('request');
 
 var util = require("./../common/util"),
     functions = require("./../common/functions"),
     string = require("./../common/string");
+
+var config = require("./../config/config");
 
 var wechat = require('wechat');
 var proxy = require("./../proxy"),
     UserAccountProxy = proxy.UserAccount,
     UserWechatProxy = proxy.UserWechat;
 
+exports.getAccessToken = function (code, callback) {
+  var url = 'https://api.weixin.qq.com/sns/oauth2/access_token'
+    + '?appid=' + config.WX_APPID
+    + '&secret=' + config.WX_APPSECRET
+    + '&code=' + code
+    + '&grant_type=authorization_code';
+
+  request(url, function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      try {
+        var token = JSON.parse(body);
+        callback(null, token);
+      } catch (e) {
+        callback(e);
+      }
+    } else {
+      callback(error);
+    }
+  });
+};
+
+exports.updateUserInfo = function (open_id, user_id, student_id, callback) {
+  UserWechatProxy.getByOpenId(open_id, function (err, wx) {
+    if (wx) {
+      UserWechatProxy.updateUserInfo(open_id, user_id, student_id, callback);
+    } else {
+      UserWechatProxy.newAndSave(open_id, function (err, wx) {
+        UserWechatProxy.updateUserInfo(open_id, user_id, student_id, callback);
+      });
+    }
+  });
+};
+
 exports.Middleware = function () {
-  return wechat('n40CPcPyf7371rHh', function (req, res, next) {
+  return wechat(config.WX_TOKEN, function (req, res, next) {
     var message = req.weixin;
-    var open_id = message.FormUserName;
+    var open_id = message.FromUserName;
 
     switch (message.MsgType) {
       case 'event':
@@ -28,7 +64,7 @@ exports.Middleware = function () {
                   + '默认的账号和密码都是学号。\n'
                   + '\n'
                   + '登录账号后就可以收到我们最新动态，可以用如下命令来登录自己的账号：\n'
-                  + 'signin 学号:密码'
+                  + 'login 学号:密码'
                   + '\n');
               });
             } else {
@@ -38,7 +74,7 @@ exports.Middleware = function () {
                   + '默认的账号和密码都是学号。\n'
                   + '\n'
                   + '登录账号后就可以收到我们最新动态，可以用如下命令来登录自己的账号：\n'
-                  + 'signin 学号:密码'
+                  + 'login 学号:密码'
                   + '\n';
               wx.subscribe = true;
               wx.save(
@@ -68,7 +104,23 @@ exports.Middleware = function () {
         break;
       case 'text':
         var content = message.Content;
-        var m = content.match(/signin (\S+?):(.+?)$/);
+        switch (content) {
+          case 'help':
+            //TODO
+            res.reply('help');
+            return;
+            break;
+          case 'test':
+            res.reply('https://open.weixin.qq.com/connect/oauth2/authorize'
+              + '?appid=' + config.WX_APPID
+              + '&redirect_uri=' + 'https://sustc.us/user/login'
+              + '&response_type=code'
+              + '&scope=snsapi_userinfo'
+              + '&state=wechatconnect#wechat_redirect');
+            return;
+            break;
+        }
+        var m = content.match(/login (\S+?):(.+?)$/);
         if (m) {
           if (string.is_numeric(m[1])) {
             UserAccountProxy.getUserByStudentId(m[1], function (err, user) {
@@ -94,6 +146,7 @@ exports.Middleware = function () {
           return;
         }
         UserWechatProxy.getByOpenId(open_id, function (err, wx) {
+          //console.log(open_id, err, wx);
           if (!wx) {
             res.reply('请先登录');
             return;
@@ -102,6 +155,7 @@ exports.Middleware = function () {
             case 'logout':
               wx.user_id = null;
               wx.student_id = null;
+              wx.subscribe = false;
               wx.save(function (err, wx) {
                 res.reply('已登出');
               });

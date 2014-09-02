@@ -20,7 +20,11 @@ exports.subscribe = function (openId, subscribe, callback) {
 };
 
 exports.updateUserInfo = function (openId, user_id, student_id, callback) {
-  UserWechat.update({open_id: openId}, {$set: {'user_id': user_id, 'student_id': student_id}}, callback);
+  UserWechat.update({open_id: openId}, {$set: {
+    'user_id': user_id,
+    'student_id': student_id,
+    'subscribe': true,
+    'update_at': Date.now() }}, callback);
 };
 
 exports.remove = function (id, callback) {

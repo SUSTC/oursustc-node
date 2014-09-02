@@ -10,9 +10,14 @@ block bodyheader
 block content
   div.span7
     div.login-board.login-signin
+      if (wx_openid)
+        .ui.form.segment
+          p= lang.wechat.connecting_to_wechat
       form.ui.form.segment#login_form(autocomplete='on', action='/user/login', method='POST')
         div(style='display:none')
           input(type='hidden', name='url', value=redirect)
+          if (wx_openid)
+            input(type='hidden', name='wx_openid', value=wx_openid)
         div.field(class=(err.accountid ? 'error' : ''))#account-id
           label= lang.user.studentid
           div.ui.left.labeled.icon.input
