@@ -748,7 +748,7 @@
                 for (var i = 0; i < replies.length; i++) {
                   author_ids.push(replies[i].author_id.toString());
                 }
-                var mention_ids = _.without(_.uniq(author_ids), res.locals.core.user.page_id.toString());
+                var mention_ids = _.without(_.uniq(author_ids), res.locals.core.user.page_id.toString(), topic.author_id.toString());
                 _.each(mention_ids, function (mention_id) {
                   message.sendReply2Message(mention_id, res.locals.core.user.page_id, topic._id, reply._id);
                 });
@@ -764,9 +764,6 @@
             TopicProxy.updateLastReply(topic_id, reply._id, ep.done(function() {
               ep.emit('reply_saved', reply);
 
-              if (topic.author_id.toString() !== res.locals.core.user.page_id.toString()) {
-                message.sendReplyMessage(topic.author_id, res.locals.core.user.page_id, topic._id, reply._id);
-              }
               //发送at消息
               at.sendMessageToMentionUsers(r_content, topic_id, res.locals.core.user.page_id, reply._id);
             }));
