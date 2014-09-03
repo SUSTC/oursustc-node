@@ -9,6 +9,7 @@ var UserContent = require('./user_content');
 //var Tag = require('./tag');
 var Reply = require('./reply');
 var Util = require('../common/util');
+var at = require('../services/at');
 
 /**
  * 根据主题ID获取主题
@@ -158,7 +159,14 @@ exports.getFullTopic = function (id, callback) {
       proxy.unbind();
       return callback(null, '此话题不存在或已被删除。');
     }
-    proxy.emit('topic', topic);
+    at.linkUsers(topic.content, function (err, str) {
+      if (err) {
+        proxy.unbind();
+        return callback(err);
+      }
+      topic.content = str;
+      proxy.emit('topic', topic);
+    });
 
     /*TopicTag.find({topic_id: topic._id}, proxy.done(function (topic_tags) {
       var tags_ids = [];

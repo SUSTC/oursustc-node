@@ -75,7 +75,8 @@ exports.linkUsers = function (text, callback) {
     }
     for (var i = 0, l = users.length; i < l; i++) {
       var name = users[i].name;
-      text = text.replace(new RegExp('@' + name, 'gmi'), '@[' + name + '](/user/@' + name + ')');
+      console.log(name);
+      text = text.replace(new RegExp('@' + name, 'gmi'), '@[' + name + '](/user/' + users[i]._id.toString() + ')');
     }
     return callback(null, text);
   });
