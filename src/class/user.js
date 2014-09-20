@@ -358,7 +358,7 @@
       }
       cookie = _cookie;
     }
-    var usercookie = eval('cookie.' + config.COOKIE_PREFIX + 'user');
+    var usercookie = cookie[config.COOKIE_PREFIX + 'user'];
     if (usercookie && (usercookie.length % 8) === 0) {
 
       var key = new Buffer(config.COOKIE_DES_KEY, 'hex');
@@ -389,7 +389,7 @@
       if (cookietime && account_id && cookiekey && (this.core.TIMESTAMP - (cookietime * 1000)) < max_online_time) {
         var that = this;
 
-        var user_page_id = eval('cookie.' + config.COOKIE_PREFIX + 'page_id');
+        var user_page_id = cookie[config.COOKIE_PREFIX + 'page_id'];
 
         var eventms = ['login', 'user_page_manager', 'manager_default_page'];
         var epm = EventProxy.create(eventms, function (login, userPageManagers, ManagerPages) {

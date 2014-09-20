@@ -261,7 +261,7 @@ exports.Middleware = function () {
                 if (rs && rs.length > 0) {
                   var page_id = rs[0].page_id;
                   UserUrpProxy.getUrpByUserId(page_id, function (err, urp) {
-                    var terms = urp.terms;
+                    var terms = urp ? urp.terms : null;
                     if (terms && terms.length > 0) {
                       if (content == 'score all') {
                         var text = '';

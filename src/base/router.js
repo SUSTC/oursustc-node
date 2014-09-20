@@ -85,7 +85,9 @@
         methodName = 'index';
         cmName = controllerName + '/index';
       }
-      method = eval('controller.' + methodName);
+
+      method = controller[methodName];
+      if (!(method instanceof Function)) method = null;
       if (method != null) {
         data = {};
         return method(req, res, data, function(isApi, resdata, template) {
