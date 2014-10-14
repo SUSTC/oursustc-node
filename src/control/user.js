@@ -3,6 +3,7 @@
 
   var EventProxy = require('eventproxy');
   var _ = require('underscore');
+  var gm = require('gm').subClass({ imageMagick : true });  
 
   //table = require("./../base/table");
   var config = require('./../config/config.json');
@@ -797,13 +798,41 @@
 
           if (req.files && req.files.user) {
             if (req.files.user.avatar_file && req.files.user.avatar_file.size > 0) {
-              res.locals.core.resource.add(req.files.user.avatar_file, false, function (err, content, path) {
-                if (content) {
-                  page_change.avatar = content.path;
-                } else {
+              var avatar_file = req.files.user.avatar_file;
+              gm(avatar_file.path).size(function (err, value) {
+                if (err || !value) {
                   data.err.avatar_file = true;
+                  ep.emit('avatar', false);
+                  return;
                 }
-                ep.emit('avatar', true);
+
+                //crop to square
+                if (value.width > value.height) {
+                  var x = (value.width - value.height) / 2;
+                  this.crop(value.height, value.height, x, 0);
+                } else if (value.width < value.height) {
+                  var y = (value.height - value.width) / 2;
+                  this.crop(value.width, value.width, 0, y);
+                }
+
+                this
+                .resize(480, 480, '>')
+                .write(avatar_file.path, function (err) {
+                  if (err) {
+                    data.err.avatar_file = true;
+                    ep.emit('avatar', false);
+                    return;
+                  }
+
+                  res.locals.core.resource.add(avatar_file, false, function (err, content, path) {
+                    if (content) {
+                      page_change.avatar = content.path;
+                    } else {
+                      data.err.avatar_file = true;
+                    }
+                    ep.emit('avatar', true);
+                  });
+                });
               });
             } else {
               ep.emit('avatar', false);
