@@ -5,30 +5,7 @@ block stylesheet
 
 block script
   script(type='text/javascript' src=base.rooturl + '/static/js/jquery.easing.min.js?v=#{version.js}')
-  script(type='text/javascript').
-    var show_slider_title = true;
-    var show_slider2_grid = false;
-    var slider_autoslide = 3000;
-    var w=156; var h=156;
-    var sliderimages = [
-      {
-        source: "#{base.rooturl}/static/img/index/bg_01.png",
-        transition: 'simple',
-        title: '我们的南科大',
-        lightbox: 0,
-        url: '#{base.nullurl}',
-        description: ''
-      }, {
-        source: "#{base.rooturl}/static/img/index/bg_02.png",
-        transition: 'random',
-        title: '校园风景',
-        lightbox: 0,
-        url: '#{base.rooturl}/news',
-        description: ''
-      }
-    ];
   script(type='text/javascript' src=base.rooturl + '/static/js/index.js?v=#{version.js}')
-  script(type='text/javascript' src=base.rooturl + '/static/js/slider-1.js?v=#{version.js}')
 
 block bodyheader
   //.masthead.segment
@@ -38,7 +15,7 @@ block bodyheader
           h1.ui.header SUSTC
 
 block bg-content
-  #bg_album_area
+  //#bg_album_area
     #bg_album
       .slider-wrapper
         #slider-1
@@ -46,7 +23,7 @@ block bg-content
           #slider-feed
 
 block content
-  #index_album
+  //#index_album
     .slider-wrapper
       #slider-1
         #slider-content

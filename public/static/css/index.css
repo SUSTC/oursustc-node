@@ -1,5 +1,5 @@
 /* Index */
-
+/*
 .main.container.index {
   z-index: 99;
 }
@@ -41,9 +41,9 @@
 }
 
 #slider-content {
-  position: relative;
+  position: relative; */
   /* width: 940px; */
-  height: 470px;
+/*  height: 470px;
   margin: 0 auto;
   cursor: pointer;
 }
@@ -159,9 +159,9 @@
 }
 
 @media (min-width: 980px) {
-  #index_album {
+  #index_album { */
     /* margin-top: 70px; */
-  }
+/*  }
 
   #index_album .simple-wrapper {
     display: none;
@@ -176,4 +176,4 @@
   #example .main.container.index {
     padding-bottom: 0;
   }
-}
+}*/
