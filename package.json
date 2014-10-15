@@ -33,6 +33,7 @@
     "bufferhelper": "*",
     "iconv-lite": "*",
     "node-tesseract": "*",
+    "gm": "*",
 
     "wechat": "*",
     "request": "*"
