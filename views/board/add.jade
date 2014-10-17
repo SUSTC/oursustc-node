@@ -25,7 +25,7 @@ block content
       .ui.error.message(style='display:none;')#attachment_errmsg
         i.close.icon(onclick='$(this).parent().hide();')
         .header= lang.info.error
-        p#errmsg
+        p.errmsg
       button.ui.teal.submit.button#topic_attachment_add(type='button')= lang.topic.add_attachment
     .form-actions
       button.ui.blue.submit.button#topic_add(type='button', onclick='check_add();')= lang.info.add

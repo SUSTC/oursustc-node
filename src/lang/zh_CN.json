@@ -89,6 +89,7 @@
         "name": "名称",
         "import": "导入",
         "add": "添加",
+        "upload": "上传",
         "reduce": "减少",
         "update": "更新",
         "set": "设置",
@@ -348,7 +349,8 @@
     "tools": {
         "editor": {
             "markdown": "Markdown",
-            "preview": "预览"
+            "preview": "预览",
+            "image_url": "请输入图片地址或上传图片"
         }
     },
 

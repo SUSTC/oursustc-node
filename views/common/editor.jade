@@ -36,7 +36,23 @@
     i.close.icon
     .header 图片
     .content
-      p= lang.info.in_process
+      .ui.form#editor_image_upload_form(style='display:none')
+        input(type='hidden', name='csrf', value=user.csrf)
+        input#editor_image_file(type='file', name='userfile')
+      .ui.error.message(style='display:none;')#editor_image_errmsg
+        i.close.icon(onclick='$(this).parent().hide();')
+        .header= lang.info.error
+        p.errmsg
+      .ui.error.message#editor_error_image_tips(style='display:none')
+        i.close.icon(type='button', onclick='$(this).parent().hide();')
+        .header= lang.info.oops
+        p=lang.user.input_error.image_ext
+      .ui.form
+        .image-url.example.field
+          .ui.left.labeled.input
+            input#editor_image_url(type='text', placeholder=lang.tools.editor.image_url)
+        .form-actions
+          button.ui.teal.submit.button#editor_image_upload(type='button')= lang.info.upload
     .actions
       .ui.black.button= lang.info.cancel
       .ui.positive.right.labeled.icon.button

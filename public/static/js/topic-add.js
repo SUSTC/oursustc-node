@@ -40,7 +40,7 @@ function successHandler(data) {
   if (data) {
     var uiMessage = $('#attachment_errmsg');
     if (data.err && data.err.msg) {
-      uiMessage.find('#errmsg').html(data.err.msg);
+      uiMessage.find('.errmsg').html(data.err.msg);
       uiMessage.show();
     } else {
       uiMessage.hide();
@@ -62,7 +62,7 @@ function completeHandler() {
 
 function errorHandler() {
   var uiMessage = $('#attachment_errmsg');
-  uiMessage.find('#errmsg').html("#{lang.errmsg.upload_failed}");
+  uiMessage.find('.errmsg').html("#{lang.errmsg.upload_failed}");
   uiMessage.show();
 }
 

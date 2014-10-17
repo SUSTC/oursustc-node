@@ -158,12 +158,111 @@ function setEditorMode(mode) {
               callback(null);
             },
             onApprove: function() {
-              callback(null);
+              var image_url = $('#editor_image_url').val();
+              callback(image_url);
             }
           })
           .modal('show')
         ;
         return true; // tell the editor that we'll take care of getting the image url
     });
+
+})();
+
+(function () {
+
+function beforeSendHandler() {
+  uploading = true;
+  $('#editor_image_upload').addClass('disabled').prop('disabled', true);
+}
+
+function successHandler(data) {
+  if (data) {
+    var uiMessage = $('#editor_image_errmsg');
+    if (data.err && data.err.msg) {
+      uiMessage.find('.errmsg').html(data.err.msg);
+      uiMessage.show();
+    } else {
+      uiMessage.hide();
+      $('#editor_image_url').val('/file/' + data.file.id);
+    }
+  }
+}
+
+function completeHandler() {
+  uploading = false;
+  $('#editor_image_upload').removeClass('disabled').prop('disabled', false);
+}
+
+function errorHandler() {
+  var uiMessage = $('#editor_image_errmsg');
+  uiMessage.find('.errmsg').html("#{lang.errmsg.upload_failed}");
+  uiMessage.show();
+}
+
+function progressHandlingFunction(e) {
+  /*if (e.lengthComputable) {
+    $('progress').attr({value:e.loaded,max:e.total});
+  }*/
+}
+
+function readyToUpload() {
+  if (this.files && this.files.length > 0) {
+    var formData = new FormData($('#editor_image_upload_form')[0]);
+    $.ajax({
+        url: '/file/upload',  //server script to process data
+        type: 'POST',
+        xhr: function () {  // custom xhr
+            myXhr = $.ajaxSettings.xhr();
+            if (myXhr.upload) { // check if upload property exists
+                myXhr.upload.addEventListener('progress', progressHandlingFunction, false); // for handling the progress of the upload
+            }
+            return myXhr;
+        },
+        //Ajax事件
+        beforeSend: beforeSendHandler,
+        success: successHandler,
+        error: errorHandler,
+        complete: completeHandler,
+        // Form数据
+        data: formData,
+        dataType: 'json',
+        //Options to tell JQuery not to process data or worry about content-type
+        cache: false,
+        contentType: false,
+        processData: false
+    });
+  }
+}
+
+  var uform = $('#editor_image_upload_form');
+  $('body').append('<form id="editor_image_upload_form" style="display:none">'
+    + uform.html()
+    + '</form>');
+  uform.remove();
+
+  $('#editor_image_upload').click(function () {
+    if (uploading) {
+      return;
+    }
+    $('#editor_image_file').click();
+  });
+
+  $('#editor_image_file').change(function () {
+    var file_obj = $(this);
+    var path = file_obj.val();
+    var filename = getFileName(path);
+    if (!checkImageFileExt(getFileNameExt(filename))) {
+      file_obj.val('');
+      filename = '';
+      if (path) {
+        // not cancel
+        $('#editor_error_image_tips').show();
+      }
+    } else {
+      $('#editor_error_image_tips').hide();
+      readyToUpload.call(this);
+    }
+  });
 
 })();
