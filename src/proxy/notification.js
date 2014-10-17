@@ -44,13 +44,13 @@ exports.getMessageById = function (id, callback) {
         }
         return callback(null, message);
       }).fail(callback); // 接收异常
-      User.getUserById(message.author_id, proxy.done('author_found'));
+      User.getUsersByIds(message.author_id, proxy.done('author_found'));
       Topic.getTopicById(message.topic_id, proxy.done('topic_found'));
       Reply.getReplyById(message.reply_id, proxy.done('reply_found'));
     }
 
     if (message.type === 'follow') {
-      User.getUserById(message.author_id, function (err, author) {
+      User.getUsersByIds(message.author_id, function (err, author) {
         if (err) {
           return callback(err);
         }
@@ -86,6 +86,10 @@ exports.getMessagesByUserId = function (userId, callback) {
  */
 exports.getUnreadMessageByUserId = function (userId, callback) {
   Message.find({master_id: userId, has_read: false}, callback);
+};
+
+exports.getLastUnreadMessage = function (type, userId, topicId, callback) {
+  Message.findOne({master_id: userId, type: type, topic_id: topicId, has_read: false}, callback);
 };
 
 exports.getUnreadMessageLimitByUserId = function (userId, callback) {
