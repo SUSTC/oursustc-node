@@ -15,11 +15,12 @@ var config = require("./../config/config.json");
 var NotificationSchema = new Schema({
   type: { type: String },
   master_id: { type: ObjectId },
-  author_id: { type: ObjectId },
+  author_id: { type: [ObjectId] },
   topic_id: { type: ObjectId },
   reply_id: { type: ObjectId },
   body: { type: String },
   has_read: { type: Boolean, default: false },
+  update_at: { type: Date, default: Date.now },
   create_at: { type: Date, default: Date.now }
 });
 

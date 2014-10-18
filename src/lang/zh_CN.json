@@ -89,6 +89,7 @@
         "name": "名称",
         "import": "导入",
         "add": "添加",
+        "upload": "上传",
         "reduce": "减少",
         "update": "更新",
         "set": "设置",
@@ -224,6 +225,7 @@
         "my_page": "我的用户页",
         "activate_succeed": "激活成功！",
         "in": "在",
+        "and_others": "等人",
         "reply_you": "回复了你",
         "reply2_you": "发表了新的回复",
         "at_you": "提及了你",
@@ -348,7 +350,8 @@
     "tools": {
         "editor": {
             "markdown": "Markdown",
-            "preview": "预览"
+            "preview": "预览",
+            "image_url": "请输入图片地址或上传图片"
         }
     },
 

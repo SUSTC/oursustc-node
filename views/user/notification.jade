@@ -13,11 +13,17 @@ block content
   .ui.divided.list.segment#notification_list
     each notification in notifications
       .item
-        - var u = notification.author;
-        include ../user/user-round
+        - var authors = notification.author.slice(0, 3);
+        each u in authors
+          include ../user/user-round
         .content
           .header
-            a(href=base.rooturl + '/user/#{u._id}', target='_blank')= u.name
+            each u, i in authors
+              a(href=base.rooturl + '/user/#{u._id}', target='_blank')= u.name
+              if (i < authors.length - 1)
+                | , 
+            if (notification.author.length > 3)
+              |  #{lang.user.and_others}
             |  #{lang.user.in} 
             if (notification.reply)
               a(href=base.rooturl + '/topic/#{notification.topic._id}##{notification.reply._id}', target='_blank')= notification.topic.title
