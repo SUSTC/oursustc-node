@@ -56,7 +56,13 @@ block content
             a.ui.image.label(href=base.rooturl + '/file/' + attach._id, target='_blank')= attach.name
       if (user.uid)
         each reply in topic.replies
-          .ui.segment(id=reply._id)
+          .ui.segment.reply(id=reply._id)
+            .ui.secondary.vertical.tools
+              a.item.reply-quote
+                i.quote.left.icon
+              if (reply.author._id == user.page_id)
+                a.item.reply-edit
+                  i.edit.icon
             .user-avatar.img-circle
               if (reply.author.avatar_url)
                 img(src=reply.author.avatar_url)

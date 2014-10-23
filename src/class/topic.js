@@ -697,6 +697,56 @@
 
   Topic.prototype.reply = function(req, res, data, callback) {
     var that = this;
+    var reply_id = req.params.id;
+    if (reply_id && req.method != 'POST') {
+      ReplyProxy.getReply(reply_id, function(err, reply) {
+        var r = {};
+        if (err) {
+          r = {err: err};
+        } else {
+          r = {
+            csrf: res.locals.core.user.csrf,
+            reply: reply
+          };
+        }
+        callback(true, r);
+      });
+      return;
+    } else if (reply_id == 'edit' && req.method == 'POST') {
+      var r = {err: 1};
+      if (res.locals.core.user.checkcsrf(req.body.csrf)
+          && req.body.reply) {
+        reply_id = req.body.reply.id;
+        r_content = req.body.reply.content;
+        if (reply_id && r_content) {
+          ReplyProxy.getReply(reply_id, function(err, reply) {
+            if (err) {
+              r = {err: err};
+            } else if (!reply) {
+              //...
+            } else if (reply.author_id.toString() !== res.locals.core.user.page_id.toString()) {
+              r = {err: 2};
+            } else {
+              if (reply.content != r_content) {
+                reply.content = r_content;
+                reply.update_at = Date.now();
+                reply.save();
+              }
+
+              r.err = 0;
+              r.reply = {
+                id: reply_id,
+                content: markdown(r_content)
+              };
+            }
+            callback(true, r);
+          });
+          return;
+        }
+      }
+      callback(true, r);
+      return;
+    }
     this.getBoard(req, res, data, callback, function (err) {
       that._reply(req, res, data, callback);
     });

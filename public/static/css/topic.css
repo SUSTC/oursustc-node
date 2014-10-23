@@ -61,3 +61,27 @@
   border-top: none;
   border-left: .2em solid #6ECFF5;
 }
+
+.reply .tools {
+  position: absolute;
+  top: 0;
+  right: 0;
+  max-width: 16px;
+}
+
+@media (min-width: 768px) {
+
+.reply .tools {
+  display: none;
+}
+
+.reply:hover .tools, .reply:active .tools {
+  display: block;
+}
+
+}
+
+.reply .tools .item {
+  cursor: pointer;
+  margin: 0;
+}
