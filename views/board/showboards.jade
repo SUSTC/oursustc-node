@@ -8,7 +8,7 @@ block script
 mixin board_list(boards, level)
     if (boards)
       if (level == 0)
-        if(Object.keys(boards).length!=1)
+        if (Object.keys(boards).length!=1)
           each board, id in boards
             .ui.segment.attached.left.blue
               a.header(href='/board/' + board.shortcut)= board.name
@@ -41,7 +41,8 @@ block content
 
     if (boards)
       .ui.segment#board_list
-        +board_list(boards, 0)
+        each board, id in boards
+          board_list(board, 0)
 
     else
       .ui.icon.message
