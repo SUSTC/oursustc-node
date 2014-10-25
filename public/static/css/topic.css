@@ -62,6 +62,10 @@
   border-left: .2em solid #6ECFF5;
 }
 
+#replies_ctl {
+  margin-bottom: 1em;
+}
+
 .reply .tools {
   position: absolute;
   top: 0;

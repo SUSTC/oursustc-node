@@ -1,4 +1,51 @@
 
+function expand_replies(topic_id) {
+  var btn = $('#expand_replies_btn');
+  if (btn.hasClass('loading')) {
+    return;
+  }
+  btn.addClass('loading');
+  $.ajax({
+    type: "GET",
+    url: '/topic/' + topic_id + '?full=1',
+    success: function (html) {
+      btn.removeClass('loading');
+      if (!html) {
+        //alert(data.err);
+        return;
+      }
+      var reply_list_el = $(html).find('#reply_list');
+      if (reply_list_el && reply_list_el.length) {
+        $('#reply_list').after(reply_list_el).remove();
+        initPage(false);
+
+        var reply_count = reply_list_el.find('> .reply').length;
+        btn.find('.reply_count').text(reply_count.toString());
+
+        $('#fold_replies_btn').show();
+      }
+      btn.removeClass('loading').hide();
+    },
+    error: function () {
+      btn.removeClass('loading');
+    },
+  });
+}
+
+function fold_replies() {
+  $('#fold_replies_btn').hide();
+
+  //'> .reply:lt()' Maybe can use lt selectors
+  var reply_els = $('#reply_list').find('> .reply');
+  if (reply_els.length > 10) {
+    for (var i = 0; i < reply_els.length - 10; i++) {
+      $(reply_els[i]).remove();
+    }
+  }
+
+  $('#expand_replies_btn').show();
+}
+
 function check_reply() {
   var form = $('form#topic_reply_form');
   var checkFields = ['.field#reply_text'];
@@ -186,5 +233,20 @@ function initTools() {
   });
 }
 
-initContent();
-initTools();
+function initPage(checkHash) {
+  if (checkHash) {
+    var urlHash = window.location.hash;
+    //like #54415df9344c392819000032
+    if (urlHash && urlHash.length == 25) {
+      var replyS = $(urlHash);
+      if (replyS && replyS.length <= 0) {
+        //click expand
+        $('#expand_replies_btn').click();
+      }
+    }
+  }
+  initContent();
+  initTools();
+}
+
+initPage(true);

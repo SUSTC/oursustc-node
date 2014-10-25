@@ -337,6 +337,12 @@
     var type = this.type;
     var topic_id = req.params.id;
 
+    var showallreply = req.query.full;
+    var folding = true;
+    if (showallreply && parseInt(showallreply)) {
+      folding = false;
+    }
+
     if (!this.canView(res)) {
       view.showMessage(data, res.locals.core.lang.errmsg.no_permission, 'error', '/', callback);
       return;
@@ -347,15 +353,21 @@
       data.topic = topic;
       data.board = that.board;
       data.author_other_topics = other_topics;
+      data.folded_count = (topic.reply_count - topic.replies.length);
       if (topic.title) {
         data.title = topic.title + ' - ' + data.title;
       }
       callback();
     });
 
+    ep.fail(function (err) {
+      console.error(err);
+      callback(true, {err: 500});
+    });
+
     var active = this.active;
     var that = this;
-    TopicProxy.getFullTopic(topic_id, ep.done(function(message, topic, tags, attachments, author, replies) {
+    TopicProxy.getFullTopic(topic_id, folding, ep.done(function(message, topic, tags, attachments, author, replies) {
 
       if (message) {
         //err msg

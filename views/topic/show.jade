@@ -55,27 +55,37 @@ block content
           each attach in topic.attachments
             a.ui.image.label(href=base.rooturl + '/file/' + attach._id, target='_blank')= attach.name
       if (user.uid)
-        each reply in topic.replies
-          .ui.segment.reply(id=reply._id)
-            .ui.secondary.vertical.tools
-              a.item.reply-quote
-                i.quote.left.icon
-              if (reply.author._id == user.page_id)
-                a.item.reply-edit
-                  i.edit.icon
-            .user-avatar.img-circle
-              if (reply.author.avatar_url)
-                img(src=reply.author.avatar_url)
-              else
-                img(src=base.rooturl + '/static/img/user/def-avatar.png')
-            .reply-info
-              .user-name
-                a(href=base.rooturl + '/user/' + reply.author._id, target='_blank')= reply.author.name
-              span.time
-                | #{lang.info.create_at}: #{reply.friendly_create_at} 
-                if (reply.update_at - reply.create_at > 10000)
-                  | (#{lang.topic.modified})
-            .reply-content.wmd-preview!= reply.content
+        if (folded_count > 0)
+          #replies_ctl
+            .fluid.ui.blue.button#expand_replies_btn(onclick='expand_replies("#{topic._id}")')
+              span.reply_count= topic.reply_count
+              = lang.topic.expand_replies_count
+              i.angle.down.icon
+            .fluid.ui.blue.button#fold_replies_btn(onclick='fold_replies()', style='display:none')
+              = lang.topic.fold_replies
+              i.angle.up.icon
+        .ui#reply_list
+          each reply in topic.replies
+            .ui.segment.reply(id=reply._id)
+              .ui.secondary.vertical.tools
+                a.item.reply-quote
+                  i.quote.left.icon
+                if (reply.author._id == user.page_id)
+                  a.item.reply-edit
+                    i.edit.icon
+              .user-avatar.img-circle
+                if (reply.author.avatar_url)
+                  img(src=reply.author.avatar_url)
+                else
+                  img(src=base.rooturl + '/static/img/user/def-avatar.png')
+              .reply-info
+                .user-name
+                  a(href=base.rooturl + '/user/' + reply.author._id, target='_blank')= reply.author.name
+                span.time
+                  | #{lang.info.create_at}: #{reply.friendly_create_at} 
+                  if (reply.update_at - reply.create_at > 10000)
+                    | (#{lang.topic.modified})
+              .reply-content.wmd-preview!= reply.content
       .ui.segment
         .ui.top.attached.label
           i.edit.icon

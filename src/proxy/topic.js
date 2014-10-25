@@ -147,7 +147,12 @@ exports.getTopicsByQuery = function (query, opt, callback) {
  * @param {String} id 主题ID
  * @param {Function} callback 回调函数
  */
-exports.getFullTopic = function (id, callback) {
+exports.getFullTopic = function (id, folding, callback) {
+  if (folding instanceof Function) {
+    callback = folding;
+    folding = true;
+  }
+
   var proxy = new EventProxy();
   var events = ['topic', 'tags', 'attachments', 'author', 'replies'];
   proxy.assign(events, function (topic, tags, attachments, author, replies) {
@@ -196,7 +201,7 @@ exports.getFullTopic = function (id, callback) {
       proxy.emit('author', author);
     }));
 
-    Reply.getRepliesByTopicId(topic._id, proxy.done('replies'));
+    Reply.getRepliesByTopicId(topic._id, folding, proxy.done('replies'));
   }));
 };
 
