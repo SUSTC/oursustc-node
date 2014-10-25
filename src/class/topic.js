@@ -733,11 +733,19 @@
                 reply.save();
               }
 
-              r.err = 0;
-              r.reply = {
-                id: reply_id,
-                content: markdown(r_content)
-              };
+              at.linkUsers(r_content, function (err, str) {
+                if (err) {
+                  r = {err: 3};
+                } else {
+                  r.err = 0;
+                  r.reply = {
+                    id: reply_id,
+                    content: markdown(str)
+                  };
+                }
+                callback(true, r);
+              });
+              return;
             }
             callback(true, r);
           });

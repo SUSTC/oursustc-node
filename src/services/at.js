@@ -55,7 +55,9 @@ exports.sendMessageToMentionUsers = function (text, topicId, authorId, reply_id,
     }).fail(callback);
 
     users.forEach(function (user) {
-      Message.sendAtMessage(user._id, authorId, topicId, reply_id, ep.done('sent'));
+      if (user._id != authorId) {
+        Message.sendAtMessage(user._id, authorId, topicId, reply_id, ep.done('sent'));
+      }
     });
   });
 };

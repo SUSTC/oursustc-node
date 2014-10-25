@@ -76,6 +76,17 @@ function reply_edit(btnel, rid) {
   return false;
 }
 
+function reply_edit_cancel(btnel, rid) {
+  var form = $(btnel).parents('form');
+  var ro = $(form).parents('.reply');
+  var rc = ro.find('.reply-content');
+
+  form.remove();
+  
+  rc.find('.dimmer').remove();
+  rc.show();
+}
+
 function initContent() {
   $('.prettyprint').each(function(){
     $(this).addClass('linenums');
@@ -93,11 +104,32 @@ function initTools() {
   $('.reply-quote').click(function () {
     var ro = $(this).parents('.reply');
     var username = ro.find('.user-name a').text();
-    var content = '';
-    var lines = ro.find('.reply-content p');
-    for (var i = 0; i < lines.length; i++) {
-      content += '> ' + $(lines[i]).text() + '\n> \n';
-    }
+    var rc = ro.find('.reply-content');
+    var gettext = function (rc, depth) {
+      var childs = $(rc).find('> *');
+      console.log(childs);
+      var quotetext = '';
+      var strquotechr = '';
+      if (depth == undefined) {
+        depth = 1;
+      }
+      for (var i = 0; i < depth; i++) {
+        strquotechr += '>';
+      }
+      for (var i = 0; i < childs.length; i++) {
+        var child = childs[i];
+        var tagName = child.tagName.toLowerCase();
+        if (tagName == 'p') {
+          quotetext += strquotechr + ' ' + $(child).text() + '\n'
+            + strquotechr + ' \n';
+        } else if (tagName == 'blockquote') {
+          quotetext += gettext(child, depth + 1);
+        }
+      };
+      return quotetext;
+    };
+
+    var content = gettext(rc);
     if (username && content) {
       content = '> @' + username + ' :\n> \n' + content + '\n';
       var trto = $("#topic_reply_text");
@@ -146,6 +178,7 @@ function initTools() {
       </div>\
       <div class="form-actions">\
         <button type="button" onclick="reply_edit(this, \'' + rid + '\');" class="ui blue submit button">保存</button>\
+        <button type="button" onclick="reply_edit_cancel(this, \'' + rid + '\');" class="ui blue submit button">取消</button>\
       </div>\
     </form>');
       ro.find('form .field textarea').val(r.reply.content).focus();
