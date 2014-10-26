@@ -156,21 +156,26 @@ function initTools() {
       var childs = $(rc).find('> *');
       console.log(childs);
       var quotetext = '';
-      var strquotechr = '';
+      var strquoteprefix = '';
       if (depth == undefined) {
         depth = 1;
       }
       for (var i = 0; i < depth; i++) {
-        strquotechr += '>';
+        strquoteprefix += '>';
       }
+      strquoteprefix += ' ';
       for (var i = 0; i < childs.length; i++) {
         var child = childs[i];
         var tagName = child.tagName.toLowerCase();
         if (tagName == 'p') {
-          quotetext += strquotechr + ' ' + $(child).text() + '\n'
-            + strquotechr + ' \n';
+          quotetext += strquoteprefix + $(child).text() + '\n'
+            + strquoteprefix + '\n';
         } else if (tagName == 'blockquote') {
-          quotetext += gettext(child, depth + 1);
+          var bqtext = gettext(child, depth + 1);
+          if (bqtext) {
+            bqtext += strquoteprefix + '\n';
+          }
+          quotetext += bqtext;
         }
       };
       return quotetext;

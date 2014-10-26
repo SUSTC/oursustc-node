@@ -9,7 +9,36 @@
 #topic_list img.avatar, #notification_list img.avatar {
   width: 60px;
   height: 60px;
-  margin-right: 1em;
+}
+
+#topic_list .user.avatar, #notification_list .user.avatar {
+  position: absolute;
+}
+
+#topic_list .content, #notification_list .content {
+  margin-left: 80px;
+}
+
+.content+.topic-info {
+  margin-top: 1rem;
+}
+
+@media only screen and (min-width : 601px) {
+#topic_list .content > .header, #notification_list .content > .header {
+  margin-top: 5px;
+}
+
+#topic_list .content > .topic-info, #notification_list .content > .topic-info {
+  margin-top: 10px;
+}
+}
+
+.topic-info span {
+  color: rgba(0,0,0,.4);
+}
+
+.topic-info span, .topic-info a {
+  font-size: .8rem;
 }
 
 #topic_list .item .floated {
@@ -71,6 +100,32 @@
   top: 0;
   right: 0;
   max-width: 16px;
+}
+
+@media only screen and (max-width : 600px) {
+  #topic_list .item, #notification_list .item {
+    padding: 5px 0 5px 5px;
+  }
+  #topic_list img.avatar, #notification_list img.avatar {
+    width: 42px;
+    height: 42px;
+  }
+  #topic_list .header, #notification_list .header {
+    font-size: 1.0em;
+  }
+  #topic_list .content, #notification_list .content {
+    margin-left: 47px;
+  }
+  #reply_list .reply {
+    padding: 5px;
+    margin: 5px 0;
+  }
+  #reply_list .reply:first-child {
+    margin-top: 0;
+  }
+  #reply_list .reply-content *:last-child {
+    margin-bottom: 5px;
+  }
 }
 
 @media (min-width: 768px) {

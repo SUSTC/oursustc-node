@@ -68,28 +68,27 @@ block content
       each topic in topics
         .item
           if (topic.author)
+          .user.avatar
             - var u = topic.author;
             include ../user/user-round
           .content
             .header
               a(href=base.rooturl + '/topic/#{topic._id}')= topic.title
-            p
+            p.topic-info
+              if (topic.author_id)
+                a(href=base.rooturl + '/topic/page/#{topic.author_id}', target='_blank')= topic.author.name
               span.time 
                 | #{lang.info.create_at}: #{topic.friendly_create_at}
                 if (topic.last_reply)
                   | &nbsp;&nbsp;#{lang.info.last_reply_at}: #{topic.friendly_last_reply_at}
           .right.floated.ui.grid
-            .eight.wide.column.computer.only.numbers
+            .column.computer.only.numbers
               .info
                 strong.number= topic.visit_count
                 | #{lang.topic.visit_count}
               .info
                 strong.number= topic.reply_count
                 | #{lang.topic.reply_count}
-          if (topic.author_id)
-            .user-topics
-              a(href=base.rooturl + '/topic/page/#{topic.author_id}')
-                i.suitcase.icon
 
       else
         .ui.icon.message

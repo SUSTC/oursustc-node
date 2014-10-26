@@ -196,18 +196,6 @@ hr {
   padding: 0 20px 0 20px;
 }
 
-.content+.topic-info {
-  margin-top: 1rem;
-}
-
-.topic-info span {
-  font-size: 1rem;
-}
-
-.introduction .topic-info span {
-  color: rgba(0,0,0,.4);
-}
-
 #attachment_list {
   margin-top: -10px;
   margin-bottom: 10px;
