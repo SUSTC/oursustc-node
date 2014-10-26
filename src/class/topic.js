@@ -241,6 +241,13 @@
       ]
     };
 
+    if (this.board.access & constdata.board_permission.ONLY_VIEW_SELF) {
+      if (this.board.administrator_ids.indexOf(res.locals.core.user.page_id) === -1) {
+        //only can view self
+        query.author_id = res.locals.core.user.page_id;
+      }
+    }
+
     var events = ['topics', 'pagination'];
     var that = this;
     var ep = EventProxy.create(events, function(topics, pagination) {
