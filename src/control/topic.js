@@ -69,4 +69,11 @@
     topic.reply(req, res, data, callback);
   };
 
+  exports.set = function(req, res, data, callback) {
+    initData(res, data, res.locals.core.lang.topic.set);
+
+    var topic = new Topic();
+    topic.set(req, res, data, callback);
+  };
+
 }).call(this);

@@ -1,4 +1,24 @@
 
+function topic_set(topic_id, sets, csrf) {
+  var topic = {
+    id: topic_id,
+  };
+  for (var key in sets) {
+    topic[key] = sets[key];
+  }
+  $.ajax({
+    type: "POST",
+    url: '/topic/set',
+    data: {topic: topic, csrf: csrf},
+    success: function (data) {
+      if (data && !data.err) {
+        window.location.reload();
+      }
+    },
+    dataType: 'json',
+  });
+}
+
 function expand_replies(topic_id) {
   var btn = $('#expand_replies_btn');
   if (btn.hasClass('loading')) {

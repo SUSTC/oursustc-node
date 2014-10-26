@@ -36,7 +36,7 @@ block content
           .divider /
           .active.section= topic.title
 
-      if (topic.canManage || (topic.author && topic.author._id == user.page_id))
+      if (topic.canManage || topic.canSet || (topic.author && topic.author._id == user.page_id))
         .ui.segment
           .ui.text.menu
             a.item(href=base.rooturl + '/topic/edit/#{topic._id}')
@@ -45,6 +45,14 @@ block content
             a.item(onclick="$('#topic_delete_confirm').modal('show');")
               i.delete.icon
               = lang.info.delete
+            if (topic.canSet)
+              a.item(onclick='topic_set("#{topic._id}", {top: #{!topic.top}}, "#{user.csrf}")')
+                if (topic.top)
+                  i.down.arrow.icon
+                  = lang.topic.untop
+                else
+                  i.up.arrow.icon
+                  = lang.topic.top
       .ui.segment.wmd-preview#topic_content
         != topic.content
       if (topic.attachments)

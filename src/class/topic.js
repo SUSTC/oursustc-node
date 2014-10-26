@@ -101,6 +101,18 @@
     return false;
   };
 
+  Topic.prototype.canSet = function(res, topic) {
+    if (!res.locals.core.isLogin()) {
+      return false;
+    }
+
+    if (res.locals.core.user.page.permission & constdata.user_permission.DASHBOARD) return true;
+
+    if (this.board.administrator_ids.indexOf(res.locals.core.user.page_id) !== -1) return true;
+
+    return false;
+  };
+
   Topic.prototype.canReply = function(res, topic) {
     return true;
   }; // STUB: Can reply
@@ -376,7 +388,8 @@
       if (topic) {
 
         var _canManage = that.canManage(res, topic);
-
+        var _canSet = that.canSet(res, topic);
+        
         topic.visit_count += 1;
         topic.save(ep.done(function() {
           // format date
@@ -407,8 +420,8 @@
 
           topic.attachments = attachments;
 
-
           topic.canManage = _canManage;
+          topic.canSet = _canSet;
 
           topic.content = markdown(topic.content);
 
@@ -519,6 +532,70 @@
       callback();
     }
 
+  };
+
+  Topic.prototype.set = function(req, res, data, callback) {
+    var that = this;
+    if (!res.locals.core.isLogin()) {
+      view.showMessage(data, res.locals.core.lang.errmsg.no_permission, 'error', callback);
+      return;
+    }
+    var r = {err: -1};
+    if (req.method == 'POST') {
+      var topic_id;
+      if (req.body.topic) {
+        topic_id = req.body.topic.id;
+      } else {
+        callback(true, r);
+        return;
+      }
+
+      if (!res.locals.core.user.checkcsrf(req.body.csrf)) {
+        r.err = 1;
+        callback(true, r);
+        return;
+      }
+
+      this.getBoard(req, res, data, callback, function (err) {
+        TopicProxy.getTopic(topic_id,  function(err, topic) {
+          var _canSet = that.canSet(res, topic);
+          if (!_canSet) {
+            r.err = 2;
+            callback(true, r);
+            return;
+          }
+
+          var seted = false;
+          if (req.body.topic.top !== undefined) {
+            seted = true;
+            switch (req.body.topic.top) {
+            case 'true':
+              topic.top = true;
+              break;
+            case 'false':
+              topic.top = false;
+              break;
+            default:
+              seted = false;
+              break;
+            }
+          }
+
+          r.err = 0;
+          if (seted) {
+            topic.save(function () {
+              callback(true, r);
+            });
+          } else {
+            callback(true, r);
+          }
+
+        });
+      });
+
+      return;
+    }
+    callback(true, r);
   };
 
   Topic.prototype.edit = function(req, res, data, callback) {
