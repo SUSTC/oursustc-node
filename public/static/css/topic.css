@@ -15,7 +15,7 @@
   position: absolute;
 }
 
-#topic_list .content, #notification_list .content {
+#topic_list .content {
   margin-left: 80px;
 }
 
@@ -113,7 +113,7 @@
   #topic_list .header, #notification_list .header {
     font-size: 1.0em;
   }
-  #topic_list .content, #notification_list .content {
+  #topic_list .content {
     margin-left: 47px;
   }
   #reply_list .reply {
