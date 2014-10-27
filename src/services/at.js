@@ -19,10 +19,17 @@ var EventProxy = require('eventproxy');
  * @return {Array} 用户名数组
  */
 var fetchUsers = function (text) {
-  var atUserPatt = /@(\S+?)[\s|$]/ig;
+  var atUserPatt = /@([^\s`]+?)[\s|$]/ig;
+  var atUserPatt2 = /@`(.+?)`/ig;
   var names = [];
   do {
     result = atUserPatt.exec(text);
+    if (result) {
+      names.push(result[1]);
+    }
+  } while (result != null);
+  do {
+    result = atUserPatt2.exec(text);
     if (result) {
       names.push(result[1]);
     }
@@ -87,7 +94,7 @@ exports.linkUsers = function (text, callback) {
     }
     for (var i = 0, l = users.length; i < l; i++) {
       var name = users[i].name;
-      text = text.replace(new RegExp('@' + name, 'gmi'), '@[' + name + '](/user/' + users[i]._id.toString() + ')');
+      text = text.replace(new RegExp('@' + name + '|@`' + name + '`', 'gmi'), '@[' + name + '](/user/' + users[i]._id.toString() + ')');
     }
     return callback(null, text);
   });

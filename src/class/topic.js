@@ -900,7 +900,7 @@
               }
             }
             if (topic_author_id !== res.locals.core.user.page_id.toString()
-                && at_user_ids.indexOf(topic_author_id) === -1) {
+                && (!at_user_ids || at_user_ids.indexOf(topic_author_id) === -1)) {
               message.sendReplyMessage(topic.author_id, res.locals.core.user.page_id, topic._id, reply._id);
             }
             ReplyProxy.getRepliesByTopicId(topic._id, false, function (err, replies) {

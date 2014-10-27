@@ -203,6 +203,10 @@ function initTools() {
 
     var content = gettext(rc);
     if (username && content) {
+      if (username.indexOf(' ') !== -1
+          || username.indexOf('\t') !== -1) {
+        username = '`' + username + '`';
+      }
       content = '> @' + username + ' :\n> \n' + content + '\n';
       var trto = $("#topic_reply_text");
       var text = trto.val();

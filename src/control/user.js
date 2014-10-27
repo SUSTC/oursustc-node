@@ -765,8 +765,20 @@
                   if (page) {
                     data.err.username = true;
                   } else {
-                    page_change.name = req.body.user.username;
-                    page_change.name_clean = username_clean;
+                    var disallow = false;
+                    var username = req.body.user.username;
+                    var disallow_char = ['`', '\t', '\r', '\n'];
+                    disallow_char.forEach(function (ch) {
+                      if (username.indexOf(ch) !== -1) {
+                        disallow = true;
+                      }
+                    });
+                    if (disallow) {
+                      data.err.username = true;
+                    } else {
+                      page_change.name = username;
+                      page_change.name_clean = username_clean;
+                    }
                   }
                   ep.emit('username', true);
                 });
