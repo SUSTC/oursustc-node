@@ -99,6 +99,7 @@ exports.sendAtMessage = function (master_id, author_id, topic_id, reply_id, call
   message.reply_id = reply_id;
   message.save(function (err) {
     // TODO: 异常处理
+    callback(err);
     return;
     User.getUserById(master_id, function (err, master) {
       // TODO: 异常处理
@@ -111,7 +112,6 @@ exports.sendAtMessage = function (master_id, author_id, topic_id, reply_id, call
         });
       }
     });
-    callback(err);
   });
 };
 

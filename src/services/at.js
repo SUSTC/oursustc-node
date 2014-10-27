@@ -46,16 +46,26 @@ exports.sendMessageToMentionUsers = function (text, topicId, authorId, reply_id,
   }
   callback = callback || function () {};
   User.getUsersByNames(fetchUsers(text), function (err, users) {
-    if (err || !users) {
+    if (err || !users || users.length == 0) {
       return callback(err);
     }
     var ep = new EventProxy();
-    ep.after('sent', users.length, function () {
-      callback();
+    var user_ids = [];
+
+    var at_count = 0;
+    users.forEach(function (user) {
+      if (user._id != authorId) {
+        at_count++;
+      }
+    });
+
+    ep.after('sent', at_count, function () {
+      callback(null, user_ids);
     }).fail(callback);
 
     users.forEach(function (user) {
       if (user._id != authorId) {
+        user_ids.push(user._id);
         Message.sendAtMessage(user._id, authorId, topicId, reply_id, ep.done('sent'));
       }
     });

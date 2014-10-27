@@ -892,17 +892,27 @@
             return;
           });
 
-          ep.all('reply_saved', 'topic', function (reply, topic) {
-            if (topic.author_id.toString() !== res.locals.core.user.page_id.toString()) {
+          ep.all('reply_saved', 'topic', 'at_user_ids', function (reply, topic, at_user_ids) {
+            var topic_author_id = topic.author_id.toString();
+            if (at_user_ids && at_user_ids.length) {
+              for (var i = 0; i < at_user_ids.length; i++) {
+                at_user_ids[i] = at_user_ids[i].toString();
+              }
+            }
+            if (topic_author_id !== res.locals.core.user.page_id.toString()
+                && at_user_ids.indexOf(topic_author_id) === -1) {
               message.sendReplyMessage(topic.author_id, res.locals.core.user.page_id, topic._id, reply._id);
             }
-            ReplyProxy.getRepliesByTopicId(topic._id, function (err, replies) {
+            ReplyProxy.getRepliesByTopicId(topic._id, false, function (err, replies) {
               if (replies) {
                 var author_ids = [];
                 for (var i = 0; i < replies.length; i++) {
                   author_ids.push(replies[i].author_id.toString());
                 }
                 var mention_ids = _.without(_.uniq(author_ids), res.locals.core.user.page_id.toString(), topic.author_id.toString());
+                if (at_user_ids && at_user_ids.length) {
+                  mention_ids = _.difference(mention_ids, at_user_ids);
+                }
                 _.each(mention_ids, function (mention_id) {
                   message.sendReply2Message(mention_id, res.locals.core.user.page_id, topic._id, reply._id);
                 });
@@ -919,7 +929,7 @@
               ep.emit('reply_saved', reply);
 
               //发送at消息
-              at.sendMessageToMentionUsers(r_content, topic_id, res.locals.core.user.page_id, reply._id);
+              at.sendMessageToMentionUsers(r_content, topic_id, res.locals.core.user.page_id, reply._id, ep.done('at_user_ids'));
             }));
           }));
 
