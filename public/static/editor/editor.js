@@ -196,6 +196,7 @@ function completeHandler() {
 
 function errorHandler() {
   var uiMessage = $('#editor_image_errmsg');
+  //TODO: move to page
   uiMessage.find('.errmsg').html("#{lang.errmsg.upload_failed}");
   uiMessage.show();
 }

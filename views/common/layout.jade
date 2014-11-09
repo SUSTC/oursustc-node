@@ -18,8 +18,9 @@ html
     link(rel='stylesheet', href='/static/css/font-OpenSans.css')
     block stylesheet
 
-    //if lt IE 9
-      script(src=base.rooturl + '/static/js/html5shiv.js')
+    <!--[if lt IE 9]>
+    script(src=base.rooturl + '/static/js/html5shiv.js')
+    <![endif]-->
 
   body#example
     block bg-content

@@ -13,6 +13,8 @@ var User = require('../proxy').UserPage;
 var Message = require('./notification');
 var EventProxy = require('eventproxy');
 
+var string = require('../common/string');
+
 /**
  * 从文本中提取出@username 标记的用户名数组
  * @param {String} text 文本内容
@@ -94,6 +96,7 @@ exports.linkUsers = function (text, callback) {
     }
     for (var i = 0, l = users.length; i < l; i++) {
       var name = users[i].name;
+      name = string.preg_quote(name);
       text = text.replace(new RegExp('@' + name + '|@`' + name + '`', 'gmi'), '@[' + name + '](/user/' + users[i]._id.toString() + ')');
     }
     return callback(null, text);

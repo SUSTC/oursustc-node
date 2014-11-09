@@ -767,12 +767,14 @@
                   } else {
                     var disallow = false;
                     var username = req.body.user.username;
-                    var disallow_char = ['`', '\t', '\r', '\n'];
-                    disallow_char.forEach(function (ch) {
+                    var disallow_str = '`\t\r\n';
+                    for (var i = 0; i < disallow_str.length; i++) {
+                      var ch = disallow_str[i];
                       if (username.indexOf(ch) !== -1) {
                         disallow = true;
+                        break;
                       }
-                    });
+                    }
                     if (disallow) {
                       data.err.username = true;
                     } else {
