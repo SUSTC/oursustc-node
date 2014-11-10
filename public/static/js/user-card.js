@@ -60,7 +60,7 @@ function show_page_card(linkel, cardelid, page_id) {
           <div class="user-text">\
             <div class="user-text-block">\
               <div class="user-name">\
-                <a href="/user/' + card.id + '" target="blank_">' + card.name + '</a>\
+                <a href="/user/' + card.id + '" target="blank_">' + htmlspecialchars(card.name) + '</a>\
               </div>\
             </div>\
           </div>\
