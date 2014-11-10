@@ -11,28 +11,29 @@ function show_page_card(linkel, cardelid, page_id) {
     return;
   }
 
+  var fn_remove = function () {
+    setTimeout(function () {
+      if (!isenter) {
+        linkel.popup('hide');
+        linkel
+          .unbind('mouseleave')
+          .data('timer', 0);
+      }
+    }, 250);
+  };
+
   popel.mouseenter(function () {
     isenter = true;
     if (!isbindleave) {
       popel.mouseleave(function () {
         isenter = false;
-        setTimeout(function () {
-          if (!isenter) {
-            linkel.popup('hide');
-            linkel.unbind('mouseleave');
-          }
-        }, 250);
+        fn_remove();
       });
       isbindleave = true;  
     }
   });
   linkel.mouseleave(function () {
-    setTimeout(function () {
-      if (!isenter) {
-        linkel.popup('hide');
-        linkel.unbind('mouseleave');
-      }
-    }, 250);
+    fn_remove();
   });
 
   $.ajax({
@@ -96,8 +97,7 @@ function initUserPageCard() {
       var timer = $(this).data('timer');
       if (timer) {
         clearTimeout(timer);
-        $(this).data('timer', 0);
-        return;
+        $(that).data('timer', 0);
       }
 
       var that = this;
