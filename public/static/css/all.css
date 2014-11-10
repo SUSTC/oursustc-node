@@ -1937,6 +1937,24 @@ hr {
     border-radius: 0;
 }
 
+.user-card .user-bio {
+  margin: -10px 10px 10px;
+  text-align: center;
+}
+
+.user-card .user-bio span {
+  /* margin: 0 auto; */
+  font-size: .875rem;
+}
+
+.ui.popup.card {
+  padding: 0;
+  max-width: 360px;
+  min-height: 80px;
+  margin-left: 1px;
+  width: 360px;
+}
+
 @media only screen and (min-width : 1051px) {
   .user-header .user-nav-tabs {
     width: 900px;

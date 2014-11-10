@@ -174,7 +174,7 @@ function initTools() {
     var rc = ro.find('.reply-content');
     var gettext = function (rc, depth) {
       var childs = $(rc).find('> *');
-      console.log(childs);
+      //console.log(childs);
       var quotetext = '';
       var strquoteprefix = '';
       if (depth == undefined) {
@@ -276,6 +276,7 @@ function initPage(checkHash) {
   }
   initContent();
   initTools();
+  initUserPageCard();
 }
 
 initPage(true);

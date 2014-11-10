@@ -42,8 +42,9 @@ if (u._id)
                         | (
                         = user.realname
                         | )
-
       .user-bottom
+    .user-bio
+      span= u.bio
     .inner
       - if (u.show_store_controls)
         .user-page-control

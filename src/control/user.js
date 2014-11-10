@@ -56,6 +56,36 @@
     callback(true, resdata);
   };
 
+  exports.card = function(req, res, data, callback) {
+    var userCard = {err: 1};
+    var page_id;
+    if (req.params.id && string.is_objectid(req.params.id)) {
+      page_id = req.params.id;
+    } else if (!req.params.id && res.locals.core.isLogin()) {
+      page_id = res.locals.core.user.page_id;
+    }
+    if (page_id) {
+      UserPageProxy.getUserById(page_id, function (err, page) {
+        if (err) {
+          userCard.err = err;
+        } else if (page) {
+          userCard.err = 0;
+          userCard.card = {
+            id: page._id,
+            name: page.name,
+            avatar: page.avatar ? page.avatar : '/static/img/user/def-avatar.png',
+            cover: page.cover ? page.cover : '/static/img/user/def-front-cover.jpg',
+            is_star: page.is_star,
+            bio: page.bio,
+          };
+        }
+        callback(true, userCard);
+      });
+    } else {
+      callback(true, userCard);
+    }
+  };
+
   exports.update = function(req, res, data, callback) {
     var resdata = {
       err: {

@@ -149,4 +149,5 @@ block script
     MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ["\\(","\\)"]], processEscapes: true },  messageStyle: "none"});
   //mathjax source code is here: https://github.com/mathjax/MathJax
   script(type='text/javascript', src='/static/editor/MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML')
+  script(type='text/javascript', src=base.rooturl + '/static/js/user-card.js?v=#{version.js}')
   script(type='text/javascript', src=base.rooturl + '/static/js/topic-show.js?v=#{version.js}')
