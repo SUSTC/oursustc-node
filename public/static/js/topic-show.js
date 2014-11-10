@@ -154,7 +154,7 @@ function reply_edit_cancel(btnel, rid) {
   rc.show();
 }
 
-function initContent() {
+function initContent(isinit) {
   $('.prettyprint').each(function(){
     $(this).addClass('linenums');
   });
@@ -164,7 +164,11 @@ function initContent() {
     $(this).addClass('ui table segment');
   });
 
-  MathJax.Hub.Queue(["Typeset", MathJax.Hub, "wmd-preview"]);
+  if (isinit) {
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, "wmd-preview"]);
+  } else {
+    MathJax.Hub.Typeset();
+  }
 }
 
 function initTools() {
@@ -274,7 +278,7 @@ function initPage(checkHash) {
       }
     }
   }
-  initContent();
+  initContent(checkHash);
   initTools();
   initUserPageCard();
 }
