@@ -16,8 +16,8 @@ function show_page_card(linkel, cardelid, page_id) {
       if (!isenter) {
         linkel.popup('hide');
         linkel
-          .unbind('mouseleave')
-          .data('timer', 0);
+          .unbind('mouseleave', fn_remove)
+          .removeData('timer');
       }
     }, 250);
   };
@@ -32,9 +32,7 @@ function show_page_card(linkel, cardelid, page_id) {
       isbindleave = true;  
     }
   });
-  linkel.mouseleave(function () {
-    fn_remove();
-  });
+  linkel.mouseleave(fn_remove);
 
   $.ajax({
     type: "GET",
@@ -97,7 +95,7 @@ function initUserPageCard() {
       var timer = $(this).data('timer');
       if (timer) {
         clearTimeout(timer);
-        $(that).data('timer', 0);
+        $(this).removeData('timer');
       }
 
       var that = this;
@@ -128,7 +126,7 @@ function initUserPageCard() {
     var timer = $(this).data('timer') || 0;
     if (timer) {
       clearTimeout(timer);
-      $(this).data('timer', 0);
+      $(this).removeData('timer');
     }
   });
 }

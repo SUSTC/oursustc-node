@@ -641,7 +641,31 @@
     }
   }
 
+  function add_user(id, name, callback) {
+    var account = {
+      studentId: id,
+      name: name,
+      password: functions.password_hash(id.toString()),
+      accounttype: constdata.account_type.STUDENT
+    };
+
+    var ep = new EventProxy();
+    ep.fail(function (err) {
+      callback(err);
+    });
+
+    UserAccountProxy.newAndSave(account.studentId, account.name, account.accounttype, '',
+      account.password, '', false,
+      ep.done(function (acc) {
+        UserPageProxy.newAndSave(acc._id, 3, false, acc.name, '', '', '',
+          ep.done(function (page) {
+            callback(null, acc, page);
+          }));
+      }));
+  }
+
   exports.User = User;
   exports.install_user_single = install_user_single;
+  exports.add_user = add_user;
 
 }).call(this);
