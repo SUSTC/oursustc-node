@@ -19,8 +19,8 @@
     "errorhandler": "*",
     
     "eventproxy": "*",
-    "jade": "*",
-    "mongoose": "2.7.3",
+    "jade": "1.5.0",
+    "mongoose": "2.*",
     "connect-mongo": "*",
     "pagedown": "*",
     "validator": "0.3.7",

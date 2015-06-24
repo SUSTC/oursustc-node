@@ -1,13 +1,32 @@
 extends ./userlayout
 
+block stylesheet
+  style.
+    #user_gpa_form .ui.checkbox label {
+      padding: 0;
+    }
+    #user_gpa_form tbody tr {
+      cursor: pointer;
+    }
+    .gpa_result {
+      font-weight: bold;
+    }
+    .gpa_result.well {
+      color: #2ecc40;
+    }
+    .gpa_result.fight {
+      color: #ff695e;
+    }
+
 block subscript
   script(src=base.rooturl + '/static/js/user-urp.js?v=#{version.js}')
+  script(src=base.rooturl + '/static/js/gpa.js?v=#{version.js}')
 
 block nav-tabs
   a.item(href=base.rooturl + '/user')= lang.user.profile
   a.item(href=base.rooturl + '/user/activity')= lang.user.activity
   a.item(href=base.rooturl + '/user/page')= lang.user.page
-  a.active.item(href=base.rooturl + '/user/urp')= lang.user.urp
+  a.active.item(href=base.rooturl + '/user/urp')= lang.user.grades_and_gpa
   a.item(href=base.rooturl + '/user/settings')= lang.user.settings
 
 block user-form
@@ -42,6 +61,48 @@ block user-form
         button.ui.blue.button#urp_update(onclick="urp_op('update');")= lang.info.update
         | 
         button.ui.blue.button#urp_update(onclick="urp_op('remove')")= lang.info.remove
+
+  .ui.form.raised.segment#user_gpa_form
+    .ui.teal.ribbon.label= lang.user.grades_and_gpa
+    p
+    if (urp && urp.terms)
+      // .compact
+      table.ui.sortable.table
+        thead.full-width
+          tr
+            th
+              .ui.checkbox
+                input(type='checkbox')
+                label
+            th= lang.user.course_term
+            th= lang.user.course_type
+            th= lang.user.course_id
+            th= lang.user.course_name
+            th= lang.user.course_credit
+            th= lang.user.grade
+        tbody
+          each term in urp.terms
+            each course in term.courses
+              tr(class=(course.grade < 60 ? 'negative': (course.grade < 70 ? 'warning' : (course.grade >= 90 ? 'positive' : ''))))
+                td.collapsing
+                  .ui.checkbox
+                    input(type='checkbox')
+                    label
+                td= term.name
+                td= course.property
+                td= course.id
+                td= course.name
+                td= course.credit
+                td= course.grade
+        tfoot.full-width
+          tr
+            th= lang.user.gpa
+            th(colspan='5')
+            th
+              span.gpa_result
+    else
+      .ui.info.message
+        p= lang.user.bind_urp_first
 
   form.ui.form.raised.segment#user_urp_form(enctype='application/x-www-form-urlencoded', method='POST', action='/user/urp')
     div(style='display:none')

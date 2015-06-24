@@ -202,14 +202,23 @@
         "activity": "活动",
         "wallet": "钱包",
         "balance": "余额",
-        "urp": "URP教务系统",
+        "urp": "URP 教务系统",
         "settings": "设置",
         "account": "帐户",
         "avatar": "头像",
         "front_cover": "封面",
         "change_avatar": "更换头像",
         "change_front_cover": "更换封面",
-        "urp_account": "URP教务系统账号",
+        "urp_account": "URP 教务系统账号",
+        "bind_urp_first": "请先绑定并更新 URP 教务系统账号",
+        "grades_and_gpa": "成绩 & GPA",
+        "gpa": "GPA",
+        "course_term": "学期",
+        "course_id": "课程号",
+        "course_name": "课程名称",
+        "course_type": "课程类型",
+        "course_credit": "学分",
+        "grade": "成绩",
         "username": "用户名",
         "pagename": "用户页名",
         "nousername": "无用户名",
@@ -233,13 +242,13 @@
         "notifications_not_found": "没有新的通知",
         "input_tips": {
             "username": "请输入一个用于显示的用户名",
-            "urp_username": "请输入您在URP教务系统中的用户名",
-            "urp_need_update": "请更新您的URP教务系统信息",
+            "urp_username": "请输入您在 URP 教务系统中的用户名",
+            "urp_need_update": "请更新您的 URP 教务系统信息",
             "realname": "您无法自己修改真实姓名",
             "studentid": "您无法自己修改学号",
             "activating": "您正在激活",
             "ori_password": "只有修改密码或电子邮件时才需要输入原始密码",
-            "urp_password": "请输入您在URP教务系统中的密码",
+            "urp_password": "请输入您在 URP 教务系统中的密码",
             "bio": "关于自己的一个小简介 (1000字以内)",
             "change_avatar": "建议大小: 200x200",
             "change_front_cover": "建议大小: 1200x675",
@@ -398,9 +407,9 @@
         "file_not_found": "没有找到该文件！",
         "user_not_found": "没有找到该用户"
     },
-    
+
     "nav_text": "SUSTC",
-    
+
     "university": {
         "name": "南方科技大学"
     }
