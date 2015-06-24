@@ -101,7 +101,7 @@ block user-form
             th
               span.gpa_result
     else
-      .ui.info.message
+      .ui.info.message(style='display:block')
         p= lang.user.bind_urp_first
 
   form.ui.form.raised.segment#user_urp_form(enctype='application/x-www-form-urlencoded', method='POST', action='/user/urp')
