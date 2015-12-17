@@ -219,6 +219,7 @@
         "course_type": "课程类型",
         "course_credit": "学分",
         "grade": "成绩",
+        "fivelevel": "五级制",
         "username": "用户名",
         "pagename": "用户页名",
         "nousername": "无用户名",
