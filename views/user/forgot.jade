@@ -1,21 +1,86 @@
-extends ../common/sublayout
+extends ../common/layout
+
+block bodyheader
+  div.segment
+    div.container
+      div.introduction#login-welcome
+        h1.ui.dividing.header= lang.title.user.forgot
+        p(class='lead')
+          | 使用 SUSTC CAS 帐号重置密码
+          br
+          a(href='http://weblogin.sustc.edu.cn/cas/login', target='_blank') http://weblogin.sustc.edu.cn/cas/login
 
 block content
-  .main
-    .panel#error_form
-      .header
-        ul.breadcrumb
-          li
-            i.icon-home
-            | 
-            a(href="/")= lang.title.index
-            span.divider /
-          li
-            a(href=base.rooturl + '/user')= lang.title.user.index
-            span.divider /
-          li
-            li.active= lang.title.user.forgot
-      .inner
-        .alert.alert-block.alert-info
-          h4= lang.info.notice
-          p= lang.info.user.manual_reset_password
+  div.span7
+    div.login-board.login-forgot
+      form.ui.form.segment#forgot_form(autocomplete='off', action='/user/forgot', method='POST')
+        div.field(class=(err.accountid ? 'error' : ''))#account-id
+          label= lang.user.studentid
+          div.ui.left.labeled.icon.input
+            input(type='text', id='forgot-account-id', name='user[account_id]', autocomplete='on', tabindex='1', placeholder=lang.user.studentid)
+            i.icon.user
+            div.ui.corner.label
+              i.icon.asterisk
+            if (err.accountid)
+              div.ui.red.pointing.above.ui.label= err.msg
+        div.field(class=(err.cas_password ? 'error' : ''))#cas-password
+          label !{lang.user.input_tips.cas_password}
+          div.ui.left.labeled.icon.input
+            input(type='password', id='forgot-password', name='user[cas_password]', autocomplete='off', tabindex='2')
+            i.icon.lock
+            div.ui.corner.label
+              i.icon.asterisk
+          if (err.cas_password)
+            div.ui.red.pointing.above.ui.label= err.msg
+        .ui.ribbon.label= lang.user.site_password
+        .field.passcheck#new_password(class=(err.new_password ? 'error' : ''))
+          label.control-label(for='user_new_password')= lang.user.new_password
+          .ui.left.labeled.icon.input
+            input#user_new_password(maxlength='36', type='password', tabindex='3', name='user[new_password]', autocomplete='off', value='')
+            i.lock.icon
+            div.ui.corner.label
+              i.icon.asterisk
+            if (err.new_password)
+              div.ui.red.pointing.above.ui.label= lang.user.input_error.new_password
+        .field.passcheck#new_password_again
+          label.control-label(for='user_new_password_again')= lang.user.new_password_again
+          .ui.left.labeled.icon.input
+            input#user_new_password_again(maxlength='36', type='password', tabindex='4', name='user[new_password_again]', autocomplete='off', value='')
+            i.lock.icon
+            div.ui.corner.label
+              i.icon.asterisk
+        div.ui.blue.submit.button#btnsubmit(class='btn btn-primary', tabindex='5', onclick='check_forgot();')= lang.user.reset
+
+block script
+  script(type='text/javascript').
+    function check_forgot() {
+      var form = $('#forgot_form');
+      var checkThings = ['.field#account-id', '.field#cas-password', '.field#new_password', '.field#new_password_again'];
+      var checkPass = true;
+
+      $.each(checkThings, function (i, value) {
+        var field = form.find(value);
+        var input = field.find('input');
+        if (!input.val()) {
+          field.addClass('error');
+          checkPass = false;
+        } else {
+          field.removeClass('error');
+        }
+      });
+
+      if (checkPass) {
+        var fields = form.find('.field.passcheck');
+        var inputs = fields.find('input');
+        if (inputs.length == 2 && ($(inputs[0]).val() != $(inputs[1]).val())) {
+          fields.addClass('error');
+          checkPass = false;
+        } else {
+          fields.removeClass('error');
+        }
+      }
+
+      if (checkPass) {
+        form.submit();
+      }
+    }

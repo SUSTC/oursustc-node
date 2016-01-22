@@ -1,6 +1,6 @@
 {
     "base_title" : "我们的南科大",
-    "copyright" : "&copy; 2014 南方科技大学计算机研究协会",
+    "copyright" : "&copy; 2012-2016 南方科技大学计算机研究协会",
 
     "projects": {
         "cloudprint": "云打印"
@@ -186,8 +186,10 @@
         "login": "登录",
         "logout": "退出",
         "activate": "激活",
+        "reset": "重置",
         "account_id": "学号或姓名",
         "password": "密码",
+        "site_password": "本站密码",
         "remember_me": "记住我",
         "forgot_password": "忘记密码",
         "create_page": "创建用户页",
@@ -234,6 +236,7 @@
         "bio": "简介",
         "my_page": "我的用户页",
         "activate_succeed": "激活成功！",
+        "password_reset_succeed": "密码重置成功！",
         "in": "在",
         "and_others": "等人",
         "reply_you": "回复了你",
@@ -250,6 +253,7 @@
             "activating": "您正在激活",
             "ori_password": "只有修改密码或电子邮件时才需要输入原始密码",
             "urp_password": "请输入您在 URP 教务系统中的密码",
+            "cas_password": "请输入您在 <a href=\"http://weblogin.sustc.edu.cn/cas/login\" target=\"_blank\">SUSTC CAS</a> 中的密码",
             "bio": "关于自己的一个小简介 (1000字以内)",
             "change_avatar": "建议大小: 200x200",
             "change_front_cover": "建议大小: 1200x675",
