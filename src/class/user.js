@@ -63,6 +63,24 @@
         console.log(r);
     }); */
   };
+  
+  User.prototype.isPageAccessible = function (page_id) {
+    if (!this.page_list || this.page_list.length <= 0) {
+      return false;
+    }
+    
+    if (page_id && page_id.length === 24) {
+      for (var i = 0; i < this.page_list.length; i++) {
+        var page = this.page_list[i];
+        if (page._id.toString() == page_id) {
+          // check user is assistant teacher or not.
+          return ((page.flags == 0 || ((page.flags == 1 || page.flags == 2) && page.power >= 3)));
+        }
+      }
+    }
+    
+    return false;
+  };
 
   User.prototype.setpage = function(page) {
   };
@@ -152,22 +170,12 @@
 
   User.prototype.switchpage = function(page_id, res) {
     page_id = page_id.replace(/[^0-9a-z]/g, '');
-    if (page_id && page_id.length === 24) {
-      var checkpageid = false;
-      for (var i = 0; i < this.page_list.length; i++) {
-        if (page_id === this.page_list[i]._id.toString() && 
-            (this.page_list[i].flags == 0 || ((this.page_list[i].flags == 1 || this.page_list[i].flags == 2) && this.page_list[i].power >= 3))) {
-          checkpageid = true;
-          break;
-        }
-      }
-      if (checkpageid) {
-        var TIMESTAMP = this.core.TIMESTAMP;
-        var cookie_options = { httpOnly: HTTP_ONLY };
-        cookie_options.expires = new Date(TIMESTAMP + max_online_time);
-        res.cookie(config.COOKIE_PREFIX + 'page_id', page_id.toString(), cookie_options);
-        return true;
-      }
+    if (this.isPageAccessible(page_id)) {
+      var TIMESTAMP = this.core.TIMESTAMP;
+      var cookie_options = { httpOnly: HTTP_ONLY };
+      cookie_options.expires = new Date(TIMESTAMP + max_online_time);
+      res.cookie(config.COOKIE_PREFIX + 'page_id', page_id.toString(), cookie_options);
+      return true;
     }
     return false;
   };
@@ -426,7 +434,7 @@
             that.showname = user.name;
             that.uid = user.uid;
             that.csrf = that.getusercsrf(cookiekey);
-
+            
             var checkpageid = false;
             var page;
             if (userPages.length > 0) {
@@ -438,21 +446,16 @@
                   }
                 }
               }
-
-              if (user_page_id && user_page_id.length === 24) {
-                for (var i = 0; i < userPages.length; i++) {
-                  if (userPages[i]._id.toString() == user_page_id) {
-                    //TODO: need to check user is assistant teacher or not.
-                    page = userPages[i];
-                    checkpageid = true;
-                    break;
-                  }
-                }
-              }
-
-              if (!checkpageid) {
+              
+              that.page_list = userPages;
+              if (that.isPageAccessible(user_page_id)) {
+                page = userPages[i];
+              } else {
                 page = userPages[0];
               }
+            } else {
+              // no pages
+              that.page_list = [];
             }
 
             if (page) {
@@ -473,9 +476,6 @@
             }
 
             ep.emit('user_current_page', page);
-
-            that.page_list = userPages;
-
             is_login = true;
           } else {
             epm.emit('user_page_manager', null);
