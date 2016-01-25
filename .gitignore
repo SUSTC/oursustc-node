@@ -7,6 +7,5 @@
 /test.js
 /src/data/*
 /src/config/config.json
-/src/config/config-production.json
 /public/static/MathJax-2.4-latest.zip
 /public/static/editor/MathJax/*
