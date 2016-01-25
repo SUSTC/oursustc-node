@@ -1,3 +1,4 @@
+
 {
   "name": "sustc.us",
   "version": "0.5.1",
@@ -32,7 +33,7 @@
     "xss": "0.0.5",
     "bufferhelper": "*",
     "iconv-lite": "*",
-    "node-tesseract": "*",
+    "tesseract_native": "*",
     "gm": "*",
 
     "wechat": "*",

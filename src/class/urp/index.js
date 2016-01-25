@@ -6,7 +6,7 @@
 var http = require('http'),
   fs = require('fs'),
   constdata = require("./../../common/constdata"),
-  tesseract = require('node-tesseract'),
+  tesseract = require('tesseract_native'),
   BufferHelper = require('bufferhelper'),
   iconv = require('iconv-lite');
 
@@ -127,12 +127,20 @@ URPSystem.prototype.getValidateCode = function (callback) {
       callback(err);
       return;
     }
-    var fname = constdata.TMP_DIR + 'vcode/' + that.jid + '.jpg';
+    var myocr = new tesseract.OcrEio();
+    myocr.ocr(buf, function(err, result) {
+      if (err) {
+        return callback(err);
+      }
+      callback(null, that.trim(result));
+    });
+    /* var fname = constdata.TMP_DIR + 'vcode/' + that.jid + '.jpg';
     fs.writeFile(fname, buf, function (e) {
       if (e) {
         callback(e);
         return;
       }
+      
       var options = {
         l: 'eng',
         psm: 8
@@ -143,7 +151,7 @@ URPSystem.prototype.getValidateCode = function (callback) {
         text = that.trim(text);
         callback(err, text);
       });
-    });
+    }); */
   }, true);
 };
 
