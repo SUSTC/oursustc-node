@@ -1,0 +1,5 @@
+a(title=u.name, href=base.rooturl + '/user/' + u._id, target='_blank')
+  if (u.avatar_url)
+    img.ui.avatar.image(src=u.avatar_url)
+  else
+    img.ui.avatar.image(src=base.rooturl + '/static/img/user/def-avatar.png')

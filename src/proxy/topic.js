@@ -9,6 +9,7 @@ var UserContent = require('./user_content');
 //var Tag = require('./tag');
 var Reply = require('./reply');
 var Util = require('../common/util');
+var at = require('../services/at');
 
 /**
  * 根据主题ID获取主题
@@ -146,7 +147,12 @@ exports.getTopicsByQuery = function (query, opt, callback) {
  * @param {String} id 主题ID
  * @param {Function} callback 回调函数
  */
-exports.getFullTopic = function (id, callback) {
+exports.getFullTopic = function (id, folding, callback) {
+  if (folding instanceof Function) {
+    callback = folding;
+    folding = true;
+  }
+
   var proxy = new EventProxy();
   var events = ['topic', 'tags', 'attachments', 'author', 'replies'];
   proxy.assign(events, function (topic, tags, attachments, author, replies) {
@@ -158,7 +164,14 @@ exports.getFullTopic = function (id, callback) {
       proxy.unbind();
       return callback(null, '此话题不存在或已被删除。');
     }
-    proxy.emit('topic', topic);
+    at.linkUsers(topic.content, function (err, str) {
+      if (err) {
+        proxy.unbind();
+        return callback(err);
+      }
+      topic.content = str;
+      proxy.emit('topic', topic);
+    });
 
     /*TopicTag.find({topic_id: topic._id}, proxy.done(function (topic_tags) {
       var tags_ids = [];
@@ -188,7 +201,7 @@ exports.getFullTopic = function (id, callback) {
       proxy.emit('author', author);
     }));
 
-    Reply.getRepliesByTopicId(topic._id, proxy.done('replies'));
+    Reply.getRepliesByTopicId(topic._id, folding, proxy.done('replies'));
   }));
 };
 
@@ -239,9 +252,9 @@ exports.reduceCount = function (id, callback) {
   });
 };
 
-exports.newAndSave = function (type, title, content, authorId, callback) {
+exports.newAndSave = function (boardId, title, content, authorId, callback) {
   var topic = new Topic();
-  topic.type = type;
+  topic.board_id = boardId;
   topic.title = title;
   topic.content = content;
   topic.author_id = authorId;

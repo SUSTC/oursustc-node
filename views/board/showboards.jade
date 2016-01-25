@@ -1,0 +1,51 @@
+extends ../common/layout
+
+block stylesheet
+  link(rel='stylesheet', href=base.rooturl + '/static/css/topic.css?v=#{version.css}')
+
+block script
+
+mixin board_list(boards, level)
+    if (boards)
+      if (level == 0)
+        if(Object.keys(boards).length!=1)
+          each board, id in boards
+            .ui.segment.attached.left.blue
+              a.header(href='/board/' + board.shortcut)= board.name
+              .text
+                = board.description? board.description: lang.board.no_description
+            +board_list(board.children, level + 1)
+        else
+          each board, id in boards
+            .ui.segment.attached.left.blue
+              a.header(href='/board/' + board.shortcut)= board.name
+              .text
+                = board.description? board.description: lang.board.no_description
+            +board_list(board.children, level + 1)
+      else
+        if(Object.keys(boards).length!=0)
+          .ui.segment.attached
+            +board_list(boards, level - 1)
+
+block bodyheader
+  //include ../user/user-bar
+  include ../common/banner
+
+block content
+  div(id=active)
+    .ui.segment
+      .ui.breadcrumb
+        a.section(href='/')= lang.title.index
+        .divider /
+        .active.section= lang.title.board.index
+
+    if (boards)
+      .ui.segment#board_list
+        +board_list(boards, 0)
+
+    else
+      .ui.icon.message
+        i.icon.exclamation
+        .content
+          .header= lang.info.tips
+          p= lang.board.boards_not_found

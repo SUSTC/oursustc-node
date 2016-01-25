@@ -12,7 +12,7 @@
 }
 
 .wmd-preview p:last-child {
-  margin-bottom: 1em !important;
+  margin-bottom: 1em;
 }
 
 .wmd-preview code, .wmd-preview pre {

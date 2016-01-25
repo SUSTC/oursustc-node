@@ -2,15 +2,18 @@
 (function() {
 
   var EventProxy = require('eventproxy');
-  var functions = require("./../common/functions"),
+  var util = require("./../common/util"),
+    functions = require("./../common/functions"),
     string = require("./../common/string"),
+    constdata = require("./../common/constdata"),
     model = require("./../model"),
     proxy = require("./../proxy"),
     config = require("./../config/config.json"),
     crypto = require("crypto"),
     UserAccountProxy = proxy.UserAccount,
     UserPageProxy = proxy.UserPage,
-    UserPageRelationProxy = proxy.UserPageRelation;
+    UserPageRelationProxy = proxy.UserPageRelation,
+    NotificationProxy = proxy.Notification;
 
   var max_online_time = 2592000000; // a month
   var HTTP_ONLY = true;
@@ -37,7 +40,7 @@
   User.prototype.init = function() {
     /* UserAccountProxy.newAndSave(
       '11210000',
-      '测试者', 'test',
+      '测试者', 0, 'test',
       functions.password_hash('123456'),
       'test@sustc.us',
       true, function (err, user) {
@@ -312,7 +315,8 @@
             res.locals.core.user.updatecookie(user.uid, remember_me, res);
           } else {
             if (!res.locals.core.api) {
-              res.redirect('/user/activate?key=' + res.locals.core.user.getactivatekey(user.uid));
+              var activateUrl = '/user/activate?key=' + res.locals.core.user.getactivatekey(user.uid);
+              res.redirect(activateUrl);
             }
             errdata.activate = true;
             callback(errdata, user, true);
@@ -323,6 +327,18 @@
         }
       }
       callback(is_login ? undefined : errdata, user);
+    });
+  };
+
+  User.prototype.getNotification = function(callback) {
+    var that = this;
+    NotificationProxy.getMessagesCount(this.page_id, function (err, count) {
+      if (err) {
+        callback(err);
+      } else {
+        that.page.new_notification = count;
+        callback(null, count);
+      }
     });
   };
 
@@ -342,7 +358,7 @@
       }
       cookie = _cookie;
     }
-    var usercookie = eval('cookie.' + config.COOKIE_PREFIX + 'user');
+    var usercookie = cookie[config.COOKIE_PREFIX + 'user'];
     if (usercookie && (usercookie.length % 8) === 0) {
 
       var key = new Buffer(config.COOKIE_DES_KEY, 'hex');
@@ -373,7 +389,7 @@
       if (cookietime && account_id && cookiekey && (this.core.TIMESTAMP - (cookietime * 1000)) < max_online_time) {
         var that = this;
 
-        var user_page_id = eval('cookie.' + config.COOKIE_PREFIX + 'page_id');
+        var user_page_id = cookie[config.COOKIE_PREFIX + 'page_id'];
 
         var eventms = ['login', 'user_page_manager', 'manager_default_page'];
         var epm = EventProxy.create(eventms, function (login, userPageManagers, ManagerPages) {
@@ -405,6 +421,7 @@
             is_login = true;
 
             that.account = user;
+            that.accounttype = parseInt(user.accounttype);
 
             that.showname = user.name;
             that.uid = user.uid;
@@ -442,6 +459,8 @@
               that.page_id = page._id.toString();
               that.page = page;
 
+              that.getNotification(ep.done('notification_count'));
+
               if (page.name) {
                 that.showname = page.name;
               }
@@ -475,7 +494,7 @@
           callback(false);
         });
 
-        ep.once('user_current_page', function (page) {
+        ep.all('user_current_page', 'notification_count', function (page) {
           if (page && page.noaccount && page.power >= 3) {
             //inpage
             UserPageRelationProxy.getRelationsByPageId(page._id, function (err, r) {
@@ -567,6 +586,86 @@
     });
   };
 
+  function install_user_single(filename, callback) {
+    var count = 0, startStudentId = 0;
+    var accounts = [];
+    util.lineSplit('src/data/' + filename + '.csv', function(line) {
+      var userdata = line.split(',');
+      if (userdata && userdata.length >= 2) {
+        var studentid_ = parseInt(userdata[0]);
+        if (userdata[1] && studentid_ > 0) {
+          if (startStudentId === 0) {
+            startStudentId = studentid_;
+          }
+
+          var objuser = {
+            studentId: studentid_,
+            name: userdata[1],
+            password: functions.password_hash(studentid_.toString()),
+            accounttype: constdata.account_type.STUDENT
+          };
+
+          accounts.push(objuser);
+
+          count++;
+        }
+      }
+    });
+
+    var events = ['accounts', 'pages'];
+    var ep = new EventProxy();
+    ep.all(events, function (accounts, pages) {
+      callback();
+    });
+
+    ep.fail(function (err) {
+      callback(err);
+    });
+
+    ep.after('page', accounts.length, function (list) {
+      ep.emit('pages', list);
+    });
+
+    ep.after('account', accounts.length, function (list) {
+      for (var i = 0; i < list.length; i++) {
+        UserPageProxy.newAndSave(list[i]._id, 3, false, list[i].name, '', '', '',
+          ep.group('page'));
+      }
+      ep.emit('accounts', list);
+    });
+
+    for (var i = 0; i < accounts.length; i++) {
+      UserAccountProxy.newAndSave(accounts[i].studentId, accounts[i].name, accounts[i].accounttype, '',
+        accounts[i].password, '', false,
+        ep.group('account'));
+    }
+  }
+
+  function add_user(id, name, callback) {
+    var account = {
+      studentId: id,
+      name: name,
+      password: functions.password_hash(id.toString()),
+      accounttype: constdata.account_type.STUDENT
+    };
+
+    var ep = new EventProxy();
+    ep.fail(function (err) {
+      callback(err);
+    });
+
+    UserAccountProxy.newAndSave(account.studentId, account.name, account.accounttype, '',
+      account.password, '', false,
+      ep.done(function (acc) {
+        UserPageProxy.newAndSave(acc._id, 3, false, acc.name, '', '', '',
+          ep.done(function (page) {
+            callback(null, acc, page);
+          }));
+      }));
+  }
+
   exports.User = User;
+  exports.install_user_single = install_user_single;
+  exports.add_user = add_user;
 
 }).call(this);

@@ -1,9 +1,9 @@
 {
   "name": "sustc.us",
-  "version": "0.1.8",
+  "version": "0.5.1",
   "private": true,
   "scripts": {
-    "start": "forever app.js"
+    "start": "node app.js"
   },
   "dependencies": {
     "express": "4.*",
@@ -20,17 +20,22 @@
     
     "eventproxy": "*",
     "jade": "*",
-    "mongoose": "2.7.3",
+    "mongoose": "2.*",
     "connect-mongo": "*",
     "pagedown": "*",
     "validator": "0.3.7",
     "nodemailer": "*",
     "marked-prettyprint": "0.2.8",
     "imagemagick": "*",
+    "underscore": "*",
     "csv": "*",
     "xss": "0.0.5",
     "bufferhelper": "*",
     "iconv-lite": "*",
-    "node-tesseract": "*"
+    "node-tesseract": "*",
+    "gm": "*",
+
+    "wechat": "*",
+    "request": "*"
   }
 }

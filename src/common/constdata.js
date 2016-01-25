@@ -1,13 +1,14 @@
-
 (function() {
 
   var path = require('path');
 
+  var root_dir = path.resolve(__dirname, '../..') + '/';
   var public_dir = path.resolve(__dirname, '../../public') + '/';
 
   var upload_dir = public_dir + 'data/';
   var tmp_dir = public_dir + 'data/tmp/';
 
+  exports.ROOT_DIR = root_dir;
   exports.PUBLIC_DIR = public_dir;
 
   exports.UPLOAD_DIR = upload_dir;
@@ -19,15 +20,35 @@
 
   exports.MIN_PASSWORD_LENGTH = 6;
 
-  exports.permission = {
-    BASE:              0x00000000,
-    RESERVE:           0x00000001,
-    ADD_NEWS:          0x00000002,
-    MANAGE_NEWS:       0x00000004,
-    ADD_COURSEWARE:    0x00000008,
-    MANAGE_COURSEWARE: 0x00000016,
+  exports.user_permission = {
+    BASE:             0x00000000,
+    RESERVE:          0x00000001,
+    STU_ACCESS:       0x00000002,
 
-    DASHBOARD: 0x00008000
+
+    DASHBOARD:        0x00008000
+
+
   };
 
+
+  exports.board_permission = {
+    BASE:              0x00000000,
+    RESERVE:           0x00000001,
+    STUDENT_ACCESS:    0x00000002,
+    STUDENT_POST:      0x00000004,
+    TEACHER_ACCESS:    0x00000008,
+    TEACHER_POST:      0x00000010,
+    EXTERNAL_ACCESS:   0x00000020,
+    EXTERNAL_POST:     0x00000040,
+    NOACCOUNT_ACCESS:  0x00000080,
+    ONLY_VIEW_SELF:    0x00000100,
+  };
+
+  exports.account_type = {
+    EXTERNAL:          0,
+    TEACHER:           1,
+    STUDENT:           2
+  };
+  
 }).call(this);

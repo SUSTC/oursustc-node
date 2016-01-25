@@ -78,6 +78,8 @@
     return (this.user.uid != 0);
   }
 
+  exports.Core = Core;
+
   exports.coreMiddleware = function(req, res, next) {
     var core = new Core();
     core.init();
@@ -85,6 +87,7 @@
     core.base.url = req.url;
 
     res.locals.core = core;
+    
     //self redirect
     core.redirect = function (status, url) {
       if (url) {
@@ -94,6 +97,21 @@
       }
       res.redirect(status, url);
     };
+    
+    res.o_redirect = res.redirect;
+    res.redirect = function (status, url) {
+      var args = Array.prototype.slice.call(arguments);
+      if (res.data) {
+        res.data.set_redirect = args;
+      } else {
+        res.o_redirect.apply(res, args);
+      }
+    };
+
+    //core debug
+    if (config.DEBUG_CORE) {
+      
+    }
 
     core.user.checklogin(req.cookies, req, function () {
       next();

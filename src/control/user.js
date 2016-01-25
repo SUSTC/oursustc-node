@@ -2,20 +2,27 @@
 (function() {
 
   var EventProxy = require('eventproxy');
+  var _ = require('underscore');
+  var gm = require('gm').subClass({ imageMagick : true });
 
   //table = require("./../base/table");
   var config = require('./../config/config.json');
   var functions = require("./../common/functions"),
     string = require("./../common/string"),
     view = require("./../common/view"),
+    Util = require('../common/util'),
     constdata = require("./../common/constdata"),
     url = require('url'),
     proxy = require("./../proxy"),
     UserAccountProxy = proxy.UserAccount,
     UserPageProxy = proxy.UserPage,
     UserPageRelationProxy = proxy.UserPageRelation,
-    UserUrpProxy = proxy.UserUrp;
-  var URPSystem = require("./../class/urp").URPSystem;
+    UserUrpProxy = proxy.UserUrp,
+    NotificationProxy = proxy.Notification;
+
+  var URPSystem = require("./../class/urp").URPSystem,
+    CAS = require("./../class/cas").CAS;
+  var Wechat = require("./../services/wechat");
 
   var MIN_PASSWORD_LENGTH = constdata.MIN_PASSWORD_LENGTH;
 
@@ -35,19 +42,50 @@
     if (res.locals.core.isLogin()) {
       var _user = res.locals.core.user;
       resdata.islogin = true;
-      resdata.csrf = res.locals.core.user.csrf;
+      resdata.csrf = _user.csrf;
       resdata.user = {
         uid: _user.uid,
         studentid: _user.account.student_id,
         showname: _user.showname,
         'realname': _user.account.name,
         'email': _user.account.email,
+        new_notification: _user.page.new_notification
       };
     } else {
       resdata.islogin = false;
     }
 
     callback(true, resdata);
+  };
+
+  exports.card = function(req, res, data, callback) {
+    var userCard = {err: 1};
+    var page_id;
+    if (req.params.id && string.is_objectid(req.params.id)) {
+      page_id = req.params.id;
+    } else if (!req.params.id && res.locals.core.isLogin()) {
+      page_id = res.locals.core.user.page_id;
+    }
+    if (page_id) {
+      UserPageProxy.getUserById(page_id, function (err, page) {
+        if (err) {
+          userCard.err = err;
+        } else if (page) {
+          userCard.err = 0;
+          userCard.card = {
+            id: page._id,
+            name: page.name,
+            avatar: page.avatar ? page.avatar : '/static/img/user/def-avatar.png',
+            cover: page.cover ? page.cover : '/static/img/user/def-front-cover.jpg',
+            is_star: page.is_star,
+            bio: page.bio,
+          };
+        }
+        callback(true, userCard);
+      });
+    } else {
+      callback(true, userCard);
+    }
   };
 
   exports.update = function(req, res, data, callback) {
@@ -100,7 +138,7 @@
           }
         });
       } else {
-        if (req.params.api) {
+        if (res.locals.core.api) {
           res.locals.core.user.renderData(data);
         }
         data.page = res.locals.core.user.page;
@@ -282,7 +320,7 @@
     }
     if (!is_login) {
       data.title = res.locals.core.lang.title.user.login;
-      
+
       if (errdata.password) {
         errdata.msg = res.locals.core.lang.errmsg.invalid_password;
       } else if (errdata.accountid) {
@@ -297,7 +335,7 @@
       if (!redirectUrl) {
         redirectUrl = '/user';
       }
-      if (req.params.api) {
+      if (res.locals.core.api) {
         data.islogin = 1;
         data.cookies = res.locals.core.user.cookies;
       } else {
@@ -314,7 +352,7 @@
     } else if (req.query.redirect) {
       redirectUrl += '?url=' + req.query.redirect;
     }
-    
+
     res.redirect(redirectUrl);
     callback(true);
   };
@@ -325,7 +363,12 @@
     var is_login = res.locals.core.isLogin();
     var check_login_info = ((req.method == 'POST') && req.body && req.body.user);
 
+    data.wx_openid = '';
     if (check_login_info) {
+      if (req.body.wx_openid) {
+        data.wx_openid = req.body.wx_openid;
+      }
+
       if (!req.body.user.account_id) {
         errdata.accountid = true;
       } else if (!req.body.user.password) {
@@ -346,14 +389,31 @@
               data.err = errdata;
               data.goactivate = true;
               callback(true);
-              return;
+            } else {
+              if (is_login && data.wx_openid) {
+                Wechat.updateUserInfo(data.wx_openid, user._id, user.student_id, function (err, wx) {
+                  view.showMessage(data, res.locals.core.lang.wechat.bind_success, 'success',
+                    "javascript:WeixinJSBridge.invoke('closeWindow',{},function(res){});", callback);
+                });
+                return;
+              }
+              login_callback(is_login, errdata, req, res, data, callback);
             }
-            login_callback(is_login, errdata, req, res, data, callback);
           }
         );
       }
     } else {
-      login_callback(is_login, errdata, req, res, data, callback);
+      if (req.query.state === 'wechatconnect' && req.query.code) {
+        Wechat.getAccessToken(req.query.code, function (err, token) {
+          if (token && token.openid) {
+            data.wx_openid = token.openid;
+            is_login = false;
+          }
+          login_callback(is_login, errdata, req, res, data, callback);
+        });
+      } else {
+        login_callback(is_login, errdata, req, res, data, callback);
+      }
     }
   };
 
@@ -369,6 +429,70 @@
   exports.forgot = function(req, res, data, callback) {
     data.title = res.locals.core.lang.title.user.forgot;
     data.active = 'user';
+    data.err = {};
+
+    if (req.method == 'POST') {
+      var body = req.body;
+      var account = {};
+      if (body && body.user) {
+        if (!body.user.account_id) {
+          data.err.accountid = true;
+        } else {
+          account.id = body.user.account_id;
+        }
+        if (!body.user.cas_password) {
+          data.err.cas_password = true;
+        } else {
+          account.cas_password = body.user.cas_password;
+        }
+        if (body.user.new_password && body.user.new_password.length > 0) {
+          if (body.user.new_password === body.user.new_password_again && body.user.new_password.length >= MIN_PASSWORD_LENGTH) {
+            account.password = functions.password_hash(body.user.new_password);
+          } else {
+            data.err.new_password = true;
+          }
+        }
+      }
+      if (functions.is_object_empty(data.err)) {
+        if (account.id && account.cas_password && account.password) {
+          // get user info
+          UserAccountProxy.getUserByStudentId(account.id, function (err, user) {
+            if (err || !user) {
+              data.err.accountid = true;
+              data.err.msg = es.locals.core.lang.errmsg.user_not_found;
+              callback();
+              return;
+            }
+
+            // CAS login
+            var cas = new CAS();
+            cas.login(account.id, account.cas_password, function (err, succeed) {
+              if (err) {
+                data.err.accountid = true;
+                data.err.cas_password = true;
+                data.err.msg = err.toString();
+                callback();
+                return;
+              }
+
+              user.update_at = Date.now();
+              user.password = account.password;
+
+              user.save(function (err, u) {
+                if (err) {
+                  view.showMessage(data, res.locals.core.lang.errmsg.error_params, 'error', callback);
+                } else {
+                  view.showMessage(data, res.locals.core.lang.user.password_reset_succeed, 'success', '/user/login', callback);
+                }
+              });
+            });
+          });
+        } else {
+          view.showMessage(data, res.locals.core.lang.errmsg.error_params, 'error', callback);
+        }
+        return;
+      }
+    }
     callback();
   };
 
@@ -398,7 +522,7 @@
         if (key && !functions.is_object_empty(account)) {
           res.locals.core.user.activate(res, key, account, function (err, user) {
             if (!err && user) {
-              view.showMessage(data, res.locals.core.lang.errmsg.activate_succeed, 'success', '/user/login', callback);
+              view.showMessage(data, res.locals.core.lang.user.activate_succeed, 'success', '/user/login', callback);
             } else {
               view.showMessage(data, res.locals.core.lang.errmsg.error_params, 'error', callback);
             }
@@ -430,7 +554,47 @@
         });
       }
     }
-    
+
+  };
+
+  exports.notification = function(req, res, data, callback) {
+    data.title = res.locals.core.lang.title.user.notification;
+    data.active = 'user';
+    data.err = {};
+    if (res.locals.core.isLogin()) {
+      if (res.locals.core.user.page.new_notification) {
+        //Limit: 20
+        if (res.locals.core.user.page.new_notification > 20) {
+          data.next_page = true;
+        }
+        NotificationProxy.getUnreadMessageLimitByUserId(res.locals.core.user.page_id, function (err, msg_ids) {
+          var ep = new EventProxy();
+          ep.after('msg', msg_ids.length, function (msgs) {
+            var notifications = [];
+            for (var i = 0; i < msgs.length; i++) {
+              if (msgs[i].is_invalid) {
+                continue;
+              }
+              msgs[i].friendly_create_at = Util.format_date(msgs[i].create_at, true);
+              notifications.push(msgs[i]);
+            }
+            //mark as read
+            NotificationProxy.markAsRead(msg_ids, function () {});
+
+            data.notifications = notifications;
+            callback();
+          });
+          _.each(msg_ids, function (msg_id) {
+            NotificationProxy.getMessageById(msg_id, ep.done('msg'));
+          });
+        });
+      } else {
+        callback();
+      }
+    } else {
+      res.redirect('/user/login?url=/user/notification');
+      callback(true);
+    }
   };
 
   exports.urp = function(req, res, data, callback) {
@@ -471,7 +635,7 @@
 
         data.active = 'user';
         data.page = res.locals.core.user.page;
-        
+
         data.title = get_title(data.page.name, res);
 
         if (opurp === false) {
@@ -487,7 +651,7 @@
           data.urp.password = undefined;
           data.urp.cookie = undefined;
         }
-        
+
         if (data.urp) {
           data.urp.update_at_friendly = string.format_date(data.urp.update_at, true);
         }
@@ -512,7 +676,7 @@
                     username: req.body.user.urp_username,
                     password: req.body.user.urp_password
                   };
-                  
+
                   urpsys.login(surp.username, surp.password, function (err) {
                     if (err) {
                       //urpsys.cookie;
@@ -697,8 +861,22 @@
                   if (page) {
                     data.err.username = true;
                   } else {
-                    page_change.name = req.body.user.username;
-                    page_change.name_clean = username_clean;
+                    var disallow = false;
+                    var username = req.body.user.username;
+                    var disallow_str = '`\t\r\n';
+                    for (var i = 0; i < disallow_str.length; i++) {
+                      var ch = disallow_str[i];
+                      if (username.indexOf(ch) !== -1) {
+                        disallow = true;
+                        break;
+                      }
+                    }
+                    if (disallow) {
+                      data.err.username = true;
+                    } else {
+                      page_change.name = username;
+                      page_change.name_clean = username_clean;
+                    }
                   }
                   ep.emit('username', true);
                 });
@@ -730,13 +908,41 @@
 
           if (req.files && req.files.user) {
             if (req.files.user.avatar_file && req.files.user.avatar_file.size > 0) {
-              res.locals.core.resource.add(req.files.user.avatar_file, false, function (err, content, path) {
-                if (content) {
-                  page_change.avatar = content.path;
-                } else {
+              var avatar_file = req.files.user.avatar_file;
+              gm(avatar_file.path).size(function (err, value) {
+                if (err || !value) {
                   data.err.avatar_file = true;
+                  ep.emit('avatar', false);
+                  return;
                 }
-                ep.emit('avatar', true);
+
+                //crop to square
+                if (value.width > value.height) {
+                  var x = (value.width - value.height) / 2;
+                  this.crop(value.height, value.height, x, 0);
+                } else if (value.width < value.height) {
+                  var y = (value.height - value.width) / 2;
+                  this.crop(value.width, value.width, 0, y);
+                }
+
+                this
+                .resize(480, 480, '>')
+                .write(avatar_file.path, function (err) {
+                  if (err) {
+                    data.err.avatar_file = true;
+                    ep.emit('avatar', false);
+                    return;
+                  }
+
+                  res.locals.core.resource.add(avatar_file, false, function (err, content, path) {
+                    if (content) {
+                      page_change.avatar = content.path;
+                    } else {
+                      data.err.avatar_file = true;
+                    }
+                    ep.emit('avatar', true);
+                  });
+                });
               });
             } else {
               ep.emit('avatar', false);
@@ -766,7 +972,7 @@
       data.active = 'user';
       data.page = res.locals.core.user.page;
       data.title = get_title(data.page.name, res);
-      
+
       callback();
     } else {
       res.redirect('/user/login?url=/user/settings');

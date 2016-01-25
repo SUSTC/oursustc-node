@@ -117,9 +117,10 @@ exports.getUserByStudentId = function (studentId, callback) {
   User.findOne({'student_id': studentId}, callback);
 };
 
-exports.newAndSave = function (studentId, name, loginname, password, email, activate, callback) {
+exports.newAndSave = function (studentId, name, accounttype, loginname, password, email, activate, callback) {
   var user = new User();
   user.student_id = studentId;
+  user.accounttype = accounttype;
   user.name = name;
   user.loginname = loginname;
   user.loginname_clean = string.clean(loginname);

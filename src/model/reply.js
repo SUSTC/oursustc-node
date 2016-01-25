@@ -13,4 +13,7 @@ var ReplySchema = new Schema({
 	content_is_html: { type: Boolean }
 });
 
+ReplySchema.index({topic_id: 1});
+ReplySchema.index({author_id: 1, create_at: -1});
+
 mongoose.model('Reply', ReplySchema, config.DB_PREFIX + 'reply');

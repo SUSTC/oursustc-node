@@ -5,7 +5,7 @@ block nav-tabs
   a.item(href=base.rooturl + '/user/activity')= lang.user.activity
   a.active.item(href=base.rooturl + '/user/page')= lang.user.page
   if (page.flags == 0)
-    a.item(href=base.rooturl + '/user/urp')= lang.user.urp
+    a.item(href=base.rooturl + '/user/urp')= lang.user.grades_and_gpa
   a.item(href=base.rooturl + '/user/settings')= lang.user.settings
 
 block user-form
@@ -87,6 +87,7 @@ block user-form
                   a.ui.blue.small.button(href=base.rooturl + '/user/page/switch?page_id=' + u._id + '&csrf=' + user.csrf)= lang.user.switch_page
     .field
       button.ui.red.button(onclick="show_create_modal();")= lang.user.create_page
+
 block other-content
   .ui.small.modal#user_page_create_modal(tabindex='-1', role='dialog', aria-labelledby='create_page_label', aria-hidden='true')
     i.close.icon

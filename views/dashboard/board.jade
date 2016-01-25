@@ -1,0 +1,246 @@
+extends ../common/layout
+
+mixin show_board_parent_list
+  .ui.selection.dropdown
+    input(type='hidden', name='board[parent]', value='_top')
+    .default.text= lang.board.top_board
+    i.dropdown.icon
+    .menu
+      .item(data-value='_top')= lang.board.top_board
+      each board in boards
+        .item(data-value=board.shortcut)= board.name
+
+block script
+  script(type='text/javascript').
+    $(document).ready(function () {
+      $('.ui.dropdown').dropdown();
+    });
+
+    var administrators = !{administrators};
+    function gen_pagelabelhtml(page_id, name) {
+      return '\
+            <div class="item">\
+              <div class="ui image label" href="/user/page/' + page_id + '" target="_blank">' + htmlspecialchars(name) + '<i class="delete icon" onclick="$(this).parent().parent().remove();"></i></div>\
+              <input type="hidden" name="board[administrator_ids][]" value="' + page_id + '" />\
+            </div>';
+    }
+
+    function getparentshortcut(parent) {
+      var boards = !{JSON.stringify(boards)};
+      if (parent) {
+        for (var i = 0; i < boards.length; i++) {
+          if (boards[i]._id == parent) {
+            return boards[i].shortcut;
+          }
+        }
+      }
+      return '_top';
+    }
+
+    function setboard(bitem) {
+      var item = $(bitem);
+      item.parent().find('.item').removeClass('active');
+      item.addClass('active');
+
+      var b = item.data('board');
+      var form_info = $('#set_board_info');
+      var form_admin = $('#set_board_administrators');
+      var form_delete = $('#delete_board');
+      var admin_list = $('#administrators_list');
+
+      // info
+      form_info.find('input[name*=shortcut]').val(b.shortcut);
+      form_info.find('input[name*=name]').val(b.name);
+      form_info.find('textarea[name*=description]').html(htmlspecialchars(b.description));
+      form_info.find('input[name*=access]').val(b.access);
+      form_info.find('input[name*=parent]').val(getparentshortcut(b.parent));
+      
+      var form_info_pd = form_info.find('.ui.dropdown');
+      form_info_pd.dropdown('set selected', getparentshortcut(b.parent));
+
+      // admin
+      form_admin.find('input[name*=shortcut]').val(b.shortcut);
+      // delete
+      form_delete.find('input[name*=shortcut]').val(b.shortcut);
+
+      admin_list.find('.item').remove();
+      if (b.administrator_ids) {
+        for (var i = 0; i < b.administrator_ids.length; i++) {
+          var page = administrators[b.administrator_ids[i]];
+          if (page) {
+            admin_list.append(gen_pagelabelhtml(page._id, page.name));
+          }
+        }
+      }
+    }
+
+    function successHandler(data) {
+      if (data) {
+        var uiMessage = $('#user_errmsg');
+        if (data.err && data.err.msg) {
+          uiMessage.find('#errmsg').html(data.err.msg);
+          uiMessage.show();
+        } else {
+          uiMessage.hide();
+
+          var odata = JSON.parse(data);
+          if (!odata || !odata.page) {
+            return;
+          }
+          var page = odata.page;
+          $('#administrators_list').append(gen_pagelabelhtml(page._id, page.name));
+        }
+      }
+    }
+
+    function check_admin_add() {
+      var page_id = $('#page_id').val();
+      if (page_id) {
+        $('#page_id').val('');
+        $.ajax({
+          url: '/api/user/' + page_id,
+          success: successHandler
+        });
+      }
+    }
+
+block bodyheader
+  div.segment
+    div.container#overview
+      div.introduction
+        h1.ui.dividing.header
+          i.dashboard.icon
+          = lang.dashboard.board_management
+
+block content
+  .ui.vertical.menu(style='float:left;margin-left:-250px')
+    .header.item
+      i.comment.icon
+      = lang.title.board.index
+    each board in boards
+      a.item(data-board=board, onclick='setboard(this)')
+        //a(href='/board/' + board.shortcut, target='_blank')
+          i.external.url.icon
+        = board.name
+  .ui.three.column.grid
+    .row
+      .column
+        .ui.form.raised.segment#set_board_info
+          .ui.top.attached.label
+            i.lock.icon
+            span= lang.info.dashboard.set_board_info
+          .field
+            form.ui.form(enctype='application/x-www-form-urlencoded', method='POST', action='/dashboard/board')
+              div(style='display:none')
+                input(type='hidden', name='csrf', value=user.csrf)
+                input(type='hidden', name='action', value='set_board_info')
+              .field(class=(err.shortcut ? 'error' : ''))
+                .ui.left.labeled.icon.input
+                  input.disabled(type='text', name='board[shortcut]', placeholder=lang.board.shortcut, readonly)
+                  i.icon.code
+                  .ui.corner.label
+                    i.icon.asterisk
+              .field(class=(err.board_name ? 'error' : ''))
+                .ui.left.labeled.icon.input
+                  input(maxlength='20', type='text', name='board[name]', placeholder=lang.board.name)
+                  i.icon.comment
+                  .ui.corner.label
+                    i.icon.asterisk
+              .field(class=(err.board_access ? 'error' : ''))
+                .ui.left.labeled.icon.input
+                  input(type='number', name='board[access]', placeholder=lang.board.access)
+                  i.icon.certificate
+                  .ui.corner.label
+                    i.icon.asterisk
+              .field(class=(err.board_description ? 'error' : ''))
+                .ui.left.labeled.icon.input
+                  textarea(name='board[description]', placeholder=lang.board.description)
+                  i.icon.info
+              .field(class=(err.parent ? 'error' : ''))
+                +show_board_parent_list
+              .form-actions
+                button.ui.blue.submit.button(type='submit')= lang.info.submit
+      .column
+        .ui.form.raised.segment#set_board_administrators
+          .ui.top.attached.label
+            i.lock.icon
+            span= lang.info.dashboard.set_board_administrators
+          .field
+            form.ui.form(enctype='application/x-www-form-urlencoded', method='POST', action='/dashboard/board')
+              div(style='display:none')
+                input(type='hidden', name='csrf', value=user.csrf)
+                input(type='hidden', name='action', value='set_board_administrators')
+              .field(class=(err.shortcut ? 'error' : ''))
+                .ui.left.labeled.icon.input
+                  input.disabled(type='text', name='board[shortcut]', placeholder=lang.board.shortcut, readonly)
+                  i.icon.code
+                  .ui.corner.label
+                    i.icon.asterisk
+              .example.field#administrators
+                #administrators_list
+                .ui.error.message(style='display:none;')#user_errmsg
+                  i.close.icon(onclick='$(this).parent().hide();')
+                  .header= lang.info.error
+                  p#errmsg
+              .field
+                .ui.left.labeled.icon.action.input
+                  input#page_id(type='text', placeholder=lang.user.page)
+                  i.icon.user
+                  .ui.button(onclick='check_admin_add();')= lang.info.add
+              .form-actions
+                button.ui.blue.submit.button(type='submit')= lang.info.submit
+      .column
+        .ui.form.raised.segment#delete_board
+          .ui.top.attached.label
+            i.lock.icon
+            span= lang.info.dashboard.delete_board
+          .field
+            form.ui.form(enctype='application/x-www-form-urlencoded', method='POST', action='/dashboard/board')
+              div(style='display:none')
+                input(type='hidden', name='csrf', value=user.csrf)
+                input(type='hidden', name='action', value='delete_board')
+              .field(class=(err.shortcut ? 'error' : ''))
+                .ui.left.labeled.icon.input
+                  input.disabled(type='text', name='board[shortcut]', placeholder=lang.board.shortcut, readonly)
+                  i.icon.code
+                  .ui.corner.label
+                    i.icon.asterisk
+              .form-actions
+                button.ui.red.submit.button(type='submit')= lang.info.delete
+    .row
+      .column
+        .ui.form.raised.segment#new_board
+          .ui.top.attached.label
+            i.lock.icon
+            span= lang.info.dashboard.new_board
+          .field
+            form.ui.form(enctype='application/x-www-form-urlencoded', method='POST', action='/dashboard/board')
+              div(style='display:none')
+                input(type='hidden', name='csrf', value=user.csrf)
+                input(type='hidden', name='action', value='new_board')
+              .field(class=(err.shortcut ? 'error' : ''))
+                .ui.left.labeled.icon.input
+                  input(type='text', name='board[shortcut]', placeholder=lang.board.shortcut)
+                  i.icon.code
+                  .ui.corner.label
+                    i.icon.asterisk
+              .field(class=(err.board_name ? 'error' : ''))
+                .ui.left.labeled.icon.input
+                  input(maxlength='20', type='text', name='board[name]', placeholder=lang.board.name)
+                  i.icon.comment
+                  .ui.corner.label
+                    i.icon.asterisk
+              .field(class=(err.board_access ? 'error' : ''))
+                .ui.left.labeled.icon.input
+                  input(type='number', name='board[access]', placeholder=lang.board.access, value='30')
+                  i.icon.certificate
+                  .ui.corner.label
+                    i.icon.asterisk
+              .field(class=(err.board_description ? 'error' : ''))
+                .ui.left.labeled.icon.input
+                  textarea(name='board[description]', placeholder=lang.board.description)
+                  i.icon.info
+              .field(class=(err.parent ? 'error' : ''))
+                +show_board_parent_list
+              .form-actions
+                button.ui.blue.submit.button(type='submit')= lang.info.submit

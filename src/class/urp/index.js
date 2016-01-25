@@ -108,6 +108,14 @@ URPSystem.prototype.trim = function (str) {
   return "";
 };
 
+URPSystem.prototype.parsescore = function (sscore) {
+  if (/^[0-9\.]+$/.test(sscore)) {
+    return parseFloat(sscore);
+  } else {
+    return sscore;
+  }
+};
+
 URPSystem.prototype.init = function () {
 
 };
@@ -256,6 +264,7 @@ URPSystem.prototype.getInfo = function (callback) {
 
 URPSystem.prototype.getTerms = function (callback) {
   var urptrim = this.trim;
+  var parseScore = this.parsescore;
   this.request('/gradeLnAllAction.do?oper=qbinfo', function (err, html) {
     var terms = [];
     var arr = html.split(/<a name="(.+?)" ?\/><\/a>/ig);
@@ -281,7 +290,7 @@ URPSystem.prototype.getTerms = function (callback) {
           }
           var sscore = splcourse[13];
           var m = sscore.match(/<p.*?>(.*?)<\/p>/i);
-          if (m) sscore = parseFloat(urptrim(m[1]));
+          if (m) sscore = parseScore(urptrim(m[1]));
           var course = {
             'id': splcourse[1],
             'name': splcourse[5],

@@ -498,10 +498,12 @@ body.guide .main.container > * {
   margin: 1em 0em 1.5em;
   padding: 0px;
 }
-#example .footer.link.list {
-  display: block;
+#example .footer {
   text-align: center;
   margin-bottom: 1.5rem;
+}
+#example .footer .copyright {
+  color: rgba(0,0,0,.3);
 }
 
 
@@ -1393,6 +1395,19 @@ body.progress .ui.progress .bar {
   #example > .tab.segment .vertical.menu {
     display: block;
   }
+
+  #example > .main.container {
+    margin: 0 5px;
+  }
+
+  p:first-child {
+    margin-top: 0;
+  }
+
+  p {
+    margin: 5px 0;
+  }
+
 }
 @media only screen and (max-width : 450px) {
   #example .main.menu .icon.item {
@@ -1686,18 +1701,6 @@ hr {
   padding: 0 20px 0 20px;
 }
 
-.content+.topic-info {
-  margin-top: 1rem;
-}
-
-.topic-info span {
-  font-size: 1rem;
-}
-
-.introduction .topic-info span {
-  color: rgba(0,0,0,.4);
-}
-
 #attachment_list {
   margin-top: -10px;
   margin-bottom: 10px;
@@ -1880,6 +1883,20 @@ hr {
   text-align: left;
   border-bottom: 1px solid #ddd;
 }
+
+.notification.unread {
+  background-color: #cb4437;
+  color: #fff;
+}
+
+.notification.unread:hover {
+  background-color: #d34c3f !important;
+}
+.notification.unread:active {
+  background-color: #db5447 !important;
+}
+
+
 .user-board {
     height: 130px;
 }
@@ -1918,6 +1935,24 @@ hr {
     -webkit-border-radius: 0;
     -moz-border-radius: 0;
     border-radius: 0;
+}
+
+.user-card .user-bio {
+  margin: -10px 10px 10px;
+  text-align: center;
+}
+
+.user-card .user-bio span {
+  /* margin: 0 auto; */
+  font-size: .875rem;
+}
+
+.ui.popup.card {
+  padding: 0;
+  max-width: 360px;
+  min-height: 80px;
+  margin-left: 1px;
+  width: 360px;
 }
 
 @media only screen and (min-width : 1051px) {

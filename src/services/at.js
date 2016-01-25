@@ -10,8 +10,10 @@
  */
 
 var User = require('../proxy').UserPage;
-var Message = require('./message');
+var Message = require('./notification');
 var EventProxy = require('eventproxy');
+
+var string = require('../common/string');
 
 /**
  * 从文本中提取出@username 标记的用户名数组
@@ -19,16 +21,21 @@ var EventProxy = require('eventproxy');
  * @return {Array} 用户名数组
  */
 var fetchUsers = function (text) {
-  var results = text.match(/@[a-zA-Z0-9]+/ig);
+  var atUserPatt = /@([^\s`]+?)[\s|$]/ig;
+  var atUserPatt2 = /@`(.+?)`/ig;
   var names = [];
-  if (results) {
-    for (var i = 0, l = results.length; i < l; i++) {
-      var s = results[i];
-      //remove char @
-      s = s.slice(1);
-      names.push(s);
+  do {
+    result = atUserPatt.exec(text);
+    if (result) {
+      names.push(result[1]);
     }
-  }
+  } while (result != null);
+  do {
+    result = atUserPatt2.exec(text);
+    if (result) {
+      names.push(result[1]);
+    }
+  } while (result != null);
   return names;
 };
 
@@ -48,16 +55,28 @@ exports.sendMessageToMentionUsers = function (text, topicId, authorId, reply_id,
   }
   callback = callback || function () {};
   User.getUsersByNames(fetchUsers(text), function (err, users) {
-    if (err || !users) {
+    if (err || !users || users.length == 0) {
       return callback(err);
     }
     var ep = new EventProxy();
-    ep.after('sent', users.length, function () {
-      callback();
+    var user_ids = [];
+
+    var at_count = 0;
+    users.forEach(function (user) {
+      if (user._id != authorId) {
+        at_count++;
+      }
+    });
+
+    ep.after('sent', at_count, function () {
+      callback(null, user_ids);
     }).fail(callback);
 
     users.forEach(function (user) {
-      Message.sendAtMessage(user._id, authorId, topicId, reply_id, ep.done('sent'));
+      if (user._id != authorId) {
+        user_ids.push(user._id);
+        Message.sendAtMessage(user._id, authorId, topicId, reply_id, ep.done('sent'));
+      }
     });
   });
 };
@@ -77,7 +96,8 @@ exports.linkUsers = function (text, callback) {
     }
     for (var i = 0, l = users.length; i < l; i++) {
       var name = users[i].name;
-      text = text.replace(new RegExp('@' + name, 'gmi'), '@[' + name + '](/user/@' + name + ')');
+      name = string.preg_quote(name);
+      text = text.replace(new RegExp('@' + name + '|@`' + name + '`', 'gmi'), '@[' + name + '](/user/' + users[i]._id.toString() + ')');
     }
     return callback(null, text);
   });

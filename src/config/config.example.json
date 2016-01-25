@@ -3,6 +3,7 @@
   "DEBUG_WARN": true,
   "DEBUG_ERROR": true,
   "DEBUG_CLIENT": true,
+  "DEBUG_CORE": true,
 
   "HOST": "sustc.us",
   "ROOT_URL": "",
@@ -19,6 +20,10 @@
   "COOKIE_PREFIX": "sc_",
   "COOKIE_DES_KEY": "2A0BA251620DC3D0",
   "COOKIE_DES_IV": "F53C540C188725C3",
+
+  "WX_APPID": "wx3792d759f47529e5",
+  "WX_APPSECRET": "fcee7b54e45bfc637f8f284372966dbe",
+  "WX_TOKEN": "n40CPcPyf7371rHh",
 
   "HASH_KEY": "mK2gg993IyU0WhKb",
   "SESSION_KEY": "zyAxYvZYEjH2",

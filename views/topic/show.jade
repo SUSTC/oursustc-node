@@ -1,6 +1,7 @@
 extends ../common/layout
 
 block stylesheet
+  link(rel='stylesheet', href=base.rooturl + '/static/css/topic.css?v=#{version.css}')
   link(rel='stylesheet', href=base.rooturl + '/static/editor/google-code-prettify/prettify.css', type='text/css')
   link(rel='stylesheet', href=base.rooturl + '/static/editor/editor.css?v=#{version.css}')
 
@@ -18,18 +19,40 @@ block bodyheader
             | &nbsp;&nbsp;#{lang.info.create_at}: #{topic.friendly_create_at} 
             if (topic.update_at - topic.create_at > 10000)
               | (#{lang.topic.modified})
+
 block content
   .ui.grid
     .twelve.wide.column#topic_wrapper
-      if (topic.canManage || (topic.author && topic.author._id == user.page_id))
+      .ui.segment
+        .ui.breadcrumb
+          a.section(href='/')= lang.title.index
+          .divider /
+          a.section(href='/board')= lang.title.board.index
+          .divider /
+          if (board)
+            a.section(href='/board/' + board.shortcut)= board.name
+          else
+            a.section ...
+          .divider /
+          .active.section= topic.title
+
+      if (topic.canManage || topic.canSet || (topic.author && topic.author._id == user.page_id))
         .ui.segment
           .ui.text.menu
-            a.item(href=base.rooturl + '/#{active}/edit/#{topic._id}')
+            a.item(href=base.rooturl + '/topic/edit/#{topic._id}')
               i.edit.icon
               = lang.info.edit
             a.item(onclick="$('#topic_delete_confirm').modal('show');")
               i.delete.icon
               = lang.info.delete
+            if (topic.canSet)
+              a.item(onclick='topic_set("#{topic._id}", {top: #{!topic.top}}, "#{user.csrf}")')
+                if (topic.top)
+                  i.down.arrow.icon
+                  = lang.topic.untop
+                else
+                  i.up.arrow.icon
+                  = lang.topic.top
       .ui.segment.wmd-preview#topic_content
         != topic.content
       if (topic.attachments)
@@ -40,27 +63,43 @@ block content
           each attach in topic.attachments
             a.ui.image.label(href=base.rooturl + '/file/' + attach._id, target='_blank')= attach.name
       if (user.uid)
-        each reply in topic.replies
-          .ui.segment(id=reply._id)
-            .user-avatar.img-circle
-              if (reply.author.avatar_url)
-                img(src=reply.author.avatar_url)
-              else
-                img(src=base.rooturl + '/static/img/user/def-avatar.png')
-            .reply-info
-              .user-name
-                a(href=base.rooturl + '/user/' + reply.author._id, target='_blank')= reply.author.name
-              span.time
-                | #{lang.info.create_at}: #{reply.friendly_create_at} 
-                if (reply.update_at - reply.create_at > 10000)
-                  | (#{lang.topic.modified})
-            .reply-content.wmd-preview!= reply.content
+        if (folded_count > 0)
+          #replies_ctl
+            .fluid.ui.blue.button#expand_replies_btn(onclick='expand_replies("#{topic._id}")')
+              span.reply_count= topic.reply_count
+              = lang.topic.expand_replies_count
+              i.angle.down.icon
+            .fluid.ui.blue.button#fold_replies_btn(onclick='fold_replies()', style='display:none')
+              = lang.topic.fold_replies
+              i.angle.up.icon
+        .ui#reply_list
+          each reply in topic.replies
+            .ui.segment.reply(id=reply._id)
+              .ui.secondary.vertical.tools
+                a.item.reply-quote
+                  i.quote.left.icon
+                if (reply.author._id == user.page_id)
+                  a.item.reply-edit
+                    i.edit.icon
+              .user-avatar.img-circle
+                if (reply.author.avatar_url)
+                  img(src=reply.author.avatar_url)
+                else
+                  img(src=base.rooturl + '/static/img/user/def-avatar.png')
+              .reply-info
+                .user-name
+                  a(href=base.rooturl + '/user/' + reply.author._id, target='_blank')= reply.author.name
+                span.time
+                  | #{lang.info.create_at}: #{reply.friendly_create_at} 
+                  if (reply.update_at - reply.create_at > 10000)
+                    | (#{lang.topic.modified})
+              .reply-content.wmd-preview!= reply.content
       .ui.segment
         .ui.top.attached.label
           i.edit.icon
           = lang.topic.reply
         if (user.uid)
-          form.ui.form#topic_reply_form(method='POST', action='/#{active}/reply')
+          form.ui.form#topic_reply_form(method='POST', action='/topic/reply')
             div(style='display:none')
               input(type='hidden', name='csrf', value=user.csrf)
               input(type='hidden', name='topic[id]', value=topic._id)
@@ -71,7 +110,7 @@ block content
         else
           .ui.message
             = lang.info.please_first
-            a(href=base.rooturl + '/user/login?redirect=/#{active}/#{topic._id}')= lang.user.login
+            a(href=base.rooturl + '/user/login?redirect=/topic/#{topic._id}')= lang.user.login
 
     .four.wide.column.desktop.only
       if (topic.author)
@@ -84,7 +123,7 @@ block content
           = lang.topic.author_other_topics
         .ui.selection.divided.list
           each t in author_other_topics
-            a.item(href=base.rooturl + '/#{active}/topic/#{t._id}')
+            a.item(href=base.rooturl + '/topic/#{t._id}')
               .content
                 .header= t.title
               //span.time.pull-right= t.friendly_create_at
@@ -99,7 +138,7 @@ block other-content
     .content= lang.topic.topic_delete_confirm
     .actions
       .ui.negative.button= lang.info.no
-      a.ui.positive.right.labeled.icon.button(href=base.rooturl + '/#{active}/delete/' + topic._id + '?csrf=' + user.csrf)
+      a.ui.positive.right.labeled.icon.button(href=base.rooturl + '/topic/delete/' + topic._id + '?csrf=' + user.csrf)
         = lang.info.yes
         i.checkmark.icon
 
@@ -110,4 +149,5 @@ block script
     MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ["\\(","\\)"]], processEscapes: true },  messageStyle: "none"});
   //mathjax source code is here: https://github.com/mathjax/MathJax
   script(type='text/javascript', src='/static/editor/MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML')
+  script(type='text/javascript', src=base.rooturl + '/static/js/user-card.js?v=#{version.js}')
   script(type='text/javascript', src=base.rooturl + '/static/js/topic-show.js?v=#{version.js}')

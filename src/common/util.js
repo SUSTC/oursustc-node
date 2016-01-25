@@ -1,4 +1,6 @@
+var fs = require('fs');
 var xss = require('xss');
+var constdata = require('./constdata');
 var string = require('./string');
 
 function clone(obj) {
@@ -37,6 +39,20 @@ function clone(obj) {
 exports.clone = clone;
 
 exports.format_date = string.format_date;
+
+exports.lineSplit = function (file, callback) {
+  var filedata = fs.readFileSync(constdata.ROOT_DIR + file, 'utf8');
+  if (filedata) {
+    filedata = filedata.replace(/\r/g, '');
+    var strproducts = filedata.split('\n');
+    for (var i = 0; i < strproducts.length; i++) {
+      // 移除空行和注释行
+      if (strproducts[i] && strproducts[i].substr(0, 1) !== '#') {
+        callback(strproducts[i]);
+      }
+    }
+  }
+};
 
 /**
  * Escape the given string of `html`.

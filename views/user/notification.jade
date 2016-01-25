@@ -1,0 +1,47 @@
+extends ../common/layout
+
+block stylesheet
+  link(rel='stylesheet', href=base.rooturl + '/static/css/topic.css?v=#{version.css}')
+
+block bodyheader
+  div.segment#overview
+    div.container
+      div.introduction
+        h1.ui.dividing.header= lang.title.user.notification
+
+block content
+  .ui.divided.list.segment#notification_list
+    each notification in notifications
+      .item
+        - var authors = notification.author.slice(0, 3);
+        each u in authors
+          include ../user/user-round
+        .content
+          .header
+            each u, i in authors
+              a(href=base.rooturl + '/user/#{u._id}', target='_blank')= u.name
+              if (i < authors.length - 1)
+                | , 
+            if (notification.author.length > 3)
+              |  #{lang.user.and_others}
+            |  #{lang.user.in} 
+            if (notification.reply)
+              a(href=base.rooturl + '/topic/#{notification.topic._id}##{notification.reply._id}', target='_blank')= notification.topic.title
+            else
+              a(href=base.rooturl + '/topic/#{notification.topic._id}', target='_blank')= notification.topic.title
+            case notification.type
+              when 'reply'
+                |  #{lang.user.reply_you}
+              when 'reply2'
+                |  #{lang.user.reply2_you}
+              when 'at'
+                |  #{lang.user.at_you}
+          p.topic-info
+            span.time 
+              | #{lang.info.create_at}: #{notification.friendly_create_at}
+    else
+      .ui.icon.message
+        i.icon.exclamation
+        .content
+          .header= lang.info.tips
+          p= lang.user.notifications_not_found

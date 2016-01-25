@@ -8,7 +8,7 @@ var express = require('express'),
   multipart = require('connect-multiparty'),
   cookieParser = require('cookie-parser'),
   //session      = require('express-session'),
-  serveStatic = require('serve-static'),
+  //serveStatic = require('serve-static'),
   methodOverride = require('method-override'),
   morgan  = require('morgan'), //logger
   errorHandler = require('errorhandler');
@@ -19,6 +19,7 @@ var express = require('express'),
 var http = require('http'),
   path = require('path');
 
+var wechat = require('./src/services/wechat');
 
 var constdata = require('./src/common/constdata'),
   config = require('./src/config/config.json'),
@@ -27,7 +28,7 @@ var constdata = require('./src/common/constdata'),
 
 var app = express();
 
-//3.x app.configure
+//app.configure
 (function() {
   app.set('port', process.env.PORT || 3005);
 
@@ -36,7 +37,8 @@ var app = express();
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
   //app.use(express.favicon());
-  app.use(bodyParser({
+  app.use(bodyParser.urlencoded({
+    extended: true,
     uploadDir: constdata.TMP_DIR
   }));
   //4.x multipart
@@ -57,10 +59,14 @@ var app = express();
   }));*/
   app.use(methodOverride());
 
-  app.use(core.coreMiddleware);
-
   //nginx process
-  app.use(serveStatic(constdata.PUBLIC_DIR));
+  app.use(express.static(constdata.PUBLIC_DIR));
+
+  app.use(core.coreMiddleware);
+  app.use('/wechat', wechat.Middleware());
+
+  router.route(app, express);
+  router.routeErrorPage(app, express);
 })();
 
 var node_env = process.env.NODE_ENV;
@@ -72,7 +78,7 @@ if (!node_env) {
 // 4.x
 switch (node_env) {
   case 'development':
-    app.use(morgan({ format: 'dev' }));
+    app.use(morgan('dev'));
     app.use(errorHandler());
     break;
   case 'production':
@@ -80,17 +86,6 @@ switch (node_env) {
     app.set('view cache', true);
     break;
 }
-//3.x
-/*app.configure('development', function () {
-  app.use(express.logger('dev'));
-  app.use(express.errorHandler());
-});
-app.configure('production', function () {
-  app.use(express.errorHandler());
-  app.set('view cache', true);
-});*/
-
-router.route(app, express);
 
 http.createServer(app).listen(app.get('port'), function() {
   console.log("Express server listening on port " + app.get('port'));

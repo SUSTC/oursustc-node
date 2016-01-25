@@ -196,18 +196,6 @@ hr {
   padding: 0 20px 0 20px;
 }
 
-.content+.topic-info {
-  margin-top: 1rem;
-}
-
-.topic-info span {
-  font-size: 1rem;
-}
-
-.introduction .topic-info span {
-  color: rgba(0,0,0,.4);
-}
-
 #attachment_list {
   margin-top: -10px;
   margin-bottom: 10px;
@@ -390,3 +378,16 @@ hr {
   text-align: left;
   border-bottom: 1px solid #ddd;
 }
+
+.notification.unread {
+  background-color: #cb4437;
+  color: #fff;
+}
+
+.notification.unread:hover {
+  background-color: #d34c3f !important;
+}
+.notification.unread:active {
+  background-color: #db5447 !important;
+}
+

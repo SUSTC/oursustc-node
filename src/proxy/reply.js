@@ -7,6 +7,9 @@ var Util = require('../common/util');
 var User = require('./user_page');
 var at = require('../services/at');
 
+//折叠总数
+var REPLY_FOLD_COUNT = 10;
+
 /**
  * 获取一条回复信息
  * @param {String} id 回复ID
@@ -14,6 +17,10 @@ var at = require('../services/at');
  */
 exports.getReply = function (id, callback) {
   Reply.findOne({_id: id}, callback);
+};
+
+exports.getCountByTopicId = function (topic_id, callback) {
+  Reply.count({topic_id: topic_id}, callback);
 };
 
 /**
@@ -63,13 +70,27 @@ exports.getReplyById = function (id, callback) {
  * @param {String} id 主题ID
  * @param {Function} callback 回调函数
  */
-exports.getRepliesByTopicId = function (id, cb) {
-  Reply.find({topic_id: id}, [], {sort: [['create_at', 'asc']]}, function (err, replies) {
+exports.getRepliesByTopicId = function (id, folding, cb) {
+  if (folding instanceof Function) {
+    cb = folding;
+    folding = true;
+  }
+
+  var opts = {sort: [['create_at', 'asc']]};
+  if (folding) {
+    opts.sort[0][1] = 'desc';
+    opts.limit = REPLY_FOLD_COUNT;
+  }
+
+  Reply.find({topic_id: id}, [], opts, function (err, replies) {
     if (err) {
       return cb(err);
     }
     if (replies.length === 0) {
       return cb(err, []);
+    }
+    if (folding) {
+      replies = replies.reverse();
     }
 
     var proxy = new EventProxy();
