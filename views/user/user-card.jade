@@ -6,7 +6,7 @@ if (u._id)
         | 
         - if (u.title)
           span.col_fade= u.title
-        - else if (u.uid === user.uid || u._id = user.page_id)
+        - else if (u.uid === user.uid || u._id === user.page_id)
           span.col_fade= lang.info.my
         - else
           span.col_fade= lang.title.user.index
@@ -51,7 +51,7 @@ if (u._id)
           a.btn.btn-primary(href=base.rooturl + '/store/house')= lang.store.house
           | 
           a.btn.btn-primary(href=base.rooturl + '/store/settle')= lang.store.settle
-      if (u.balance)
+      - if (u.balance)
         .user-balance #{lang.user.balance} ¥ 
           span= u.balance.str
       .clearfix
