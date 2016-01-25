@@ -435,7 +435,6 @@
             that.uid = user.uid;
             that.csrf = that.getusercsrf(cookiekey);
             
-            var checkpageid = false;
             var page;
             if (userPages.length > 0) {
               for (var i = 0; i < userPages.length; i++) {
@@ -449,7 +448,15 @@
               
               that.page_list = userPages;
               if (that.isPageAccessible(user_page_id)) {
-                page = userPages[i];
+                for (var i = 0; i < userPages.length; i++) {
+                  if (userPages[i]._id.toString() == user_page_id) {
+                    page = userPages[i];
+                    break;
+                  }
+                }
+                if (!page) {
+                  page = userPages[0];
+                }
               } else {
                 page = userPages[0];
               }
