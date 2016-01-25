@@ -3,22 +3,41 @@
 
 "use strict";
 
-var http = require('http'),
-  fs = require('fs'),
+var request = require('request'),
+  //fs = require('fs'),
   constdata = require("./../../common/constdata"),
   tesseract = require('tesseract_native'),
-  BufferHelper = require('bufferhelper'),
   iconv = require('iconv-lite');
 
 function URPSystem() {
   this.host = '172.18.1.77';
   this.port = 80;
+  this.url = 'http://' + this.host;
   this.cookie = '';
   this.jid = '';
 }
 
 //change password
 //http://172.18.1.77/modifyPassWordAction.do?pwd=xxx
+
+URPSystem.prototype.processCookie = function (res) {
+  if (res && res.headers['set-cookie']) {
+    var cookies = res.headers['set-cookie'];
+    var strCookie = '';
+    for (var i = 0; i < cookies.length; i++) {
+      var isplit = cookies[i].indexOf(';');
+      if (i > 0) {
+        strCookie += '; ';
+      }
+      if (isplit !== -1) {
+        strCookie += cookies[i].substring(0, isplit);
+      } else {
+        strCookie += cookies[i];
+      }
+    }
+    this.setCookie(strCookie);
+  }
+};
 
 URPSystem.prototype.setCookie = function (cookie) {
   this.cookie = cookie ? cookie : '';
@@ -38,13 +57,13 @@ URPSystem.prototype.setCookie = function (cookie) {
 
 URPSystem.prototype.request = function (url, formdata, callback, raw) {
   var options = {
-    hostname: this.host,
-    port: this.port,
-    path: url,
+    // for Buffer return
+    encoding: null,
+    url: this.url + url,
     //method: 'POST',
     headers: {
       'Cookie': this.cookie,
-      'Connection': 'keep-alive'
+      //'Connection': 'keep-alive'
     }
   };
   if (formdata instanceof Function) {
@@ -57,48 +76,22 @@ URPSystem.prototype.request = function (url, formdata, callback, raw) {
     options.method = 'GET';
   } else {
     options.method = 'POST';
-    options.headers['Content-Type'] = 'application/x-www-form-urlencoded';
-    options.headers['Content-Length'] = formdata.length;
+    //options.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+    //options.headers['Content-Length'] = formdata.length;
+    options.form = formdata;
   }
   var that = this;
-  var req = http.request(options, function (res) {
-    if (res.headers['set-cookie']) {
-      var cookies = res.headers['set-cookie'];
-      var strCookie = '';
-      for (var i = 0; i < cookies.length; i++) {
-        var isplit = cookies[i].indexOf(';');
-        if (i > 0) {
-          strCookie += '; ';
-        }
-        if (isplit !== -1) {
-          strCookie += cookies[i].substring(0, isplit);
-        } else {
-          strCookie += cookies[i];
-        }
-      }
-      that.setCookie(strCookie);
+  request(options, function (err, res, buf) {
+    if (err) {
+      return callback(err);
     }
-    var buffer = new BufferHelper();
-    res.on('data', function (chunk) {
-      buffer.concat(chunk);
-    });
-    res.on('end', function () {
-      var buf = buffer.toBuffer();
-      if (raw) {
-        callback(null, buf);
-      } else {
-        var str = iconv.decode(buf, 'gbk');
-        callback(null, str);
-      }
-    });
+    that.processCookie(res);
+    if (raw) {
+      return callback(null, buf);
+    }
+    var str = iconv.decode(buf, 'gbk');
+    callback(null, str);
   });
-  req.on('error', function (e) {
-    callback(e);
-  });
-  if (formdata) {
-    req.write(formdata);
-  }
-  req.end();
 };
 
 URPSystem.prototype.trim = function (str) {
@@ -128,7 +121,7 @@ URPSystem.prototype.getValidateCode = function (callback) {
       return;
     }
     var myocr = new tesseract.OcrEio();
-    myocr.ocr(buf, function(err, result) {
+    myocr.ocr(buf, { psm: 8 }, function(err, result) {
       if (err) {
         return callback(err);
       }
@@ -164,8 +157,16 @@ URPSystem.prototype.login = function (username, password, callback, depth) {
       return;
     }
     //console.log('vcode:', vcode);
-    var formdata = 'zjh1=&tips=&lx=&evalue=&eflag=&fs=&dzslh='
-      + '&zjh=' + username + '&mm=' + password + '&v_yzm=' + vcode;
+    /*var formdata = 'zjh1=&tips=&lx=&evalue=&eflag=&fs=&dzslh='
+        + '&zjh=' + encodeURIComponent(username)
+        + '&mm=' + encodeURIComponent(password)
+        + '&v_yzm=' + vcode;*/
+    var formdata = {
+      zjh1: '', tips: '', lx: '', evalue: '', eflag: '', fs: '', dzslh: '',
+      zjh: username,
+      mm: password,
+      v_yzm: vcode
+    };
     that.request('/loginAction.do', formdata, function (err, data) {
       if (err) {
         callback(err);

@@ -1,14 +1,31 @@
 "use strict";
 
-var http = require('http'),
-  BufferHelper = require('bufferhelper');
+var request = require('request');
 
-var SUSTC_CAS_HOST = 'weblogin.sustc.edu.cn';
-var SUSTC_CAS_PORT = 80;
+var SUSTC_CAS_URL = 'http://weblogin.sustc.edu.cn';
 
 function CAS() {
   this.cookie = '';
 }
+
+CAS.prototype.processCookie = function (res) {
+  if (res && res.headers['set-cookie']) {
+    var cookies = res.headers['set-cookie'];
+    var strCookie = '';
+    for (var i = 0; i < cookies.length; i++) {
+      var isplit = cookies[i].indexOf(';');
+      if (i > 0) {
+        strCookie += '; ';
+      }
+      if (isplit !== -1) {
+        strCookie += cookies[i].substring(0, isplit);
+      } else {
+        strCookie += cookies[i];
+      }
+    }
+    this.setCookie(strCookie);
+  }
+};
 
 CAS.prototype.setCookie = function (cookie) {
   this.cookie = cookie ? cookie : '';
@@ -28,13 +45,11 @@ CAS.prototype.setCookie = function (cookie) {
 
 CAS.prototype.request = function (url, formdata, callback, raw) {
   var options = {
-    hostname: SUSTC_CAS_HOST,
-    port: SUSTC_CAS_PORT,
-    path: url,
+    url: SUSTC_CAS_URL + url,
     //method: 'POST',
     headers: {
       'Cookie': this.cookie,
-      'Connection': 'keep-alive'
+      //'Connection': 'keep-alive'
     }
   };
   if (formdata instanceof Function) {
@@ -47,49 +62,22 @@ CAS.prototype.request = function (url, formdata, callback, raw) {
     options.method = 'GET';
   } else {
     options.method = 'POST';
-    options.headers['Content-Type'] = 'application/x-www-form-urlencoded';
-    options.headers['Content-Length'] = formdata.length;
+    //options.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+    //options.headers['Content-Length'] = formdata.length;
+    options.form = formdata;
+  }
+  if (raw) {
+    // for Buffer return
+    options.encoding = null;
   }
   var that = this;
-  var req = http.request(options, function (res) {
-    if (res.headers['set-cookie']) {
-      var cookies = res.headers['set-cookie'];
-      var strCookie = '';
-      for (var i = 0; i < cookies.length; i++) {
-        var isplit = cookies[i].indexOf(';');
-        if (i > 0) {
-          strCookie += '; ';
-        }
-        if (isplit !== -1) {
-          strCookie += cookies[i].substring(0, isplit);
-        } else {
-          strCookie += cookies[i];
-        }
-      }
-      that.setCookie(strCookie);
+  request(options, function (err, res, str) {
+    if (err) {
+      return callback(err);
     }
-    var buffer = new BufferHelper();
-    res.on('data', function (chunk) {
-      buffer.concat(chunk);
-    });
-    res.on('end', function () {
-      var buf = buffer.toBuffer();
-      if (raw) {
-        callback(null, buf);
-      } else {
-        //var str = iconv.decode(buf, 'gbk');
-        var str = buf.toString();
-        callback(null, str);
-      }
-    });
+    that.processCookie(res);
+    callback(null, str);
   });
-  req.on('error', function (e) {
-    callback(e);
-  });
-  if (formdata) {
-    req.write(formdata);
-  }
-  req.end();
 };
 
 CAS.prototype.login = function (username, password, callback) {

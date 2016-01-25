@@ -31,7 +31,6 @@
     "underscore": "*",
     "csv": "*",
     "xss": "0.0.5",
-    "bufferhelper": "*",
     "iconv-lite": "*",
     "tesseract_native": "*",
     "gm": "*",
