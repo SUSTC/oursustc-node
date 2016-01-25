@@ -87,6 +87,7 @@
     core.base.url = req.url;
 
     res.locals.core = core;
+    
     //self redirect
     core.redirect = function (status, url) {
       if (url) {
@@ -95,6 +96,16 @@
         status = this.base.rooturl + status;
       }
       res.redirect(status, url);
+    };
+    
+    res.o_redirect = res.redirect;
+    res.redirect = function (status, url) {
+      var args = Array.prototype.slice.call(arguments);
+      if (res.data) {
+        res.data.set_redirect = args;
+      } else {
+        res.o_redirect.apply(res, args);
+      }
     };
 
     //core debug

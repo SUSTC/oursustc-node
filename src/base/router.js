@@ -90,12 +90,18 @@
       if (!(method instanceof Function)) method = null;
       if (method != null) {
         data = {};
+        res.data = data;
         return method(req, res, data, function(isApi, resdata, template) {
           if (!(data != null)) {
             throw new Error("Controller's return value not implemented!");
           }
           if (template) {
             cmName = template;
+          }
+          if (data.set_redirect) {
+            // redirect
+            res.o_redirect.apply(res, data.set_redirect);
+            return;
           }
           if (isApi) {
             if (resdata) {
