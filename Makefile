@@ -14,7 +14,7 @@ js:
 	cat public/static/js/jquery-1.10.2.min.js public/static/js/semantic.min.js public/static/js/global.min.js > all.min.js
 
 css:
-	cat public/static/css/semantic.min.css public/static/css/semantic-theme.css public/static/css/global.css public/static/css/bundle.css public/static/css/user.css public/static/css/layout.css | cleancss -o public/static/css/all.min.css
+	cat public/static/css/semantic.min.css public/static/css/semantic-theme.css public/static/css/bundle.css public/static/css/user.css public/static/css/layout.css | cleancss -o public/static/css/all.min.css
 
 clean:
 	rm -rf public/static/js/global.min.js
