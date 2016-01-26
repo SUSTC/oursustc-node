@@ -16,5 +16,8 @@ block script
   block subscript
   script(type='text/javascript').
     !function ($) {
-      $('body').scrollTop(675 - 160 - 39);
+      $(document).ready(function () {
+        $('.header .user-cover').addClass('cover-loaded');
+        $('body').scrollTop(675 - 160 - 39);
+      });
     }(window.jQuery);

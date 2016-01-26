@@ -280,6 +280,25 @@
   }
 }
 
+.header .user-cover {
+  height: 199px;
+}
+
+.header .user-cover.cover-loaded {
+  height: 675px;
+}
+
+.header .user-cover .user-front-cover {
+  position: absolute;
+  bottom: 0;
+  height: 675px;
+}
+
+.header .user-cover .user-front-cover img {
+  width: auto;
+  height: 100%;
+}
+
 .user-cover .user-front-cover {
     float: left;
     overflow: hidden;
@@ -288,7 +307,7 @@
 }
 
 .user-cover .user-front-cover img {
-    width: 100%;
+  width: 100%;
 }
 
 .user-cover .user-info {
