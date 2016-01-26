@@ -16,10 +16,5 @@ block script
   block subscript
   script(type='text/javascript').
     !function ($) {
-      $(document).ready(function() {
-        setTimeout(function() {
-          var startTop = $('.user-info').offset().top - $('.navbar').height();
-          $("html,body").animate({scrollTop: startTop.toString() + 'px'}, 1000);
-        }, 200);
-      });
+      $('body').scrollTop(675 - 160 - 39);
     }(window.jQuery);

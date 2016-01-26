@@ -37,5 +37,9 @@
 
     "wechat": "*",
     "request": "*"
+  },
+  "devDependencies": {
+    "clean-css": "*",
+    "uglify-js": "*"
   }
 }
