@@ -241,17 +241,21 @@
           return;
         }
         // at.linkUsers
-        ep.after('ats', replies.length, function (contents) {
-          for (var i = 0; i < replies.length; i++) {
-            replies[i].content = contents[i];
-          }
+        ep.after('ats', replies.length, function () {
           ep.emit('linkUsers');
         });
         
         var topic_ids = [];
         replies.forEach(function (reply) {
           topic_ids.push(reply.topic_id);
-          at.linkUsers(reply.content, ep.done('ats'));
+          at.linkUsers(reply.content, function (err, str) {
+            if (err) {
+              ep.emit('error', err);
+              return;
+            }
+            reply.content = str;
+            ep.emit('ats');
+          });
         });
         if (topic_ids.length > 0) {
           TopicProxy.getTopicsByIds(topic_ids, ep.done('reply_topics'));
