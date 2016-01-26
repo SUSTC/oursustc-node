@@ -453,6 +453,9 @@
   .user-cover .user-info {
     height: 100px;
   }
+  .header .user-cover {
+    height: 139px;
+  }
   .user-cover .user-avatar {
     top: 12px;
     left: 12px;

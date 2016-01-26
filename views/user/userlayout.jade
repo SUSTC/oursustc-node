@@ -16,22 +16,46 @@ block script
   block subscript
   script(type='text/javascript').
     !function ($) {
-      //$(document).ready(function () {
-        $('.header .user-front-cover img').one('load', function () {
-          var h = this.naturalHeight ? this.naturalHeight : this.height;
-          var w = this.naturalWidth ? this.naturalWidth : this.width;
-          var container = $('.header .user-cover');
-          var container_width = container.width();
-          h = h * container_width / w;
-          if (h > 675) {
-            h = 675;
-            container.addClass('cover-loaded').css({ width: 'auto', height: '675px' });
-          } else {
-            container.addClass('cover-loaded').css({ 'height': h.toFixed(3) + 'px' });
+      // update cover & page-top
+      function displayUserCover(settop) {
+        var img = $('.header .user-front-cover img')[0];
+        var h = img.naturalHeight ? img.naturalHeight : img.height;
+        var w = img.naturalWidth ? img.naturalWidth : img.width;
+        var container = $('.header .user-cover');
+        var info_h = $('.header .user-info').height();
+        var container_w = container.width();
+        var old_h = container.height();
+        h = h * container_w / w;
+        if (h > 675) {
+          h = 675;
+        }
+        container.addClass('cover-loaded').css({ 'height': h.toFixed(3) + 'px' });
+        if (settop) {
+          $('body').scrollTop(h - info_h - 39);
+        } else {
+          var t = $('body').scrollTop();
+          $('body').scrollTop(t + (h - old_h));
+        }
+      }
+      
+      // events
+      $(document).ready(function () {
+        var resizeTimer = null;
+        function doResize() {
+          resizeTimer = null;
+          displayUserCover(false);
+        }
+        window.onresize = function () {
+          if (resizeTimer != null) {
+            clearTimeout(resizeTimer);
           }
-          $('body').scrollTop(h - 160 - 39);
-        }).each(function () {
-          if (this.complete) $(this).load();
-        });
-      //});
+          resizeTimer = setTimeout(doResize, 300);
+        };
+      });
+      
+      $('.header .user-front-cover img').one('load', function () {
+        displayUserCover(true);
+      }).each(function () {
+        if (this.complete) $(this).load();
+      });
     }(window.jQuery);
