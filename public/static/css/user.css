@@ -653,7 +653,8 @@
 
 .posts-list .posts-list-item .post-content code,
 .posts-list .posts-list-item .post-content pre {
-    font-size: 14px;
+  line-height: 14px;
+  margin-bottom: 0;
 }
 
 .posts-list .posts-list-item .post-content img {
