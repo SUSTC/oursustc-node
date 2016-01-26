@@ -1,5 +1,5 @@
 extends ./userlayout
-
+  
 block nav-tabs
   if (user.page_id == page._id)
     a.item(href=base.rooturl + '/user')= lang.user.profile
@@ -14,6 +14,29 @@ block nav-tabs
 
 block user-form
   .ui.raised.segment
-    .ui.info.message
-      .header= lang.info.tips
-      = lang.info.in_process
+    ul.posts-list
+      each po in activities
+        li.posts-list-item.row(data-topic_id=po.topic_id)
+          .post-body.col-post
+            a.topic-title(href='/topic/' + po.topic_id + (po.is_reply ? ('#' + po.reply_id) : ''))= po.title
+            .post-content
+              != po.content
+            if (po.board)
+              small.topic-category
+                = lang.topic.post_at
+                | 
+                a(href='/board/' + (po.board.shortcut ? po.board.shortcut : po.board._id))= po.board.name
+            .post-info
+              a(href='/user/' + po.author_id)
+                .user-icon.user-img(title=page.name)
+                  if (u.avatar_url)
+                    img(src=u.avatar_url)
+                  else
+                    img(src=base.rooturl + '/static/img/user/def-avatar.png')
+              .post-author
+                a(href='/user/' + po.author_id)= page.name
+                br
+                if (po.update_at != po.create_at)
+                  span.timeago(title=po.update_at.toISOString())= po.friendly_update_at
+                else
+                  span.timeago(title=po.create_at.toISOString())= po.friendly_create_at

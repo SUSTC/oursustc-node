@@ -252,6 +252,10 @@ exports.reduceCount = function (id, callback) {
   });
 };
 
+exports.getTopicsByIds = function (_ids, callback) {
+  Topic.find({ _id: {$in: _ids} }, callback);
+};
+
 exports.newAndSave = function (boardId, title, content, authorId, callback) {
   var topic = new Topic();
   topic.board_id = boardId;

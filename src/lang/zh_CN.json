@@ -327,6 +327,7 @@
         "untop": "取消置顶",
         "modified": "已修改",
         "post_reply": "发表回复",
+        "post_at": "发布于",
         "title": "标题",
         "content": "内容",
         "attachment": "附件",
@@ -410,7 +411,8 @@
         "error_params": "错误的参数",
         "upload_failed": "上传失败",
         "file_not_found": "没有找到该文件！",
-        "user_not_found": "没有找到该用户"
+        "user_not_found": "没有找到该用户",
+        "unknow_error": "未知错误"
     },
 
     "nav_text": "SUSTC",

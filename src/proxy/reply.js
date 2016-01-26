@@ -169,3 +169,7 @@ exports.newAndSave = function (content, topicId, authorId, replyId, callback) {
 exports.getRepliesByAuthorId = function (authorId, callback) {
   Reply.find({author_id: authorId}, callback);
 };
+
+exports.getRepliesByQuery = function (query, opts, callback) {
+  Reply.find(query, [], opts, callback);
+};

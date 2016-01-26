@@ -408,7 +408,9 @@
 
           if (replies) {
             for (var i = 0; i < replies.length; i++) {
-              replies[i].content = markdown(replies[i].content);
+              if (!replies[i].content_is_html) {
+                replies[i].content = markdown(replies[i].content);
+              }
             }
           }
 
@@ -430,7 +432,9 @@
           topic.canManage = _canManage;
           topic.canSet = _canSet;
 
-          topic.content = markdown(topic.content);
+          if (!topic.content_is_html) {
+            topic.content = markdown(topic.content);
+          }
 
           ep.emit('topic', topic);
         }));
@@ -834,10 +838,12 @@
                   r = {err: 3};
                 } else {
                   r.err = 0;
-                  r.reply = {
-                    id: reply_id,
-                    content: markdown(str)
-                  };
+                  r.reply = { id: reply_id };
+                  if (reply.content_is_html) {
+                    r.reply.content = str;
+                  } else {
+                    r.reply.content = markdown(str);
+                  }
                 }
                 callback(true, r);
               });

@@ -4,6 +4,8 @@
   var EventProxy = require('eventproxy');
   var _ = require('underscore');
   var gm = require('gm').subClass({ imageMagick : true });
+  var at = require("./../services/at");
+  var markdown = require('../common/markdown').Markdown;
 
   //table = require("./../base/table");
   var config = require('./../config/config.json');
@@ -18,7 +20,10 @@
     UserPageProxy = proxy.UserPage,
     UserPageRelationProxy = proxy.UserPageRelation,
     UserUrpProxy = proxy.UserUrp,
-    NotificationProxy = proxy.Notification;
+    NotificationProxy = proxy.Notification,
+    TopicProxy = proxy.Topic,
+    ReplyProxy = proxy.Reply,
+    BoardProxy = proxy.Board;
 
   var URPSystem = require("./../class/urp").URPSystem,
     CAS = require("./../class/cas").CAS;
@@ -151,8 +156,167 @@
       callback(true);
     }
   };
+  
+  function get_page_activity(page, is_self, data, callback) {    
+    BoardProxy.fetchAll(function(err, list) {
+      if (err) {
+        view.showMessage(data, res.locals.core.lang.errmsg.unknow_error, 'error', callback);
+        return;
+      }
+      
+      var activities = [];
+      var findBoard = function (board_id) {
+        for (var j = 0; j < list.length; j++) {
+          if (list[j]._id.toString() == board_id.toString()) {
+            return list[j];
+          }
+        }
+        return null;
+      };
+      var add_activity = function (topic_or_reply, is_reply) {
+        var a = {
+          title: topic_or_reply.title,
+          author_id: topic_or_reply.author_id,
+          content_is_html: topic_or_reply.content_is_html,
+          board_id: topic_or_reply.board_id,
+          board: findBoard(topic_or_reply.board_id),
+          create_at: topic_or_reply.create_at,
+          update_at: topic_or_reply.update_at,
+          friendly_create_at: Util.format_date(topic_or_reply.create_at, true),
+          friendly_update_at: Util.format_date(topic_or_reply.update_at, true),
+          is_reply: is_reply
+        };
+        if (is_reply) {
+          a.topic_id = topic_or_reply.topic_id;
+          a.reply_id = topic_or_reply._id;
+        } else {
+          a.topic_id = topic_or_reply._id;
+        }
+        if (topic_or_reply.content_is_html) {
+          a.content = topic_or_reply.content;
+        } else {
+          a.content = markdown(topic_or_reply.content);
+        }
+        activities.push(a);
+      };
+      
+      var ep = EventProxy.create(['topics', 'replies', 'reply_topics', 'linkUsers'],
+          function (topics, replies, reply_topics, linkUsers) {
+        var findTopic = function (topic_id) {
+          for (var j = 0; j < reply_topics.length; j++) {
+            var r = reply_topics[j];
+            if (r._id.toString() == topic_id) {
+              return reply_topics[j];
+            }
+          }
+          return null;
+        };
+        var checkAccessible = function (topic) {
+          // match board
+          var board = findBoard(topic.board_id);
+          if (board && board._id.toString() == topic.board_id.toString()) {
+            return (!(board.access & constdata.board_permission.ONLY_VIEW_SELF));
+          }
+          return false;
+        };
+        for (var i = 0; i < topics.length; i++) {
+          add_activity(topics[i], false);
+        }
+        for (var i = 0; i < replies.length; i++) {
+          var topic = findTopic(replies[i].topic_id);
+          if (topic && (is_self || checkAccessible(topic))) {
+            replies[i].title = 'RE: ' + topic.title;
+            replies[i].board_id = topic.board_id;
+            add_activity(replies[i], true);
+          }
+        }
+        data.activities = _.sortBy(activities, function (a) {
+          return -a.update_at;
+        }).slice(0, 30);
+        callback();
+      });
+      ep.once('replies', function (replies) {
+        if (replies.length <= 0) {
+          ep.emit('reply_topics', []);
+          return;
+        }
+        // at.linkUsers
+        ep.after('ats', replies.length, function (contents) {
+          for (var i = 0; i < replies.length; i++) {
+            replies[i].content = contents[i];
+          }
+          ep.emit('linkUsers');
+        });
+        
+        var topic_ids = [];
+        replies.forEach(function (reply) {
+          topic_ids.push(reply.topic_id);
+          at.linkUsers(reply.content, ep.done('ats'));
+        });
+        if (topic_ids.length > 0) {
+          TopicProxy.getTopicsByIds(topic_ids, ep.done('reply_topics'));
+        }
+      });
+      ep.fail('error', function (err) {
+        view.showMessage(data, res.locals.core.lang.errmsg.unknow_error, 'error', callback);
+      });
+      
+      var opts = {
+        limit: 30,
+        sort: [
+          ['update_at', 'desc']
+        ]
+      };
+    
+      ReplyProxy.getRepliesByQuery({ 'author_id': page._id }, opts, ep.done('replies'));
+      
+      var t_query = {
+        'author_id': page._id,
+      };
+      if (!is_self) {
+        var board_ids = [];
+        for (var i = 0 ; i < list.length; i++) {
+          if (!(list[i].access & constdata.board_permission.ONLY_VIEW_SELF)) {
+            // can view public
+            board_ids.push(list[i]._id);
+          }
+        }
+        t_query.board_id = { $in: board_ids };
+      }
+      TopicProxy.getTopicsByQuery(t_query, opts, ep.done('topics'));
+    });
+  }
 
-  exports.activity = exports.index;
+  exports.activity = function(req, res, data, callback) {
+    if (res.locals.core.isLogin()) {
+      data.active = 'user';
+
+      //data.page
+      if (string.is_objectid(req.params.id)
+          && res.locals.core.user.page_id.toString() != req.params.id) {
+        UserPageProxy.getUserById(req.params.id, function (err, page) {
+          if (!err && page) {
+            data.page = page;
+            data.title = get_title(data.page.name, res);
+            get_page_activity(data.page, false, data, callback);
+          } else {
+            view.showMessage(data, res.locals.core.lang.errmsg.user_not_found, 'error', callback);
+          }
+        });
+      } else {
+        if (res.locals.core.api) {
+          res.locals.core.user.renderData(data);
+        }
+        data.page = res.locals.core.user.page;
+        data.title = get_title(data.page.name, res);
+        get_page_activity(data.page, true, data, callback);
+      }
+
+    } else {
+      res.redirect('/user/login');
+      callback(true);
+    }
+  };
 
   exports.page = function(req, res, data, callback) {
 
