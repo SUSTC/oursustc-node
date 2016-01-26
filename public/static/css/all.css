@@ -2727,6 +2727,12 @@ div.sidetip p.isaok {
 
 .posts-list .posts-list-item .post-content p {
     margin: 0 0 2px;
+  word-break: break-word;
+}
+
+.posts-list .posts-list-item .post-content code,
+.posts-list .posts-list-item .post-content pre {
+    font-size: 14px;
 }
 
 .posts-list .posts-list-item .post-content img {
@@ -2746,11 +2752,11 @@ div.sidetip p.isaok {
 .posts-list .posts-list-item .post-info .post-author {
     padding-left: 25px;
     color: #a6a6a6;
-    text-transform: uppercase;
+    /* text-transform: uppercase; */
 }
 
 .posts-list .posts-list-item .topic-category {
-    text-transform: uppercase;
+    /* text-transform: uppercase; */
     font-size: 10px;
     color: #a6a6a6;
     margin-top: 6px;
