@@ -18,8 +18,7 @@ block script
     !function ($) {
       //$(document).ready(function () {
         $('.header .user-front-cover img').one('load', function () {
-          var h = this.height;
-          console.log('height', h, this);
+          var h = this.naturalHeight ? this.naturalHeight : this.height;
           $('.header .user-cover').addClass('cover-loaded').css('height', h.toString() + 'px');
           $('body').scrollTop(h - 160 - 39);
         }).each(function () {
