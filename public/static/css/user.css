@@ -294,6 +294,7 @@
     overflow: hidden;
     width: 100%;
     max-height: 675px;
+    text-align: center;
 }
 
 .user-cover .user-front-cover img {

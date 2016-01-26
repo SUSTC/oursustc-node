@@ -19,7 +19,16 @@ block script
       //$(document).ready(function () {
         $('.header .user-front-cover img').one('load', function () {
           var h = this.naturalHeight ? this.naturalHeight : this.height;
-          $('.header .user-cover').addClass('cover-loaded').css('height', h.toString() + 'px');
+          var w = this.naturalWidth ? this.naturalWidth : this.width;
+          var container = $('.header .user-cover');
+          var container_width = container.width();
+          h = h * container_width / w;
+          if (h > 675) {
+            h = 675;
+            container.addClass('cover-loaded').css({ width: 'auto', height: '675px' });
+          } else {
+            container.addClass('cover-loaded').css({ 'height': h.toFixed(3) + 'px' });
+          }
           $('body').scrollTop(h - 160 - 39);
         }).each(function () {
           if (this.complete) $(this).load();
