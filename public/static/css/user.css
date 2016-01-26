@@ -713,3 +713,15 @@
     width: 83.33333333%;
   }
 }
+
+@media (max-width: 767px) {
+  .posts-list .posts-list-item .post-info {
+    width: 150px;
+  }
+}
+
+@media (max-width: 480px) {
+  .posts-list .posts-list-item .post-info {
+    width: 100px;
+  }
+}
