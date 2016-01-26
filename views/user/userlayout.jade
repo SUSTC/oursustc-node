@@ -16,8 +16,14 @@ block script
   block subscript
   script(type='text/javascript').
     !function ($) {
-      $(document).ready(function () {
-        $('.header .user-cover').addClass('cover-loaded');
-        $('body').scrollTop(675 - 160 - 39);
-      });
+      //$(document).ready(function () {
+        $('.header .user-front-cover img').one('load', function () {
+          var h = this.height;
+          console.log('height', h, this);
+          $('.header .user-cover').addClass('cover-loaded').css('height', h.toString() + 'px');
+          $('body').scrollTop(h - 160 - 39);
+        }).each(function () {
+          if (this.complete) $(this).load();
+        });
+      //});
     }(window.jQuery);
