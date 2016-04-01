@@ -24,9 +24,9 @@ var permission = constdata.permission;
  */
 exports.getTopicById = function (id, callback) {
   var proxy = new EventProxy();
-  var events = ['topic', 'tags', 'attachments', 'author', 'last_reply'];
-  proxy.assign(events, function (topic, tags, attachments, author, last_reply) {
-    return callback(null, topic, tags, attachments, author, last_reply);
+  var events = ['topic', 'tags', 'attachments', 'author'];
+  proxy.assign(events, function (topic, tags, attachments, author) {
+    return callback(null, topic, tags, attachments, author);
   }).fail(callback);
 
   Topic.findOne({_id: id}, proxy.done(function (topic) {
@@ -34,7 +34,6 @@ exports.getTopicById = function (id, callback) {
       proxy.emit('topic', null);
       proxy.emit('attachments', null);
       proxy.emit('author', null);
-      proxy.emit('last_reply', null);
       return;
     }
     proxy.emit('topic', topic);
@@ -53,13 +52,6 @@ exports.getTopicById = function (id, callback) {
       }
     }));
 
-    if (topic.last_reply) {
-      Reply.getReplyById(topic.last_reply, proxy.done(function (last_reply) {
-        proxy.emit('last_reply', last_reply || null);
-      }));
-    } else {
-      proxy.emit('last_reply', null);
-    }
   }));
 };
 
@@ -99,6 +91,10 @@ exports.getUsersByQuery = function (query, opt, callback) {
  */
 exports.getUserByQuery = function (name, key, callback) {
   UserPage.findOne({name: name, retrieve_key: key}, callback);
+};
+
+exports.updateById = function (id, updateData, callback) {
+  UserPage.update({_id: id}, {$set: updateData}, callback);
 };
 
 exports.newAndSave = function (studentID, clientCount, upThresold, downThreshold, allowedFlow, callback) {
