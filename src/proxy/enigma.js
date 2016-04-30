@@ -1,59 +1,21 @@
-var EventProxy = require('eventproxy');
+//var EventProxy = require('eventproxy');
 
 var models = require('../model');
+/*Database Model Import*/
+var User = models.UserAccount;
 var Enigma = models.EnigmaUser,
-	EnigmaCli = models.EnigmaClient;
+    EnigmaCli = models.EnigmaClient;
 
-var User = require('./user_page');
 var functions = require("./../common/functions"),
   	string = require("./../common/string"),
   	constdata = require("./../common/constdata");
-var permission = constdata.permission;
 
+var FC = module.exports;
 
-/**SAMPLE
- * 根据主题ID获取主题
- * Callback:
- * - err, 数据库错误
- * - topic, 主题
- * - tags, 标签列表
- * - author, 作者
- * - lastReply, 最后回复
- * @param {String} id 主题ID
- * @param {Function} callback 回调函数
- */
-exports.getTopicById = function (id, callback) {
-  var proxy = new EventProxy();
-  var events = ['topic', 'tags', 'attachments', 'author'];
-  proxy.assign(events, function (topic, tags, attachments, author) {
-    return callback(null, topic, tags, attachments, author);
-  }).fail(callback);
-
-  Topic.findOne({_id: id}, proxy.done(function (topic) {
-    if (!topic) {
-      proxy.emit('topic', null);
-      proxy.emit('attachments', null);
-      proxy.emit('author', null);
-      return;
-    }
-    proxy.emit('topic', topic);
-
-    User.getUserById(topic.author_id, proxy.done('author'));
-
-    TopicAttachment.getAttachmentByTopicId(topic._id, proxy.done(function (topic_attachments) {
-      if (topic_attachments && topic_attachments.length > 0) {
-        var usercontent_ids = [];
-        for (var i = 0; i < topic_attachments.length; i++) {
-          usercontent_ids.push(topic_attachments[i].usercontent_id);
-        }
-        UserContent.getContentsByIds(usercontent_ids, proxy.done('attachments'));
-      } else {
-        proxy.emit('attachments', null);
-      }
-    }));
-
-  }));
-};
+function Ipv4Test(ip){
+  var numpattern = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+  return ip && numpattern.test(ip);
+}
 
 /**
  * 根据用户ID，查找用户
@@ -64,7 +26,33 @@ exports.getTopicById = function (id, callback) {
  * @param {Function} callback 回调函数
  */
 exports.getUserById = function (id, callback) {
-  //UserPage.findOne({_id: id}, callback);
+  Enigma.findOne({_id: id}, callback);
+};
+
+/**
+ * 根据用户Account，查找用户
+ * Callback:
+ * - err, 数据库异常
+ * - user, 用户
+ * @param {String} account 用户studentID
+ * @param {Function} callback 回调函数
+ */
+exports.getUserByAccount = function (account, callback) {
+  Enigma.findOne({studentID: account}, callback);
+};
+
+/**
+ * 根据用户Account，查找用户
+ * Callback:
+ * - err, 数据库异常
+ * - users, 用户列表
+ * @param {String} status 用户abolishFlag
+ * @param {Function} callback 回调函数
+ */
+exports.getUsersByStatus = function (status, callback) {
+  if(status) status = false;
+  else status = true;
+  Enigma.findOne({abolishFlag: status}, callback);
 };
 
 /**
@@ -77,51 +65,79 @@ exports.getUserById = function (id, callback) {
  * @param {Function} callback 回调函数
  */
 exports.getUsersByQuery = function (query, opt, callback) {
-  UserPage.find(query, [], opt, callback);
+  Enigma.find(query, [], opt, callback);
+};
+
+
+/**
+ * 根据关键字，获取一组用户
+ * Callback:
+ * - err, 数据库异常
+ * @param {String} id/account 用户关键字
+ * @param {Object} updateData 更新数据
+ * @param {Function} callback 回调函数
+ */
+exports.updateAccountInfo = function (account, updateData, callback) {
+  Enigma.update({studentID: account}, {$set: updateData}, callback);
+};
+exports.updateById = function (id, updateData, callback) {
+  Enigma.update({_id: id}, {$set: updateData}, callback);
 };
 
 /**
- * 根据查询条件，获取一个用户
+ * 根据关键字，获取一组用户
  * Callback:
  * - err, 数据库异常
- * - user, 用户
- * @param {String} name 用户名
- * @param {String} key 激活码
+ * - message, 返回信息
+ * @param {String} id/account 用户关键字
+ * @param {Object} newClient 更新数据
  * @param {Function} callback 回调函数
  */
-exports.getUserByQuery = function (name, key, callback) {
-  UserPage.findOne({name: name, retrieve_key: key}, callback);
-};
+exports.addClient = function (account, newClient, callback) {
+  FC.getUserByAccount(account, function(err, user){
+    if(err || !user) 
+      return callback(-1, "NO_USER_ACCOUNT");
 
-exports.updateById = function (id, updateData, callback) {
-  UserPage.update({_id: id}, {$set: updateData}, callback);
-};
+    if (user.onlineClient.length >= user.clientCount)
+      return callback(-1, "CLIENT_LIMIT_EXCEED");
 
-exports.newAndSave = function (studentID, clientCount, upThresold, downThreshold, allowedFlow, callback) {
-  var user = new Enigma();
-  user.name = name;
-  user.name_clean = string.clean(name);
-  user.noaccount = noaccount;
-  user.bio = bio;
-  user.avatar = avatar_url;
-  user.cover = cover_url;
-  if (permission) {
-    user.permission = permission;
-  }
-  if (accountId) {
-    user.save(function (err, page) {
-      if (err) {
-        callback(err, page);
-      } else {
-        UserPageRelationProxy.newAndSave(
-          accountId, page._id, accountPower,
-          function (err, r) {
-            callback(err, page, r);
-          }
-        );
-      }
+    if(!newClient.lanIP || !newClient.wanIP)
+      return callback(-1, "IP_FORMAT_ERROR");
+
+    newClient = {lanIP: newClient.lanIP, wanIP: newClient.wanIP, onlineTime: Date.now};
+    newClient = new EnigmaCli(newClient);
+
+    user.onlineClient.push(newClient);
+    user.clientCount += 1;
+    user.save(function(err){
+      if(err) return callback(-1, "DB_ERROR");
+      return callback(1, "SAVE_SUCCESS");
     });
-  } else {
-    user.save(callback);
-  }
+  });
 };
+
+/**
+ * 根据关键字，获取一组用户
+ * Callback:
+ * - err, 数据库异常
+ * @param {String} id/account 用户关键字
+ * @param {Object} updateData 更新数据
+ * @param {Function} callback 回调函数
+ */
+exports.updateClient = function (account, updateData, callback) {
+  Enigma.update({studentID: account}, {$set: updateData}, callback);
+};
+
+exports.newAndSave = function (studentID, clientCount, upThresold, downThreshold, allowedFlow, activate, callback) {
+  var Enigma = new Enigma();
+  Enigma.studentID = studentID;
+  Enigma.clientCount = clientCount;
+  Enigma.upThresold = upThresold;
+  Enigma.downThreshold = downThreshold;
+  Enigma.allowedFlow = allowedFlow;
+
+  Enigma.abolishFlag = !activate;
+
+  Enigma.save(callback);
+};
+

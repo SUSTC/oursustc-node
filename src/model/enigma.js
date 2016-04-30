@@ -30,4 +30,4 @@ var EnigmaSchema = new Schema({
 
 
 mongoose.model('EnigmaUser', EnigmaSchema, config.DB_PREFIX + 'enigma_usr');
-mongoose.model('EnigmaClient', EnigmaSchema, config.DB_PREFIX + 'enigma_cli');
+mongoose.model('EnigmaClient', EnigmaClientSchema, config.DB_PREFIX + 'enigma_cli');
