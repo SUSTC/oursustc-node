@@ -15,7 +15,11 @@ var EnigmaClientSchema = new Schema({
 var EnigmaSchema = new Schema({
 
   studentID: { type: String },
-  abolishFlag : { type: Boolean , default: false },
+  abolishFlag: { type: Boolean , default: false },
+
+  last_auth_time: {type: Date, default :Date.now},
+  last_connect_time: {type: Date, default :Date.now},
+  last_disconnect_time: {type: Date, default :Date.now},
 
   clientCount: { type: Number, default: 0 },
   onlineClient: { type: [EnigmaClientSchema] },
@@ -23,9 +27,9 @@ var EnigmaSchema = new Schema({
   upThreshold: { type: Number, default: 0 },
   downThreshold: { type: Number, default: 0 },
 
-  allowedFlow : { type: Number, default: 0 },
-  upStream: { type: Number, default: 0 },
-  donwStream { type: Number, default: 0 }
+  allowed_bytes: { type: Number, default: 0 },
+  rx_bytes: { type: Number, default: 0 },
+  tx_bytes: { type: Number, default: 0 }
 });
 
 

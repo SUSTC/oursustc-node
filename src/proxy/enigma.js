@@ -89,7 +89,7 @@ exports.updateById = function (id, updateData, callback) {
  * Callback:
  * - err, 数据库异常
  * - message, 返回信息
- * @param {String} id/account 用户关键字
+ * @param {String} account 用户关键字
  * @param {Object} newClient 更新数据
  * @param {Function} callback 回调函数
  */
@@ -104,11 +104,13 @@ exports.addClient = function (account, newClient, callback) {
     if(!newClient.lanIP || !newClient.wanIP)
       return callback(-1, "IP_FORMAT_ERROR");
 
-    newClient = {lanIP: newClient.lanIP, wanIP: newClient.wanIP, onlineTime: Date.now};
+    newClient = {lanIP: newClient.lanIP, wanIP: newClient.wanIP, onlineTime: Date.now()};
     newClient = new EnigmaCli(newClient);
 
     user.onlineClient.push(newClient);
+    user.last_connect_time = Date.now();
     user.clientCount += 1;
+
     user.save(function(err){
       if(err) return callback(-1, "DB_ERROR");
       return callback(1, "SAVE_SUCCESS");
@@ -120,12 +122,18 @@ exports.addClient = function (account, newClient, callback) {
  * 根据关键字，获取一组用户
  * Callback:
  * - err, 数据库异常
- * @param {String} id/account 用户关键字
- * @param {Object} updateData 更新数据
+ * - message, 返回信息
+ * @param {String} account 用户关键字
+ * @param {Object} newClient 更新数据
  * @param {Function} callback 回调函数
  */
-exports.updateClient = function (account, updateData, callback) {
-  Enigma.update({studentID: account}, {$set: updateData}, callback);
+exports.findClient = function (user, wanIP) {
+  var enigma_len = user.onlineClient.length;
+  for (var i = 0; i < enigma_len; i++) {
+    if (user.onlineClient[i].wanIP == wanIP)
+      return i;
+  }
+  return -1;
 };
 
 exports.newAndSave = function (studentID, clientCount, upThresold, downThreshold, allowedFlow, activate, callback) {

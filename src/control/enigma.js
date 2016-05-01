@@ -3,8 +3,7 @@
   var EventProxy = require('eventproxy');
   var _ = require('underscore');
   var gm = require('gm').subClass({ imageMagick : true });
-  var at = require("./../services/at");
-  var markdown = require('../common/markdown').Markdown;
+
 
   //table = require("./../base/table");
   var config = require('./../config/config.json');
@@ -12,22 +11,138 @@
     string = require("./../common/string"),
     constdata = require("./../common/constdata"),
     proxy = require("./../proxy"),
-    UserAccountProxy = proxy.UserAccount,
-    UserPageProxy = proxy.UserPage;
-
+    EnigmaProxy  = proxy.Enigma,
+    UserAccountProxy = proxy.UserAccount;
 
   exports.index = function(req, res, data, callback) {
+
+    data.err = 0;
+    data.title = "Hello World!";
+    callback(true);
+
+  };
+
+  exports.auth = function(req, res, data, callback) {
+    var account = req.body.username,
+        pwd  = req.body.password;
+
+    var getFunc = UserAccountProxy.getUserByStudentId;
+    if (!string.is_numeric(account)) {
+      //非学号
+      getFunc = UserAccountProxy.getUserByLoginName;
+    }
+
+    getFunc(account, function (err, user) {
+
+      if (err || !user) {
+        data.err = 1;
+        data.message = "Auth_Error_Account";
+        return callback(true);
+      }
+      account = user.student_id;
+      if (functions.password_check_hash(pwd, user.password) && user.activate) {
+        Enigma.getUserByAccount(account, function(err, enigma){
+          if(err) {
+            data.err = -1;
+            data.message = "DB_ERROR";
+            return callback(true);
+          }
+
+          if(!user) {
+            data.err = 0;
+            data.message = "USER_ADD";
+            Enigma.newAndSave(account, callback(true));
+            return;
+          }
+
+          enigma.last_auth_time = Date.now();
+          if (enigma.rx_bytes + enigma.tx_bytes >= allowed_bytes){
+            data.err = 2;
+            data.message = "FLOW_EXCEED";
+          }
+          else if (enigma.onlineClient.length >= enigma.clientCount){
+            data.err = 3;
+            data.message = "COUNT_EXCEED";
+          }
+          else {
+            data.err = 0;
+            data.message = "SUCCESS";
+          }
+
+          enigma.save(function(err){
+            if(err){
+              data.err = -1;
+              data.message = "DB_ERROR";
+              return callback(true);
+            }
+            return callback(true);
+          });
+
+        });
+      } 
+      else {
+        data.err = 1;
+        data.message = "Auth_Error_Password";
+        return callback(true);
+      }
+    });
+    callback(true);
+  }
+
+  exports.connect = function(req, res, data, callback) {
+    var account = req.body.username,
+        lan_ip   = req.body.ifconfig_pool_local_ip,
+        wan_ip   = req.body.ifconfig_pool_remote_ip;
+
+    var newClient = {
+      lanIP: lan_ip,
+      wanIP: wan_ip,
+    }
+
+    Enigma.addClient(account, newClient, function(err, msg){
+      if(err != 1){
+        data.err = -1;
+        data.message = "DB_ERROR";
+      }
+      else{
+        data.err = 1;
+        data.message = "SUCCESS";
+      }
+      return callback(true);
+    });
+
+  }
+
+  exports.disconnect = function(req, res, data, callback) {
+    var account = req.body.username,
+        lan_ip  = ifconfig_pool_local_ip,
+        wan_ip  = ifconfig_pool_remote_ip,
+        rx_bytes= bytes_received,
+        tx_bytes= bytes_sent;
+
+    Enigma.getUserByAccount(account, function(err, user) {
+      if(err) {
+        data.err = -1;
+        data.message = "DB_ERROR";
+        return callback(true);
+      }
+
+      var index = Enigma.findClient(user, wan_ip);
+      if (index != -1){
+        user.last_disconnect_time = Date.now();
+        user.tx_bytes += tx_bytes;
+        user.rx_bytes += rx_bytes;
+        user.onlineClient.splice(index, 1);
+      }
+      
+    });
+  }
+
+  exports.reconnect = function(req, res, data, callback) {
 
     data.err = 0;
     
     callback(true);
 
   };
-
-  exports.auth = function(req, res, data, callback) {
-    req.body.user;
-    req.body.password;
-    callback(true);
-  }
-
 }).call(this);

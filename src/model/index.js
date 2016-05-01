@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var config = require("./../config/config.json");
 
 // models
+require('./enigma.js');
 require('./user_account');
 require('./user_page');
 require('./user_page_relation');
@@ -25,3 +26,5 @@ exports.Topic = mongoose.model('Topic');
 exports.TopicAttachment = mongoose.model('TopicAttachment');
 exports.Reply = mongoose.model('Reply');
 exports.Notification = mongoose.model('Notification');
+
+exports.EnigmaUser = mongoose.model('EnigmaUser');
