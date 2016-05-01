@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var config = require("./../config/config.json");
 //var ObjectId = Schema.ObjectId;
 
 var EnigmaClientSchema = new Schema({
