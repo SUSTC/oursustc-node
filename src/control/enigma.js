@@ -25,11 +25,17 @@
 
   exports.auth = function(req, res, data, callback) {
     var account = req.body.username,
-        pwd  = req.body.password;
+        pwd     = req.body.password,
+        key     = req.body.key;
 
     if (!account || !pwd){
       data.err = 1;
       data.message = "FORMAT_ERROR";
+      return callback(true);
+    }
+    if (!key || key !== config.ENIGMA_KEY){
+      data.err = -2;
+      data.message = "KEY_FRAUD";
       return callback(true);
     }
 
@@ -98,12 +104,18 @@
 
   exports.connect = function(req, res, data, callback) {
     var account = req.body.username,
-        lan_ip   = req.body.ifconfig_pool_local_ip,
-        wan_ip   = req.body.ifconfig_pool_remote_ip;
+        lan_ip  = req.body.ifconfig_pool_local_ip,
+        wan_ip  = req.body.ifconfig_pool_remote_ip,
+        key     = req.body.key;
 
     if (!account || !lan_ip || !wan_ip){
       data.err = 1;
       data.message = "FORMAT_ERROR";
+      return callback(true);
+    }
+    if (!key || key !== config.ENIGMA_KEY){
+      data.err = -2;
+      data.message = "KEY_FRAUD";
       return callback(true);
     }
 
@@ -131,11 +143,17 @@
         lan_ip  = req.body.ifconfig_pool_local_ip,
         wan_ip  = req.body.ifconfig_pool_remote_ip,
         rx_bytes= req.body.bytes_received,
-        tx_bytes= req.body.bytes_sent;
+        tx_bytes= req.body.bytes_sent,
+        key     = req.body.key;
 
     if (!account || !lan_ip || !wan_ip || !rx_bytes || !tx_bytes){
       data.err = 1;
       data.message = "FORMAT_ERROR";
+      return callback(true);
+    }
+    if (!key || key !== config.ENIGMA_KEY){
+      data.err = -2;
+      data.message = "KEY_FRAUD";
       return callback(true);
     }
 
