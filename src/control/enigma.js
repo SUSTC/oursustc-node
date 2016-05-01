@@ -27,6 +27,12 @@
     var account = req.body.username,
         pwd  = req.body.password;
 
+    if (!account || !pwd){
+      data.err = 1;
+      data.message = "FORMAT_ERROR";
+      return callback(true);
+    }
+
     var getFunc = UserAccountProxy.getUserByStudentId;
     if (!string.is_numeric(account)) {
       //非学号
@@ -95,6 +101,12 @@
         lan_ip   = req.body.ifconfig_pool_local_ip,
         wan_ip   = req.body.ifconfig_pool_remote_ip;
 
+    if (!account || !lan_ip || !wan_ip){
+      data.err = 1;
+      data.message = "FORMAT_ERROR";
+      return callback(true);
+    }
+
     var newClient = {
       lanIP: lan_ip,
       wanIP: wan_ip,
@@ -116,10 +128,16 @@
 
   exports.disconnect = function(req, res, data, callback) {
     var account = req.body.username,
-        lan_ip  = ifconfig_pool_local_ip,
-        wan_ip  = ifconfig_pool_remote_ip,
-        rx_bytes= bytes_received,
-        tx_bytes= bytes_sent;
+        lan_ip  = req.body.ifconfig_pool_local_ip,
+        wan_ip  = req.body.ifconfig_pool_remote_ip,
+        rx_bytes= req.body.bytes_received,
+        tx_bytes= req.body.bytes_sent;
+
+    if (!account || !lan_ip || !wan_ip || !rx_bytes || !tx_bytes){
+      data.err = 1;
+      data.message = "FORMAT_ERROR";
+      return callback(true);
+    }
 
     Enigma.getUserByAccount(account, function(err, user) {
       if(err) {
