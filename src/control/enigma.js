@@ -1,9 +1,6 @@
 (function() {
 
   var EventProxy = require('eventproxy');
-  var _ = require('underscore');
-  var gm = require('gm').subClass({ imageMagick : true });
-
 
   //table = require("./../base/table");
   var config = require('./../config/config.json');
@@ -15,11 +12,15 @@
     UserAccountProxy = proxy.UserAccount;
 
   exports.index = function(req, res, data, callback) {
-
     data.err = 0;
     data.title = "Hello World!";
     callback(true);
+  };
 
+  exports.online = function(req, res, data, callback) {
+    data.err = 0;
+    data.message = "Online Client:";
+    callback(true);
   };
 
   exports.auth = function(req, res, data, callback) {
@@ -100,7 +101,7 @@
     }
 
     Enigma.addClient(account, newClient, function(err, msg){
-      if(err != 1){
+      if(err != 0){
         data.err = -1;
         data.message = "DB_ERROR";
       }

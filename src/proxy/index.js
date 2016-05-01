@@ -10,4 +10,4 @@ exports.TopicAttachment = require('./topic_attachment');
 exports.Reply = require('./reply');
 exports.Notification = require('./notification');
 
-exports.Enigma = require('./enigma.js');
+exports.Enigma = require('./enigma');
