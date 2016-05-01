@@ -133,16 +133,32 @@
         user.tx_bytes += tx_bytes;
         user.rx_bytes += rx_bytes;
         user.onlineClient.splice(index, 1);
+
+        user.save(function(err){
+          if(err) {
+            data.err = -1;
+            data.message = "DB_ERROR";
+            return callback(true);
+          }
+          else{
+            data.err = 0;
+            data.message = "SUCCESS";
+            return callback(true);
+          }
+        });
       }
-      
+      else{
+        data.err = -1;
+        data.message = "DB_ERROR";
+        return callback(true);
+      }
     });
   }
 
   exports.reconnect = function(req, res, data, callback) {
 
     data.err = 0;
-    
     callback(true);
-
+    
   };
 }).call(this);
