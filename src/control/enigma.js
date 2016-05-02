@@ -63,7 +63,7 @@
           }
 
           if(!enigma) {
-            console.log("NO ENIGMA USER");
+            //console.log("NO ENIGMA USER");
             data.err = 0;
             data.message = "USER_ADD";
             EnigmaProxy.newAndSaveEmpty(account, function (err, u){
@@ -149,7 +149,7 @@
         tx_bytes= req.body.bytes_sent,
         key     = req.body.key;
 
-    if (!account || !lan_ip || !wan_ip || !rx_bytes || !tx_bytes){
+    if (!account || !lan_ip || !wan_ip || !isNaN(rx_bytes) || !isNaN(tx_bytes) ){
       data.err = 1;
       data.message = "FORMAT_ERROR";
       return callback(true);
@@ -170,8 +170,8 @@
       var index = EnigmaProxy.findClient(user, wan_ip);
       if (index != -1){
         user.last_disconnect_time = Date.now();
-        user.tx_bytes += tx_bytes;
-        user.rx_bytes += rx_bytes;
+        user.tx_bytes += Number(tx_bytes) / 1024;
+        user.rx_bytes += Number(rx_bytes) / 1024;
         user.onlineClient.splice(index, 1);
 
         user.save(function(err){

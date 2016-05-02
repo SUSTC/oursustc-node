@@ -27,5 +27,8 @@
 
   "HASH_KEY": "mK2gg993IyU0WhKb",
   "SESSION_KEY": "zyAxYvZYEjH2",
-  "API_KEY": "sMP45cQTjfiimeUppnc3A6zKsYjwfQEpQp2kQ3M65H2PyCeqvSJ152kMTZSI0hm6"
+  "API_KEY": "sMP45cQTjfiimeUppnc3A6zKsYjwfQEpQp2kQ3M65H2PyCeqvSJ152kMTZSI0hm6",
+
+  "ENIGMA_KEY": "DSmEyhYKVO9fSq7be2gY1PglshftAM8hYwR5bMhB",
+  "DEFAULT_LIMIT": 20E6 //for allowed_bytes in enigma
 }

@@ -28,7 +28,7 @@ var EnigmaSchema = new Schema({
   upThreshold: { type: Number, default: 0 },
   downThreshold: { type: Number, default: 0 },
 
-  allowed_bytes: { type: Number, default: 0 },
+  allowed_bytes: { type: Number, default: config.DEFAULT_LIMIT },
   rx_bytes: { type: Number, default: 0 },
   tx_bytes: { type: Number, default: 0 }
 });
