@@ -126,10 +126,6 @@ exports.findClient = function (user, wanIP) {
 exports.newAndSaveEmpty = function (studentID, callback) {
   var user = new EnigmaUsr();
   user.studentID = studentID;
-  user.clientCount = 0;
-  user.upThresold = 0;
-  user.downThreshold = 0;
-  user.allowedFlow = 0;
 
   user.abolishFlag = false;
 
