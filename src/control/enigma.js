@@ -170,8 +170,8 @@
       var index = EnigmaProxy.findClient(user, wan_ip);
       if (index != -1){
         user.last_disconnect_time = Date.now();
-        user.tx_bytes += Number(tx_bytes) / 1024;
-        user.rx_bytes += Number(rx_bytes) / 1024;
+        user.tx_bytes += Number(tx_bytes) / 1000;
+        user.rx_bytes += Number(rx_bytes) / 1000;
         user.onlineClient.splice(index, 1);
 
         user.save(function(err){
