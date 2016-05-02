@@ -3,7 +3,7 @@
 var models = require('../model');
 /*Database Model Import*/
 var User = models.UserAccount;
-var Enigma = models.EnigmaUser,
+var EnigmaUsr = models.EnigmaUser,
     EnigmaCli = models.EnigmaClient;
 
 var functions = require("./../common/functions"),
@@ -26,7 +26,7 @@ function Ipv4Test(ip){
  * @param {Function} callback 回调函数
  */
 exports.getUserById = function (id, callback) {
-  Enigma.findOne({_id: id}, callback);
+  EnigmaUsr.findOne({_id: id}, callback);
 };
 
 /**
@@ -38,7 +38,7 @@ exports.getUserById = function (id, callback) {
  * @param {Function} callback 回调函数
  */
 exports.getUserByAccount = function (account, callback) {
-  Enigma.findOne({studentID: account}, callback);
+  EnigmaUsr.findOne({studentID: account}, callback);
 };
 
 /**
@@ -52,7 +52,7 @@ exports.getUserByAccount = function (account, callback) {
 exports.getUsersByStatus = function (status, callback) {
   if(status) status = false;
   else status = true;
-  Enigma.findOne({abolishFlag: status}, callback);
+  EnigmaUsr.findOne({abolishFlag: status}, callback);
 };
 
 
@@ -65,10 +65,10 @@ exports.getUsersByStatus = function (status, callback) {
  * @param {Function} callback 回调函数
  */
 exports.updateAccountInfo = function (account, updateData, callback) {
-  Enigma.update({studentID: account}, {$set: updateData}, callback);
+  EnigmaUsr.update({studentID: account}, {$set: updateData}, callback);
 };
 exports.updateById = function (id, updateData, callback) {
-  Enigma.update({_id: id}, {$set: updateData}, callback);
+  EnigmaUsr.update({_id: id}, {$set: updateData}, callback);
 };
 
 /**
@@ -100,8 +100,7 @@ exports.addClient = function (account, newClient, callback) {
 
     user.onlineClient.push(newClient);
     user.last_connect_time = Date.now();
-    user.clientCount += 1;
-
+    
     user.save(function(err){
       if(err) return callback(-1, "DB_ERROR");
       return callback(0, "SAVE_SUCCESS");
@@ -127,16 +126,29 @@ exports.findClient = function (user, wanIP) {
   return -1;
 };
 
+exports.newAndSaveEmpty = function (studentID, callback) {
+  var user = new EnigmaUsr();
+  user.studentID = studentID;
+  user.clientCount = 0;
+  user.upThresold = 0;
+  user.downThreshold = 0;
+  user.allowedFlow = 0;
+
+  user.abolishFlag = false;
+
+  user.save(callback);
+};
+
 exports.newAndSave = function (studentID, clientCount, upThresold, downThreshold, allowedFlow, activate, callback) {
-  var Enigma = new Enigma();
-  Enigma.studentID = studentID;
-  Enigma.clientCount = clientCount;
-  Enigma.upThresold = upThresold;
-  Enigma.downThreshold = downThreshold;
-  Enigma.allowedFlow = allowedFlow;
+  var user = new EnigmaUsr();
+  user.studentID = studentID;
+  user.clientCount = clientCount;
+  user.upThresold = upThresold;
+  user.downThreshold = downThreshold;
+  user.allowedFlow = allowedFlow;
 
-  Enigma.abolishFlag = !activate;
+  user.abolishFlag = !activate;
 
-  Enigma.save(callback);
+  user.save(callback);
 };
 

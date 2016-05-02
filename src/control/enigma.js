@@ -53,6 +53,7 @@
         return callback(true);
       }
       account = user.student_id;
+
       if (functions.password_check_hash(pwd, user.password) && user.activate) {
         EnigmaProxy.getUserByAccount(account, function(err, enigma){
           if(err) {
@@ -62,43 +63,46 @@
           }
 
           if(!enigma) {
+            console.log("NO ENIGMA USER");
             data.err = 0;
             data.message = "USER_ADD";
-            return EnigmaProxy.newAndSave(account, callback(true));
-          }
-          console.log("HERE~");
-          enigma.last_auth_time = Date.now();
-          if (enigma.rx_bytes + enigma.tx_bytes >= allowed_bytes){
-            data.err = 2;
-            data.message = "FLOW_EXCEED";
-          }
-          else if (enigma.onlineClient.length >= enigma.clientCount){
-            data.err = 3;
-            data.message = "COUNT_EXCEED";
-          }
-          else {
-            data.err = 0;
-            data.message = "SUCCESS";
-          }
-
-          enigma.save(function(err){
-            if(err){
-              data.err = -1;
-              data.message = "DB_ERROR";
+            EnigmaProxy.newAndSaveEmpty(account, function (err, u){
               return callback(true);
+            });
+          }
+          else{
+            enigma.last_auth_time = Date.now();
+            if (enigma.rx_bytes + enigma.tx_bytes >= enigma.allowed_bytes){
+              data.err = 2;
+              data.message = "FLOW_EXCEED";
             }
-            return callback(true);
-          });
+            else if (enigma.onlineClient.length >= enigma.clientCount){
+              data.err = 3;
+              data.message = "COUNT_EXCEED";
+            }
+            else {
+              data.err = 0;
+              data.message = "SUCCESS";
+            }
 
+            enigma.save(function (err, u){
+              if(err){
+                data.err = -1;
+                data.message = "DB_ERROR";
+                return callback(true);
+              }
+              else
+                return callback(true);
+            });
+          }
         });
-      } 
+      }
       else {
         data.err = 1;
         data.message = "Auth_Error_Password";
         return callback(true);
       }
     });
-    callback(true);
   }
 
   exports.connect = function(req, res, data, callback) {
@@ -129,7 +133,7 @@
         data.message = "DB_ERROR";
       }
       else{
-        data.err = 1;
+        data.err = 0;
         data.message = "SUCCESS";
       }
       return callback(true);
