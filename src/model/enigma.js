@@ -22,13 +22,13 @@ var EnigmaSchema = new Schema({
   last_connect_time: {type: Date, default :Date.now},
   last_disconnect_time: {type: Date, default :Date.now},
 
-  clientCount: { type: Number, default: 0 },
+  clientCount: { type: Number, default: config.ENIGMA_DEFAULT_CLIENT_LIMIT },
   onlineClient: { type: [EnigmaClientSchema] },
 
   upThreshold: { type: Number, default: 0 },
   downThreshold: { type: Number, default: 0 },
 
-  allowed_bytes: { type: Number, default: config.ENIGMA_DEFAULT_LIMIT },
+  allowed_bytes: { type: Number, default: config.ENIGMA_DEFAULT_ALLOWED_LIMIT },
   rx_bytes: { type: Number, default: 0 },
   tx_bytes: { type: Number, default: 0 }
 });
