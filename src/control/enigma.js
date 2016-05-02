@@ -33,7 +33,7 @@
       data.message = "FORMAT_ERROR";
       return callback(true);
     }
-    if (!key || key !== config.ENIGMA_KEY){
+    if (!key || key != config.ENIGMA_KEY){
       data.err = -2;
       data.message = "KEY_FRAUD";
       return callback(true);
@@ -54,20 +54,19 @@
       }
       account = user.student_id;
       if (functions.password_check_hash(pwd, user.password) && user.activate) {
-        Enigma.getUserByAccount(account, function(err, enigma){
+        EnigmaProxy.getUserByAccount(account, function(err, enigma){
           if(err) {
             data.err = -1;
             data.message = "DB_ERROR";
             return callback(true);
           }
 
-          if(!user) {
+          if(!enigma) {
             data.err = 0;
             data.message = "USER_ADD";
-            Enigma.newAndSave(account, callback(true));
-            return;
+            return EnigmaProxy.newAndSave(account, callback(true));
           }
-
+          console.log("HERE~");
           enigma.last_auth_time = Date.now();
           if (enigma.rx_bytes + enigma.tx_bytes >= allowed_bytes){
             data.err = 2;
@@ -124,7 +123,7 @@
       wanIP: wan_ip,
     }
 
-    Enigma.addClient(account, newClient, function(err, msg){
+    EnigmaProxy.addClient(account, newClient, function(err, msg){
       if(err != 0){
         data.err = -1;
         data.message = "DB_ERROR";
@@ -157,14 +156,14 @@
       return callback(true);
     }
 
-    Enigma.getUserByAccount(account, function(err, user) {
+    EnigmaProxy.getUserByAccount(account, function(err, user) {
       if(err) {
         data.err = -1;
         data.message = "DB_ERROR";
         return callback(true);
       }
 
-      var index = Enigma.findClient(user, wan_ip);
+      var index = EnigmaProxy.findClient(user, wan_ip);
       if (index != -1){
         user.last_disconnect_time = Date.now();
         user.tx_bytes += tx_bytes;
