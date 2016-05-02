@@ -109,13 +109,10 @@ exports.addClient = function (account, newClient, callback) {
 };
 
 /**
- * 根据关键字，获取一组用户
- * Callback:
- * - err, 数据库异常
- * - message, 返回信息
- * @param {String} account 用户关键字
- * @param {Object} newClient 更新数据
- * @param {Function} callback 回调函数
+ * 返回用户中的指定IP的在线客户端
+ * return: 客户端数组index(没有为-1)
+ * @param {String} user  一条enigma document
+ * @param {String} wanIP 指定remote IP地址
  */
 exports.findClient = function (user, wanIP) {
   var enigma_len = user.onlineClient.length;
