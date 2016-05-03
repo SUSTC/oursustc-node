@@ -109,9 +109,10 @@
     var account = req.body.username,
         lan_ip  = req.body.ifconfig_pool_local_ip,
         wan_ip  = req.body.ifconfig_pool_remote_ip,
+        true_ip = req.body.ifconfig_pool_trusted_ip,
         key     = req.body.key;
 
-    if (!account || !lan_ip || !wan_ip){
+    if (!account || !lan_ip || !wan_ip || !true_ip){
       data.err = 1;
       data.message = "FORMAT_ERROR";
       return callback(true);
@@ -125,6 +126,7 @@
     var newClient = {
       lanIP: lan_ip,
       wanIP: wan_ip,
+      trustIP: true_ip
     }
 
     EnigmaProxy.addClient(account, newClient, function(err, msg){
@@ -145,11 +147,12 @@
     var account = req.body.username,
         lan_ip  = req.body.ifconfig_pool_local_ip,
         wan_ip  = req.body.ifconfig_pool_remote_ip,
+        true_ip = req.body.ifconfig_pool_trusted_ip,
         rx_bytes= req.body.bytes_received,
         tx_bytes= req.body.bytes_sent,
         key     = req.body.key;
 
-    if (!account || !lan_ip || !wan_ip || !isNaN(rx_bytes) || !isNaN(tx_bytes) ){
+    if (!account || !lan_ip || !wan_ip || !true_ip || isNaN(rx_bytes) || isNaN(tx_bytes) ){
       data.err = 1;
       data.message = "FORMAT_ERROR";
       return callback(true);

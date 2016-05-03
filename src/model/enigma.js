@@ -6,6 +6,7 @@ var config = require("./../config/config.json");
 var EnigmaClientSchema = new Schema({
   lanIP: { type: String },
   wanIP: { type: String },
+  trustIP: { type: String },
   onlineTime: { type: Date, default: Date.now }
 });
 
