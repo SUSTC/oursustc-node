@@ -18,10 +18,26 @@
   };
 
   exports.online = function(req, res, data, callback) {
-    data.err = 0;
-    data.message = "Online Client:";
-    callback(true);
-  };
+    var account = req.body.username;
+
+    if (!account){
+      data.err = 1;
+      data.message = "FORMAT_ERROR";
+      return callback(true);
+    }
+
+    EnigmaProxy.getUserByAccount(account, function (err, enigma){
+      if (err || !enigma) {
+        data.err = -1;
+        data.message = "DB_ERROR";
+        return callback(true);
+      }
+
+      data.err = 0;
+      data._data = enigma;
+      callback(true);
+    });
+  }
 
   exports.auth = function(req, res, data, callback) {
     var account = req.body.username,
