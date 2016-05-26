@@ -93,7 +93,8 @@ exports.addClient = function (account, newClient, callback) {
 
     newClient = {
       lanIP: newClient.lanIP, 
-      wanIP: newClient.wanIP, 
+      wanIP: newClient.wanIP,
+      trustIP: newClient.trustIP, 
       onlineTime: Date.now()
     };
     newClient = new EnigmaCli(newClient);
