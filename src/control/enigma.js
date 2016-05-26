@@ -125,7 +125,7 @@
     var account = req.body.username,
         lan_ip  = req.body.ifconfig_pool_local_ip,
         wan_ip  = req.body.ifconfig_pool_remote_ip,
-        true_ip = req.body.ifconfig_pool_trusted_ip,
+        true_ip = req.body.trusted_ip,
         key     = req.body.key;
 
     if (!account || !lan_ip || !wan_ip || !true_ip){
@@ -143,27 +143,41 @@
       lanIP: lan_ip,
       wanIP: wan_ip,
       trustIP: true_ip
+    };
+    
+    var getFunc = UserAccountProxy.getUserByStudentId;
+    if (!string.is_numeric(account)) {
+      //非学号
+      getFunc = UserAccountProxy.getUserByLoginName;
     }
 
-    EnigmaProxy.addClient(account, newClient, function(err, msg){
-      if(err != 0){
-        data.err = -1;
-        data.message = "DB_ERROR";
+    getFunc(account, function (err, user) {
+      if (err || !user) {
+        data.err = 1;
+        data.message = "Auth_Error_Account";
+        return callback(true);
       }
-      else{
-        data.err = 0;
-        data.message = "SUCCESS";
-      }
-      return callback(true);
-    });
+      account = user.student_id;
 
+      EnigmaProxy.addClient(account, newClient, function(err, msg){
+        if(err != 0){
+          data.err = -1;
+          data.message = "DB_ERROR";
+        }
+        else{
+          data.err = 0;
+          data.message = "SUCCESS";
+        }
+        return callback(true);
+      });
+    });
   }
 
   exports.disconnect = function(req, res, data, callback) {
     var account = req.body.username,
         lan_ip  = req.body.ifconfig_pool_local_ip,
         wan_ip  = req.body.ifconfig_pool_remote_ip,
-        true_ip = req.body.ifconfig_pool_trusted_ip,
+        true_ip = req.body.trusted_ip,
         rx_bytes= req.body.bytes_received,
         tx_bytes= req.body.bytes_sent,
         key     = req.body.key;
@@ -178,6 +192,20 @@
       data.message = "KEY_FRAUD";
       return callback(true);
     }
+    
+    var getFunc = UserAccountProxy.getUserByStudentId;
+    if (!string.is_numeric(account)) {
+      //非学号
+      getFunc = UserAccountProxy.getUserByLoginName;
+    }
+
+    getFunc(account, function (err, user) {
+      if (err || !user) {
+        data.err = 1;
+        data.message = "Auth_Error_Account";
+        return callback(true);
+      }
+      account = user.student_id;
 
     EnigmaProxy.getUserByAccount(account, function(err, user) {
       if(err) {
@@ -211,6 +239,8 @@
         data.message = "DB_ERROR";
         return callback(true);
       }
+    });
+    
     });
   }
 
