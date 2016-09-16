@@ -1,10 +1,11 @@
 /*
-  Author:  tengattack
-  Version: 0.8.1
-  Update:  2015/12/18
+  Author:  tengattack, Frank
+  Version: 0.8.2
+  Update:  2016/09/16
   Date:    2015/06/25
 
   Updates:
+  * v0.8.2 2016/09/16 fix the bug for the scores higer than 100, increase the significant num of GPA
   * v0.8.1 2015/12/18 add grade5 support in the scores
 */
 
@@ -37,7 +38,7 @@ function CalcGPA(terms) {
       n += cls.credit;
     }
   }
-  return (total / n).toFixed(2);
+  return (total / n).toFixed(4);
 }
 
 function TranslateGPA5(grade5) {
@@ -61,7 +62,7 @@ function CalcGPA5(terms) {
       n += cls.credit;
     }
   }
-  return (total / n).toFixed(2);
+  return (total / n).toFixed(4);
 }
 
 function parseScore(sscore) {
