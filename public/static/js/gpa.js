@@ -16,6 +16,10 @@ function TranslateGPA(score) {
    3.39, 3.32, 3.25, 3.17, 3.09, 3.01, 2.92, 2.83, 2.73,
     2.63, 2.53, 2.42, 2.31, 2.2, 2.08, 1.96, 1.83, 1.7,
     1.57, 1.43, 1.29, 1.15, 1, 0];
+    // for those score larger than 100, fix the bug
+    if (score > 100){
+      score = 100 ;
+    }
   return ((score >= 60) ? trans[(100 - Math.floor(score))] : 0);
 }
 
